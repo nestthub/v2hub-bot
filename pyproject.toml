@@ -1,0 +1,17 @@
+[project]
+name = "v2hub-bot"
+version = "1.0.0"
+description = (
+    "Bot for managing V2Hub VPN subscriptions. "
+    "Allows users to connect a subscription once and centrally manage and update configurations "
+    "that automatically apply to all linked devices."
+)
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiogram==3.13.1",
+    "asyncpg==0.30.0",
+    "pydantic-settings==2.6.1",
+    "sqlalchemy[asyncio]==2.0.36",
+    "v2hub-admin==1.0.2",
+]
