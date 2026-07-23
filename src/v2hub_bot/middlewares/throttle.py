@@ -1,11 +1,12 @@
 import asyncio
 import logging
-from typing import Any, Awaitable, Callable
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 from aiogram import BaseMiddleware
-from aiogram.types import Message
+from aiogram.types import Message, TelegramObject
 
-from locales import ru as t
+from v2hub_bot.locales import ru as t
 
 logger = logging.getLogger(__name__)
 
@@ -19,10 +20,13 @@ class ThrottleMiddleware(BaseMiddleware):
 
     async def __call__(
         self,
-        handler: Callable[[Message, dict[str, Any]], Awaitable[Any]],
-        event: Message,
+        handler: Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]],
+        event: TelegramObject,
         data: dict[str, Any],
     ) -> Any:
+        if not isinstance(event, Message):
+            return await handler(event, data)
+
         user = event.from_user
         if user is None:
             return await handler(event, data)

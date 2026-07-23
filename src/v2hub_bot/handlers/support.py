@@ -2,8 +2,8 @@ from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message
 
-from locales import ru as t
-from services import keyboards
+from v2hub_bot.locales import ru as t
+from v2hub_bot.services import keyboards
 
 router = Router()
 
@@ -15,5 +15,6 @@ async def cmd_support(message: Message) -> None:
 
 @router.callback_query(F.data == "support")
 async def cb_support(call: CallbackQuery) -> None:
-    await call.message.edit_text(t.SUPPORT_TEXT, reply_markup=keyboards.support())
+    if call.message and isinstance(call.message, Message):
+        await call.message.edit_text(t.SUPPORT_TEXT, reply_markup=keyboards.support())
     await call.answer()

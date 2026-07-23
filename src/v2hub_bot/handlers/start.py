@@ -2,11 +2,10 @@ from aiogram import F, Router
 from aiogram.filters import CommandStart
 from aiogram.types import CallbackQuery, Message
 
-from db.crud import get_or_create_user, get_user, save_token
-from db.engine import async_session
-from locales import ru as t
-from services.keyboards import main_menu, token_first_time
-from services.v2hub import V2HubError, v2hub_client
+from v2hub_bot.db import async_session, get_or_create_user, get_user, save_token
+from v2hub_bot.locales import ru as t
+from v2hub_bot.services import V2HubError, v2hub_client
+from v2hub_bot.services.keyboards import main_menu, token_first_time
 
 router = Router()
 
@@ -40,6 +39,7 @@ async def cmd_start(message: Message) -> None:
         return
 
     import html
+
     name = html.escape(user.first_name)
 
     # Проверяем, новый ли пользователь (нет токена до этого вызова)
@@ -67,13 +67,15 @@ async def cmd_start(message: Message) -> None:
 @router.callback_query(F.data == "menu")
 async def cb_menu(call: CallbackQuery) -> None:
     import html
+
     name = html.escape(call.from_user.first_name)
 
     async with async_session() as session:
         db_user = await get_or_create_user(session, call.from_user.id)
 
-    await call.message.edit_text(
-        t.WELCOME_RETURNING.format(name=name),
-        reply_markup=main_menu(has_token=bool(db_user.api_token)),
-    )
+    if call.message and isinstance(call.message, Message):
+        await call.message.edit_text(
+            t.WELCOME_RETURNING.format(name=name),
+            reply_markup=main_menu(has_token=bool(db_user.api_token)),
+        )
     await call.answer()

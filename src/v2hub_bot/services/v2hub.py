@@ -17,13 +17,13 @@ import logging
 
 from v2hub import AuthenticationError, AuthorizationError, VPNAPIError
 from v2hub_admin import AsyncAdminClient
-
-from config import settings
+from v2hub_admin.models import UserResponse
+from v2hub_bot.config import settings
 
 logger = logging.getLogger(__name__)
 
 # Re-export for handlers to catch
-__all__ = ["v2hub_client", "V2HubError", "VPNAPIError", "AuthenticationError", "AuthorizationError"]
+__all__ = ["AuthenticationError", "AuthorizationError", "V2HubError", "VPNAPIError", "v2hub_client"]
 
 # Convenience alias so handlers can catch a single base class
 V2HubError = VPNAPIError
@@ -31,8 +31,8 @@ V2HubError = VPNAPIError
 
 def _make_client() -> AsyncAdminClient:
     return AsyncAdminClient(
-        base_url=settings.V2HUB_API_URL,
-        secret_key=settings.V2HUB_SECRET_KEY,
+        base_url=settings.v2hub_api_url,
+        secret_key=settings.v2hub_secret_key,
     )
 
 
@@ -46,13 +46,13 @@ class V2HubService:
         """Create user and return api_token."""
         async with _make_client() as admin:
             try:
-                user = await admin.create_user(user_id)
-            except: 
+                user: UserResponse = await admin.create_user(user_id)
+            except:
                 user = await admin.get_user(user_id)
 
             return user.api_token
 
-    async def get_user(self, user_id: int):
+    async def get_user(self, user_id: int) -> UserResponse | None:
         """Return user object or None if not found."""
         try:
             async with _make_client() as admin:

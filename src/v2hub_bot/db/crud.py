@@ -1,12 +1,12 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.models import User
-
+from v2hub_bot.db.models import User
 
 # ── Users ─────────────────────────────────────────────────────────────────────
+
 
 async def get_or_create_user(session: AsyncSession, user_id: int) -> User:
     result = await session.execute(select(User).where(User.id == user_id))
@@ -28,5 +28,5 @@ async def save_token(session: AsyncSession, user_id: int, token: str) -> None:
     user = await get_user(session, user_id)
     if user:
         user.api_token = token
-        user.token_generated_at = datetime.now(timezone.utc)
+        user.token_generated_at = datetime.now(UTC)
         await session.commit()

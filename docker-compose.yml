@@ -1,8 +1,14 @@
+x-app-environment: &app-environment
+  DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
 services:
   bot:
     build: .
     restart: unless-stopped
-    env_file: .env
+    env_file:
+      - .env
+    environment:
+      <<: *app-environment
     depends_on:
       db:
         condition: service_healthy
@@ -15,9 +21,12 @@ services:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     volumes:
-      - ./data/db_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
       interval: 5s
       timeout: 5s
       retries: 10
+
+volumes:
+  postgres_data:

@@ -2,11 +2,10 @@ from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message
 
-from db.crud import get_or_create_user, get_user, save_token
-from db.engine import async_session
-from locales import ru as t
-from services.keyboards import back_to_menu, token_actions
-from services.v2hub import V2HubError, v2hub_client
+from v2hub_bot.db import async_session, get_or_create_user, get_user, save_token
+from v2hub_bot.locales import ru as t
+from v2hub_bot.services import V2HubError, v2hub_client
+from v2hub_bot.services.keyboards import back_to_menu, token_actions
 
 router = Router()
 
@@ -31,6 +30,7 @@ async def _token_info_text(user_id: int) -> tuple[str, bool, str | None]:
 
 # ── /token ────────────────────────────────────────────────────────────────────
 
+
 @router.message(Command("token"))
 async def cmd_token(message: Message) -> None:
     user = message.from_user
@@ -43,10 +43,12 @@ async def cmd_token(message: Message) -> None:
 
 # ── Callbacks ─────────────────────────────────────────────────────────────────
 
+
 @router.callback_query(F.data == "token:info")
 async def cb_token_info(call: CallbackQuery) -> None:
     text, has_token, _ = await _token_info_text(call.from_user.id)
-    await call.message.edit_text(text, reply_markup=token_actions(has_token))
+    if call.message and isinstance(call.message, Message):
+        await call.message.edit_text(text, reply_markup=token_actions(has_token))
     await call.answer()
 
 
@@ -57,20 +59,22 @@ async def cb_token_generate(call: CallbackQuery) -> None:
     try:
         new_token = await v2hub_client.create_user(user_id=call.from_user.id)
     except V2HubError as exc:
-        await call.message.edit_text(
-            t.TOKEN_ERROR_GENERATE.format(error=exc),
-            reply_markup=back_to_menu(),
-        )
+        if call.message and isinstance(call.message, Message):
+            await call.message.edit_text(
+                t.TOKEN_ERROR_GENERATE.format(error=exc),
+                reply_markup=back_to_menu(),
+            )
         return
 
     async with async_session() as session:
         await get_or_create_user(session, user_id=call.from_user.id)
         await save_token(session, call.from_user.id, new_token)
 
-    await call.message.edit_text(
-        t.TOKEN_CREATED.format(token=new_token),
-        reply_markup=back_to_menu(),
-    )
+    if call.message and isinstance(call.message, Message):
+        await call.message.edit_text(
+            t.TOKEN_CREATED.format(token=new_token),
+            reply_markup=back_to_menu(),
+        )
 
 
 @router.callback_query(F.data == "token:refresh")
@@ -87,16 +91,18 @@ async def cb_token_refresh(call: CallbackQuery) -> None:
     try:
         new_token = await v2hub_client.refresh_token(user_id=call.from_user.id)
     except V2HubError as exc:
-        await call.message.edit_text(
-            t.TOKEN_ERROR_REFRESH.format(error=exc),
-            reply_markup=back_to_menu(),
-        )
+        if call.message and isinstance(call.message, Message):
+            await call.message.edit_text(
+                t.TOKEN_ERROR_REFRESH.format(error=exc),
+                reply_markup=back_to_menu(),
+            )
         return
 
     async with async_session() as session:
         await save_token(session, call.from_user.id, new_token)
 
-    await call.message.edit_text(
-        t.TOKEN_REFRESHED.format(token=new_token),
-        reply_markup=back_to_menu(),
-    )
+    if call.message and isinstance(call.message, Message):
+        await call.message.edit_text(
+            t.TOKEN_REFRESHED.format(token=new_token),
+            reply_markup=back_to_menu(),
+        )

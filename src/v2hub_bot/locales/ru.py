@@ -124,12 +124,12 @@ THROTTLE_WARNING = (
 
 # ── Кнопки ───────────────────────────────────────────────────────────────────
 
-BTN_OPEN_PANEL    = "Открыть панель"
-BTN_MY_TOKEN      = "Мой токен"
-BTN_GET_TOKEN     = "Получить токен"
+BTN_OPEN_PANEL = "Открыть панель"
+BTN_MY_TOKEN = "Мой токен"
+BTN_GET_TOKEN = "Получить токен"
 BTN_REFRESH_TOKEN = "Обновить токен"
-BTN_HELP          = "Помощь"
-BTN_SUPPORT       = "Поддержка"
-BTN_BACK          = "Назад"
-BTN_MAIN_MENU     = "Главное меню"
+BTN_HELP = "Помощь"
+BTN_SUPPORT = "Поддержка"
+BTN_BACK = "Назад"
+BTN_MAIN_MENU = "Главное меню"
 BTN_WRITE_SUPPORT = "Написать в поддержку"

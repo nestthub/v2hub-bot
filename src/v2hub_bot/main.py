@@ -5,10 +5,11 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
-from config import settings
-from db.engine import init_db
-from handlers import start, token, support, help as help_handler
-from middlewares.throttle import ThrottleMiddleware
+from v2hub_bot.config import settings
+from v2hub_bot.db import init_db
+from v2hub_bot.handlers import help as help_handler
+from v2hub_bot.handlers import start, support, token
+from v2hub_bot.middlewares import ThrottleMiddleware
 
 logging.basicConfig(
     level=logging.INFO,
@@ -21,7 +22,7 @@ async def main() -> None:
     await init_db()
 
     bot = Bot(
-        token=settings.BOT_TOKEN,
+        token=settings.bot_token,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML),
     )
     dp = Dispatcher()
@@ -37,6 +38,10 @@ async def main() -> None:
 
     logger.info("Bot started")
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+
+
+def cli() -> None:
+    asyncio.run(main())
 
 
 if __name__ == "__main__":

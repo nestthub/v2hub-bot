@@ -2,9 +2,14 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml uv.lock README.md ./
 
-COPY . .
+RUN pip install --no-cache-dir uv
 
-CMD ["python", "main.py"]
+COPY src ./src
+
+RUN uv sync --frozen --no-dev
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+CMD ["v2hub-bot"]
