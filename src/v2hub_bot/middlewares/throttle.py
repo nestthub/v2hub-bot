@@ -1,5 +1,5 @@
-import asyncio
 import logging
+import time
 from collections.abc import Awaitable, Callable
 from typing import Any
 
@@ -16,7 +16,7 @@ class ThrottleMiddleware(BaseMiddleware):
 
     def __init__(self, rate_limit: float = 1.5) -> None:
         self.rate_limit = rate_limit
-        self._last_call: dict[int, float] = {}
+        self._last_call: dict[int, float | None] = {}
 
     async def __call__(
         self,
@@ -31,10 +31,10 @@ class ThrottleMiddleware(BaseMiddleware):
         if user is None:
             return await handler(event, data)
 
-        now = asyncio.get_event_loop().time()
-        last = self._last_call.get(user.id, 0.0)
+        now = time.monotonic()
+        last = self._last_call.get(user.id)
 
-        if now - last < self.rate_limit:
+        if last is not None and now - last < self.rate_limit:
             logger.debug("Throttled user %s", user.id)
             await event.answer(t.THROTTLE_WARNING)
             return
