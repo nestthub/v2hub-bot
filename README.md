@@ -14,7 +14,10 @@ This package is one component of V2Hub — see the full project overview, archit
   Mini App switches over automatically)
 - Ships a Mini App launch button pre-authorized with the user's token
 - Per-user rate limiting to protect the bot from spam/floods
-- Async PostgreSQL storage (SQLAlchemy + asyncpg) for the Telegram ↔ V2Hub account link
+- All v2hub data (tokens, provider ownership, authorizations) lives on the server and is
+  always fetched fresh via the v2hub / v2hub-admin API — the bot's own database stores
+  nothing about it. Locally it only keeps a Telegram `user_id` and the date it first
+  started the bot.
 
 ## Requirements
 
@@ -73,9 +76,9 @@ src/v2hub_bot/
 ├── locales/
 │   └── ru.py                 # User-facing text and button labels (Russian)
 ├── db/
-│   ├── engine.py              # Async SQLAlchemy engine, session factory, init_db
-│   ├── models.py               # ORM models
-│   └── crud.py                  # CRUD helpers
+│   ├── engine.py              # Async SQLAlchemy engine, session factory
+│   ├── models.py               # ORM models (just User.id + created_at + is_banned)
+│   └── crud.py                  # CRUD helpers (get/create user by Telegram id)
 ├── handlers/
 │   ├── start.py                 # /start — main menu + automatic token creation
 │   ├── token.py                  # /token — view/generate/refresh token

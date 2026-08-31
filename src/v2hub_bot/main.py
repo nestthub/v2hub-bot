@@ -6,9 +6,8 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from v2hub_bot.config import settings
-from v2hub_bot.db import init_db
 from v2hub_bot.handlers import help as help_handler
-from v2hub_bot.handlers import start, support, token
+from v2hub_bot.handlers import provider, start, support, token
 from v2hub_bot.middlewares import ThrottleMiddleware
 
 logging.basicConfig(
@@ -19,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    await init_db()
 
     bot = Bot(
         token=settings.bot_token,
@@ -33,6 +31,7 @@ async def main() -> None:
     # Routers
     dp.include_router(start.router)
     dp.include_router(token.router)
+    dp.include_router(provider.router)
     dp.include_router(support.router)
     dp.include_router(help_handler.router)
 

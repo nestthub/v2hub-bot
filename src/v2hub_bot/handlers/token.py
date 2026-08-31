@@ -2,7 +2,6 @@ from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message
 
-from v2hub_bot.db import async_session, get_or_create_user, get_user, save_token
 from v2hub_bot.locales import ru as t
 from v2hub_bot.services import V2HubError, v2hub_client
 from v2hub_bot.services.keyboards import back_to_menu, token_actions
@@ -11,21 +10,18 @@ router = Router()
 
 
 async def _token_info_text(user_id: int) -> tuple[str, bool, str | None]:
-    """Returns (message_text, has_token, token_value)."""
-    async with async_session() as session:
-        db_user = await get_user(session, user_id)
+    """Returns (message_text, has_token, token_value).
 
-    if not db_user or not db_user.api_token:
+    Always reads straight from the server — the bot never stores the
+    token locally.
+    """
+    user = await v2hub_client.get_user(user_id)
+
+    if not user or not user.api_token:
         return t.TOKEN_NONE, False, None
 
-    generated = (
-        db_user.token_generated_at.strftime("%d.%m.%Y %H:%M UTC")
-        if db_user.token_generated_at
-        else "неизвестно"
-    )
-
-    text = t.TOKEN_INFO.format(token=db_user.api_token, generated_at=generated)
-    return text, True, db_user.api_token
+    text = t.TOKEN_INFO.format(token=user.api_token)
+    return text, True, user.api_token
 
 
 # ── /token ────────────────────────────────────────────────────────────────────
@@ -66,10 +62,6 @@ async def cb_token_generate(call: CallbackQuery) -> None:
             )
         return
 
-    async with async_session() as session:
-        await get_or_create_user(session, user_id=call.from_user.id)
-        await save_token(session, call.from_user.id, new_token)
-
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
             t.TOKEN_CREATED.format(token=new_token),
@@ -79,10 +71,9 @@ async def cb_token_generate(call: CallbackQuery) -> None:
 
 @router.callback_query(F.data == "token:refresh")
 async def cb_token_refresh(call: CallbackQuery) -> None:
-    async with async_session() as session:
-        db_user = await get_user(session, call.from_user.id)
+    user = await v2hub_client.get_user(call.from_user.id)
 
-    if not db_user or not db_user.api_token:
+    if not user or not user.api_token:
         await call.answer(t.TOKEN_NO_ACTIVE, show_alert=True)
         return
 
@@ -97,9 +88,6 @@ async def cb_token_refresh(call: CallbackQuery) -> None:
                 reply_markup=back_to_menu(),
             )
         return
-
-    async with async_session() as session:
-        await save_token(session, call.from_user.id, new_token)
 
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(

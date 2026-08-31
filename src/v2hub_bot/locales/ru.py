@@ -46,8 +46,6 @@ TOKEN_NONE = (
 TOKEN_INFO = (
     '<tg-emoji emoji-id="6005570495603282482">🔑</tg-emoji> <b>Ваш токен доступа</b>\n\n'
     "<blockquote><code>{token}</code></blockquote>\n\n"
-    '<tg-emoji emoji-id="5967412305338568701">📅</tg-emoji> '
-    "Выдан: {generated_at}\n\n"
     '<tg-emoji emoji-id="5881702736843511327">⚠️</tg-emoji> '
     "Никому не передавайте токен: он даёт полный доступ к вашему аккаунту."
 )
@@ -114,6 +112,177 @@ SUPPORT_TEXT = (
     "Мы на связи — напишите нам, и мы разберёмся.\n\n"
     "Чем подробнее опишете ситуацию, тем быстрее поможем."
 )
+
+# ── Провайдер: раздел "Стать провайдером" ──────────────────────────────────────
+
+PROVIDER_INTRO = (
+    '<tg-emoji emoji-id="6005570495603282482">🏷</tg-emoji> <b>Провайдер</b>\n\n'
+    "Провайдер — партнёр V2Hub с собственным VPN-сервисом, который может "
+    "подключать пользователей и управлять их подписками через API.\n\n"
+    "<b>Чтобы стать провайдером, нужно:</b>\n"
+    "<blockquote>• иметь действующий VPN-сервис;\n"
+    "• либо чётко подтверждённое намерение построить сервис на базе V2Hub</blockquote>\n\n"
+    "Роль провайдера выдаётся только администратором. "
+    "Напишите в поддержку, для получения собственного провайдера."
+)
+
+# ── Провайдер: раздел для пользователей с ролью provider ───────────────────────
+
+PROVIDER_INFO = (
+    '<tg-emoji emoji-id="6005570495603282482">🏷</tg-emoji> <b>Ваш провайдер</b>\n\n'
+    "<b>Название:</b> {provider_name}\n"
+    "<b>URL:</b> {provider_url}\n"
+    "<b>Статус:</b> {status}"
+)
+
+PROVIDER_STATUS_ACTIVE = "активен"
+PROVIDER_STATUS_INACTIVE = "неактивен"
+
+PROVIDER_TOKEN_INFO = (
+    '<tg-emoji emoji-id="6005570495603282482">🔑</tg-emoji> <b>Токен провайдера</b>\n\n'
+    "<blockquote><code>{token}</code></blockquote>\n\n"
+    '<tg-emoji emoji-id="5881702736843511327">⚠️</tg-emoji> '
+    "Никому не передавайте этот токен: он даёт полный доступ к API вашего провайдера."
+)
+
+PROVIDER_TOKEN_REFRESHING = "⏳ Обновляем токен провайдера…"
+
+PROVIDER_TOKEN_REFRESHED = (
+    '<tg-emoji emoji-id="6005843436479975944">🔄</tg-emoji> '
+    "<b>Токен провайдера обновлён!</b>\n\n"
+    "<blockquote><code>{token}</code></blockquote>\n\n"
+    "Старый токен деактивирован."
+)
+
+PROVIDER_TOKEN_ERROR_REFRESH = (
+    '<tg-emoji emoji-id="6032636795387121097">❌</tg-emoji> '
+    "Не удалось обновить токен провайдера:\n<code>{error}</code>"
+)
+
+PROVIDER_NOT_FOUND_FOR_ROLE = (
+    '<tg-emoji emoji-id="6032636795387121097">❌</tg-emoji> '
+    "Ваш провайдерский аккаунт не найден. Обратитесь в поддержку."
+)
+
+# ── Провайдер: публичная страница (/start provider_*) ───────────────────────────
+
+PROVIDER_PUBLIC_INFO = (
+    '<tg-emoji emoji-id="6005570495603282482">🏷</tg-emoji> <b>{provider_name}</b>\n\n'
+    "<b>URL:</b> {provider_url}\n"
+    "<b>Статус авторизации:</b> {status}"
+)
+
+PROVIDER_STATUS_NONE = "не авторизован"
+PROVIDER_STATUS_PENDING = "ожидает подтверждения"
+PROVIDER_STATUS_APPROVED = "подключён"
+PROVIDER_STATUS_REVOKED = "отключён"
+
+PROVIDER_NOT_FOUND = (
+    '<tg-emoji emoji-id="6032636795387121097">❌</tg-emoji> '
+    "Провайдер <code>{provider_name}</code> не найден."
+)
+
+# ── Провайдер: подключение по ссылке conn_* ─────────────────────────────────────
+
+PROVIDER_CONNECTION_REQUEST = (
+    '<tg-emoji emoji-id="6005570495603282482">🏷</tg-emoji> '
+    "<b>Запрос на подключение провайдера</b>\n\n"
+    "<b>{provider_name}</b>\n"
+    "URL: {provider_url}\n\n"
+    "Провайдер запрашивает доступ на добавление подписок.\n\n"
+    '<tg-emoji emoji-id="6030445631921721471">✅</tg-emoji> '
+    "Подключение провайдера <b>не затрагивает</b> ваши личные подписки — "
+    "создаются новые рядом с ними.\n\n"
+    '<tg-emoji emoji-id="5881702736843511327">🔒</tg-emoji> '
+    "Подтвердите или отклоните запрос ниже."
+)
+
+PROVIDER_CONNECTION_LINK_INVALID = (
+    '<tg-emoji emoji-id="6032636795387121097">❌</tg-emoji> '
+    "Ссылка подключения недействительна или устарела. "
+    "Попросите провайдера прислать новую ссылку.\n\n<code>{error}</code>"
+)
+
+# ── Провайдер: действия ──────────────────────────────────────────────────────
+
+PROVIDER_APPROVING = "⏳ Подтверждаем подключение…"
+
+PROVIDER_APPROVED = (
+    '<tg-emoji emoji-id="6030445631921721471">✅</tg-emoji> '
+    "Провайдер <b>{provider_name}</b> подключён."
+)
+
+PROVIDER_APPROVE_ERROR = (
+    '<tg-emoji emoji-id="6032636795387121097">❌</tg-emoji> '
+    "Не удалось подтвердить подключение:\n<code>{error}</code>"
+)
+
+PROVIDER_LIMIT_ERROR = (
+    '<tg-emoji emoji-id="6032636795387121097">❌</tg-emoji> '
+    "Достигнут максимальный лимит подключённых провайдеров.\n"
+    "Отключите неиспользуемого провайдера, чтобы подключить новый."
+)
+
+PROVIDER_REJECTING = "⏳ Отклоняем запрос…"
+
+PROVIDER_REJECTED = (
+    '<tg-emoji emoji-id="6030445631921721471">✅</tg-emoji> '
+    "Запрос от провайдера <b>{provider_name}</b> отклонён."
+)
+
+PROVIDER_REJECT_ERROR = (
+    '<tg-emoji emoji-id="6032636795387121097">❌</tg-emoji> '
+    "Не удалось отклонить запрос:\n<code>{error}</code>"
+)
+
+PROVIDER_DISCONNECTING = "⏳ Отключаем провайдера…"
+
+PROVIDER_DISCONNECTED_DELETED = (
+    '<tg-emoji emoji-id="6030445631921721471">✅</tg-emoji> '
+    "Провайдер <b>{provider_name}</b> отключён и удалён из списка ваших провайдеров."
+)
+
+PROVIDER_DISCONNECTED_REVOKED = (
+    '<tg-emoji emoji-id="6030445631921721471">✅</tg-emoji> '
+    "Провайдер <b>{provider_name}</b> отключён. "
+)
+
+PROVIDER_DISCONNECT_ERROR = (
+    '<tg-emoji emoji-id="6032636795387121097">❌</tg-emoji> '
+    "Не удалось отключить провайдера:\n<code>{error}</code>"
+)
+
+# ── Провайдер: список моих провайдеров ──────────────────────────────────────────
+
+MY_PROVIDERS_EMPTY = (
+    '<tg-emoji emoji-id="6005570495603282482">🏷</tg-emoji> <b>Мои провайдеры</b>\n\n'
+    "У вас пока нет подключённых провайдеров."
+)
+
+MY_PROVIDERS_TITLE = (
+    '<tg-emoji emoji-id="6005570495603282482">🏷</tg-emoji> <b>Мои провайдеры</b>\n\n'
+)
+
+DEEP_LINK_INVALID = (
+    '<tg-emoji emoji-id="6032636795387121097">❌</tg-emoji> Ссылка повреждена или неполная.'
+)
+
+# ── Кнопки провайдера ────────────────────────────────────────────────────────
+
+BTN_PROVIDER = "Провайдер"
+BTN_MY_PROVIDERS = "Мои провайдеры"
+BTN_PROVIDER_TOKEN = "Токен провайдера"
+BTN_PROVIDER_REFRESH_TOKEN = "Обновить токен"
+BTN_CONNECT = "Подключить"
+BTN_REJECT = "Отклонить"
+BTN_DISCONNECT = "Отключить"
+BTN_CONTACT_SUPPORT = "Написать администратору"
+
+
+# ── Расширенный набор кнопок ────────────────────────────────────────────────────────
+BTN_EXTENDED_MENU = "Расширенное меню"
+BTN_V2HUB_API = "О проекте"
+BTN_V2HUB_GITHUB = "Наш GitHub"
 
 # ── Throttle ──────────────────────────────────────────────────────────────────
 

@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from contextlib import asynccontextmanager
-from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from aiogram.types import CallbackQuery, Message
 from aiogram.types import User as TgUser
 
-from v2hub_bot.handlers import token as token_handler
+from v2hub_bot.handlers import token
 from v2hub_bot.services import V2HubError
 
 pytestmark = pytest.mark.unit
@@ -17,19 +15,10 @@ pytestmark = pytest.mark.unit
 def _tg_user(user_id: int = 1) -> MagicMock:
     user = MagicMock(spec=TgUser)
     user.id = user_id
-    user.first_name = "Bob"
     return user
 
 
-def _session_cm(session: MagicMock) -> MagicMock:
-    @asynccontextmanager
-    async def _cm() -> AsyncMock:
-        yield session
-
-    return _cm
-
-
-def _message_with_user(user: MagicMock) -> MagicMock:
+def _message(user: MagicMock) -> MagicMock:
     message = MagicMock(spec=Message)
     message.from_user = user
     message.answer = AsyncMock()
@@ -54,144 +43,131 @@ async def test_cmd_token_without_from_user_does_nothing() -> None:
     message.from_user = None
     message.answer = AsyncMock()
 
-    await token_handler.cmd_token(message)
+    await token.cmd_token(message)
 
     message.answer.assert_not_called()
 
 
 @pytest.mark.asyncio
-async def test_cmd_token_no_token_shows_generate_prompt(sample_user_id: int) -> None:
-    user = _tg_user(sample_user_id)
-    message = _message_with_user(user)
-    fake_session = AsyncMock()
+async def test_cmd_token_with_no_server_account_shows_none(sample_user_id: int) -> None:
+    message = _message(_tg_user(sample_user_id))
 
-    with (
-        patch("v2hub_bot.handlers.token.async_session", _session_cm(fake_session)),
-        patch("v2hub_bot.handlers.token.get_user", AsyncMock(return_value=None)),
-    ):
-        await token_handler.cmd_token(message)
+    with patch.object(token.v2hub_client, "get_user", AsyncMock(return_value=None)):
+        await token.cmd_token(message)
 
     message.answer.assert_awaited_once()
+    text, kwargs = message.answer.await_args
+    assert text[0] == token.t.TOKEN_NONE
+    assert kwargs["reply_markup"] is not None
 
 
 @pytest.mark.asyncio
-async def test_cmd_token_with_token_shows_token_info(sample_user_id: int) -> None:
-    user = _tg_user(sample_user_id)
-    message = _message_with_user(user)
-    fake_session = AsyncMock()
-    db_user = MagicMock(api_token="my-token", token_generated_at=datetime.now(UTC))
+async def test_cmd_token_with_existing_token_shows_it(sample_user_id: int) -> None:
+    message = _message(_tg_user(sample_user_id))
+    server_user = MagicMock(api_token="server-token-1")
 
-    with (
-        patch("v2hub_bot.handlers.token.async_session", _session_cm(fake_session)),
-        patch("v2hub_bot.handlers.token.get_user", AsyncMock(return_value=db_user)),
-    ):
-        await token_handler.cmd_token(message)
+    with patch.object(token.v2hub_client, "get_user", AsyncMock(return_value=server_user)):
+        await token.cmd_token(message)
 
+    message.answer.assert_awaited_once()
     text = message.answer.await_args.args[0]
-    assert "my-token" in text
+    assert "server-token-1" in text
 
 
-# ── token:generate ────────────────────────────────────────────────────────────
-
-
-@pytest.mark.asyncio
-async def test_cb_token_generate_success(sample_user_id: int) -> None:
-    user = _tg_user(sample_user_id)
-    call = _callback(user)
-    fake_session = AsyncMock()
-
-    with (
-        patch.object(token_handler.v2hub_client, "create_user", AsyncMock(return_value="tok-123")),
-        patch("v2hub_bot.handlers.token.async_session", _session_cm(fake_session)),
-        patch("v2hub_bot.handlers.token.get_or_create_user", AsyncMock()),
-        patch("v2hub_bot.handlers.token.save_token", AsyncMock()) as save_token_mock,
-    ):
-        await token_handler.cb_token_generate(call)
-
-    save_token_mock.assert_awaited_once_with(fake_session, sample_user_id, "tok-123")
-    call.message.edit_text.assert_awaited_once()
-    assert "tok-123" in call.message.edit_text.await_args.args[0]
+# ── token:info ────────────────────────────────────────────────────────────────
 
 
 @pytest.mark.asyncio
-async def test_cb_token_generate_handles_v2hub_error(sample_user_id: int) -> None:
-    user = _tg_user(sample_user_id)
-    call = _callback(user)
+async def test_cb_token_info_reads_straight_from_server(sample_user_id: int) -> None:
+    call = _callback(_tg_user(sample_user_id))
+    server_user = MagicMock(api_token="server-token-2")
 
     with patch.object(
-        token_handler.v2hub_client,
-        "create_user",
-        AsyncMock(side_effect=V2HubError("api down")),
-    ):
-        await token_handler.cb_token_generate(call)
+        token.v2hub_client, "get_user", AsyncMock(return_value=server_user)
+    ) as get_user_mock:
+        await token.cb_token_info(call)
 
+    get_user_mock.assert_awaited_once_with(sample_user_id)
     call.message.edit_text.assert_awaited_once()
-    assert "api down" in call.message.edit_text.await_args.args[0]
+    assert "server-token-2" in call.message.edit_text.await_args.args[0]
+    call.answer.assert_awaited_once()
 
 
-# ── token:refresh ─────────────────────────────────────────────────────────────
+# ── token:generate ───────────────────────────────────────────────────────────
 
 
 @pytest.mark.asyncio
-async def test_cb_token_refresh_without_existing_token_shows_alert(
+async def test_cb_token_generate_success_shows_new_token_without_touching_local_db(
     sample_user_id: int,
 ) -> None:
-    user = _tg_user(sample_user_id)
-    call = _callback(user)
-    fake_session = AsyncMock()
+    """token.py doesn't import async_session at all anymore: the token is
+    never persisted locally, only created/read via v2hub_client."""
+    call = _callback(_tg_user(sample_user_id))
 
-    with (
-        patch("v2hub_bot.handlers.token.async_session", _session_cm(fake_session)),
-        patch("v2hub_bot.handlers.token.get_user", AsyncMock(return_value=None)),
-    ):
-        await token_handler.cb_token_refresh(call)
+    assert not hasattr(token, "async_session")
 
-    call.answer.assert_awaited_once()
-    assert call.answer.await_args.kwargs.get("show_alert") is True
+    with patch.object(
+        token.v2hub_client, "create_user", AsyncMock(return_value="brand-new-token")
+    ) as create_mock:
+        await token.cb_token_generate(call)
+
+    create_mock.assert_awaited_once_with(user_id=sample_user_id)
+    call.message.edit_text.assert_awaited_once()
+    assert "brand-new-token" in call.message.edit_text.await_args.args[0]
+
+
+@pytest.mark.asyncio
+async def test_cb_token_generate_error_shows_error_message(sample_user_id: int) -> None:
+    call = _callback(_tg_user(sample_user_id))
+
+    with patch.object(token.v2hub_client, "create_user", AsyncMock(side_effect=V2HubError("boom"))):
+        await token.cb_token_generate(call)
+
+    call.message.edit_text.assert_awaited_once()
+    assert "boom" in call.message.edit_text.await_args.args[0]
+
+
+# ── token:refresh ────────────────────────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_cb_token_refresh_without_active_token_shows_alert(sample_user_id: int) -> None:
+    call = _callback(_tg_user(sample_user_id))
+
+    with patch.object(token.v2hub_client, "get_user", AsyncMock(return_value=None)):
+        await token.cb_token_refresh(call)
+
+    call.answer.assert_awaited_once_with(token.t.TOKEN_NO_ACTIVE, show_alert=True)
     call.message.edit_text.assert_not_called()
 
 
 @pytest.mark.asyncio
-async def test_cb_token_refresh_success(sample_user_id: int) -> None:
-    user = _tg_user(sample_user_id)
-    call = _callback(user)
-    fake_session = AsyncMock()
-    db_user = MagicMock(api_token="old-token")
+async def test_cb_token_refresh_success_shows_rotated_token(sample_user_id: int) -> None:
+    call = _callback(_tg_user(sample_user_id))
+    server_user = MagicMock(api_token="old-token")
 
     with (
-        patch("v2hub_bot.handlers.token.async_session", _session_cm(fake_session)),
-        patch("v2hub_bot.handlers.token.get_user", AsyncMock(return_value=db_user)),
-        patch.object(
-            token_handler.v2hub_client,
-            "refresh_token",
-            AsyncMock(return_value="rotated-token"),
-        ),
-        patch("v2hub_bot.handlers.token.save_token", AsyncMock()) as save_token_mock,
+        patch.object(token.v2hub_client, "get_user", AsyncMock(return_value=server_user)),
+        patch.object(token.v2hub_client, "refresh_token", AsyncMock(return_value="rotated-token")),
     ):
-        await token_handler.cb_token_refresh(call)
+        await token.cb_token_refresh(call)
 
-    save_token_mock.assert_awaited_once_with(fake_session, sample_user_id, "rotated-token")
     call.message.edit_text.assert_awaited_once()
     assert "rotated-token" in call.message.edit_text.await_args.args[0]
 
 
 @pytest.mark.asyncio
-async def test_cb_token_refresh_handles_v2hub_error(sample_user_id: int) -> None:
-    user = _tg_user(sample_user_id)
-    call = _callback(user)
-    fake_session = AsyncMock()
-    db_user = MagicMock(api_token="old-token")
+async def test_cb_token_refresh_error_shows_error_message(sample_user_id: int) -> None:
+    call = _callback(_tg_user(sample_user_id))
+    server_user = MagicMock(api_token="old-token")
 
     with (
-        patch("v2hub_bot.handlers.token.async_session", _session_cm(fake_session)),
-        patch("v2hub_bot.handlers.token.get_user", AsyncMock(return_value=db_user)),
+        patch.object(token.v2hub_client, "get_user", AsyncMock(return_value=server_user)),
         patch.object(
-            token_handler.v2hub_client,
-            "refresh_token",
-            AsyncMock(side_effect=V2HubError("refresh failed")),
+            token.v2hub_client, "refresh_token", AsyncMock(side_effect=V2HubError("refresh failed"))
         ),
     ):
-        await token_handler.cb_token_refresh(call)
+        await token.cb_token_refresh(call)
 
     call.message.edit_text.assert_awaited_once()
     assert "refresh failed" in call.message.edit_text.await_args.args[0]
