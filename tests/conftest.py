@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 import pytest
@@ -31,7 +30,13 @@ def sample_user_id() -> int:
 
 @pytest_asyncio.fixture
 async def db_session() -> AsyncGenerator[AsyncSession, None]:
-    """Isolated in-memory SQLite session, fresh schema per test."""
+    """Isolated in-memory SQLite session, fresh schema per test.
+
+    The bot's own database only ever stores the fact that a Telegram
+    user_id has started the bot (User.id / created_at / is_banned) — all
+    v2hub account data (tokens, provider ownership, ...) lives on the
+    server and is never persisted here.
+    """
     engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -45,12 +50,8 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
 
 @pytest_asyncio.fixture
 async def existing_user(db_session: AsyncSession, sample_user_id: int) -> User:
-    """A user row that already has a token, pre-inserted into db_session."""
-    user = User(
-        id=sample_user_id,
-        api_token="existing-token-abc",
-        token_generated_at=datetime.now(UTC),
-    )
+    """A user row that already exists locally (i.e. has started the bot before)."""
+    user = User(id=sample_user_id)
     db_session.add(user)
     await db_session.commit()
     await db_session.refresh(user)

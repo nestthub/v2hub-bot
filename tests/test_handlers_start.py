@@ -46,6 +46,9 @@ async def test_cmd_start_without_from_user_does_nothing() -> None:
 
 @pytest.mark.asyncio
 async def test_cmd_start_new_user_sends_welcome_and_token(sample_user_id: int) -> None:
+    """No user on the server yet -> account is created and both welcome
+    messages are sent. The bot only records that the user_id started the
+    bot locally; the token itself is never persisted locally."""
     user = _tg_user(sample_user_id)
     message = _message(user)
 
@@ -53,16 +56,13 @@ async def test_cmd_start_new_user_sends_welcome_and_token(sample_user_id: int) -
 
     with (
         patch("v2hub_bot.handlers.start.async_session", _session_cm(fake_session)),
-        patch("v2hub_bot.handlers.start.get_user", AsyncMock(return_value=None)),
-        patch(
-            "v2hub_bot.handlers.start.get_or_create_user",
-            AsyncMock(return_value=MagicMock(api_token=None)),
-        ),
-        patch("v2hub_bot.handlers.start.save_token", AsyncMock()),
+        patch("v2hub_bot.handlers.start.get_or_create_user", AsyncMock()) as get_or_create_mock,
+        patch.object(start.v2hub_client, "get_user", AsyncMock(return_value=None)),
         patch.object(start.v2hub_client, "create_user", AsyncMock(return_value="new-token")),
     ):
         await start.cmd_start(message)
 
+    get_or_create_mock.assert_awaited_once_with(fake_session, sample_user_id)
     assert message.answer.await_count == 2
     first_call_text = message.answer.await_args_list[0].args[0]
     second_call_text = message.answer.await_args_list[1].args[0]
@@ -75,16 +75,13 @@ async def test_cmd_start_returning_user_sends_single_welcome(sample_user_id: int
     user = _tg_user(sample_user_id)
     message = _message(user)
 
-    existing_db_user = MagicMock(api_token="existing-token")
+    existing_server_user = MagicMock(api_token="existing-token")
     fake_session = AsyncMock()
 
     with (
         patch("v2hub_bot.handlers.start.async_session", _session_cm(fake_session)),
-        patch("v2hub_bot.handlers.start.get_user", AsyncMock(return_value=existing_db_user)),
-        patch(
-            "v2hub_bot.handlers.start.get_or_create_user",
-            AsyncMock(return_value=existing_db_user),
-        ),
+        patch("v2hub_bot.handlers.start.get_or_create_user", AsyncMock()),
+        patch.object(start.v2hub_client, "get_user", AsyncMock(return_value=existing_server_user)),
     ):
         await start.cmd_start(message)
 
@@ -105,11 +102,8 @@ async def test_cmd_start_v2hub_error_falls_back_to_returning_flow(sample_user_id
 
     with (
         patch("v2hub_bot.handlers.start.async_session", _session_cm(fake_session)),
-        patch("v2hub_bot.handlers.start.get_user", AsyncMock(return_value=None)),
-        patch(
-            "v2hub_bot.handlers.start.get_or_create_user",
-            AsyncMock(return_value=MagicMock(api_token=None)),
-        ),
+        patch("v2hub_bot.handlers.start.get_or_create_user", AsyncMock()),
+        patch.object(start.v2hub_client, "get_user", AsyncMock(return_value=None)),
         patch.object(start.v2hub_client, "create_user", AsyncMock(side_effect=V2HubError("boom"))),
     ):
         await start.cmd_start(message)
@@ -126,14 +120,115 @@ async def test_cb_menu_edits_message_with_main_menu(sample_user_id: int) -> None
     call.message.edit_text = AsyncMock()
     call.answer = AsyncMock()
 
-    fake_session = AsyncMock()
-    db_user = MagicMock(api_token="tok")
+    server_user = MagicMock(api_token="tok")
 
-    with (
-        patch("v2hub_bot.handlers.start.async_session", _session_cm(fake_session)),
-        patch("v2hub_bot.handlers.start.get_or_create_user", AsyncMock(return_value=db_user)),
-    ):
+    with patch.object(start.v2hub_client, "get_user", AsyncMock(return_value=server_user)):
         await start.cb_menu(call)
 
     call.message.edit_text.assert_awaited_once()
     call.answer.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_cb_menu_without_server_account_shows_no_token(sample_user_id: int) -> None:
+    call = MagicMock(spec=CallbackQuery)
+    call.from_user = _tg_user(sample_user_id)
+    call.message = MagicMock(spec=Message)
+    call.message.edit_text = AsyncMock()
+    call.answer = AsyncMock()
+
+    with patch.object(start.v2hub_client, "get_user", AsyncMock(return_value=None)):
+        await start.cb_menu(call)
+
+    call.message.edit_text.assert_awaited_once()
+    _, kwargs = call.message.edit_text.await_args
+    assert kwargs["reply_markup"] is not None
+
+
+# ── /start with a deep-link payload ──────────────────────────────────────────
+
+
+def _command_object(args: str | None) -> MagicMock:
+    from aiogram.filters import CommandObject
+
+    return CommandObject(prefix="/", command="start", args=args)
+
+
+@pytest.mark.asyncio
+async def test_cmd_start_deep_link_without_from_user_does_nothing() -> None:
+    message = _message(user=None)
+
+    await start.cmd_start_deep_link(message, _command_object("provider_vpn123"))
+
+    message.answer.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_cmd_start_deep_link_invalid_payload_shows_error(sample_user_id: int) -> None:
+    user = _tg_user(sample_user_id)
+    message = _message(user)
+
+    await start.cmd_start_deep_link(message, _command_object("garbage"))
+
+    message.answer.assert_awaited_once()
+    assert message.answer.await_args.args[0] == start.t.DEEP_LINK_INVALID
+
+
+@pytest.mark.asyncio
+async def test_cmd_start_deep_link_provider_payload_delegates_to_provider_handler(
+    sample_user_id: int,
+) -> None:
+    user = _tg_user(sample_user_id)
+    message = _message(user)
+    fake_session = AsyncMock()
+
+    handle_mock = AsyncMock()
+
+    with (
+        patch("v2hub_bot.handlers.start.async_session", _session_cm(fake_session)),
+        patch("v2hub_bot.handlers.start.get_or_create_user", AsyncMock()),
+        patch("v2hub_bot.handlers.provider.handle_provider_deep_link", handle_mock),
+    ):
+        await start.cmd_start_deep_link(message, _command_object("provider_vpn123"))
+
+    handle_mock.assert_awaited_once_with(message, sample_user_id, "provider", "vpn123", None)
+
+
+@pytest.mark.asyncio
+async def test_cmd_start_deep_link_conn_payload_delegates_to_provider_handler(
+    sample_user_id: int,
+) -> None:
+    user = _tg_user(sample_user_id)
+    message = _message(user)
+    fake_session = AsyncMock()
+
+    handle_mock = AsyncMock()
+
+    with (
+        patch("v2hub_bot.handlers.start.async_session", _session_cm(fake_session)),
+        patch("v2hub_bot.handlers.start.get_or_create_user", AsyncMock()),
+        patch("v2hub_bot.handlers.provider.handle_provider_deep_link", handle_mock),
+    ):
+        await start.cmd_start_deep_link(message, _command_object("conn_hmac123_vpn123"))
+
+    handle_mock.assert_awaited_once_with(message, sample_user_id, "conn", "vpn123", "hmac123")
+
+
+@pytest.mark.asyncio
+async def test_cmd_start_deep_link_marks_user_locally_before_delegating(
+    sample_user_id: int,
+) -> None:
+    """Even on a deep-link start, the bot still records that this user_id
+    started the bot — that's the only thing it persists locally."""
+    user = _tg_user(sample_user_id)
+    message = _message(user)
+    fake_session = AsyncMock()
+
+    with (
+        patch("v2hub_bot.handlers.start.async_session", _session_cm(fake_session)),
+        patch("v2hub_bot.handlers.start.get_or_create_user", AsyncMock()) as get_or_create_mock,
+        patch("v2hub_bot.handlers.provider.handle_provider_deep_link", AsyncMock()),
+    ):
+        await start.cmd_start_deep_link(message, _command_object("provider_vpn123"))
+
+    get_or_create_mock.assert_awaited_once_with(fake_session, sample_user_id)

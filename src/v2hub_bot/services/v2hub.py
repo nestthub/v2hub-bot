@@ -1,29 +1,58 @@
 """
 Async wrapper over the v2hub-admin library (https://pypi.org/project/v2hub-admin/).
 
+Everything about a user's v2hub account — API token, provider ownership,
+provider authorizations — lives on the server and is always fetched fresh
+here. The bot's own database never caches any of it; it only remembers
+that a Telegram user_id has started the bot.
+
 API:
     AsyncAdminClient(base_url, secret_key)
         .create_user(user_id)   → user.api_token
-        .get_user(user_id)      → user
-        .refresh_token(user_id) → user.api_token
+        .get_user(user_id)      → user (has .user_hash, used as owner_hash)
+        .refresh_token(user_id) → user.new_api_token
         .delete_user(user_id)   → None
         .set_user_status(user_id, is_active) → user
 
+        .get_providers()                                → provider_name -> provider_hash
+        .get_provider(provider_hash)                     → provider
+        .get_provider_by_name(provider_name)              → provider | 404
+        .get_provider_by_owner_id(owner_id)                → provider | 404
+        .create_provider(owner_hash, provider_name, provider_url) → provider (incl. api_token)
+        .refresh_provider_token(provider_hash)              → new_api_token
+
+        .get_user_providers(user_id)                         → all connections for a user
+        .get_provider_authorization(provider_name, user_id)     → auth | 404
+        .process_provider_authorization(user_id, provider_name, hmac) → auth
+        .approve_provider_authorization(user_id, provider_name) → auth
+        .reject_provider_authorization(user_id, provider_name)  → auth
+
 Errors from v2hub:
-    VPNAPIError, AuthenticationError, AuthorizationError
+    VPNAPIError, AuthenticationError, AuthorizationError, NotFoundError, ConflictError
 """
 
 import logging
 
-from v2hub import AuthenticationError, AuthorizationError, VPNAPIError
+from v2hub import AuthenticationError, AuthorizationError, ConflictError, NotFoundError, VPNAPIError
+from v2hub.models import ConnectionsResponse
 from v2hub_admin import AsyncAdminClient
-from v2hub_admin.models import UserResponse
+from v2hub_admin.models import ProviderAuthorizationInfoResponse, ProviderResponse, UserResponse
 from v2hub_bot.config import settings
 
 logger = logging.getLogger(__name__)
 
 # Re-export for handlers to catch
-__all__ = ["AuthenticationError", "AuthorizationError", "V2HubError", "VPNAPIError", "v2hub_client"]
+__all__ = [
+    "AuthenticationError",
+    "AuthorizationError",
+    "ConflictError",
+    "NotFoundError",
+    "ProviderAuthorizationInfoResponse",
+    "ProviderResponse",
+    "V2HubError",
+    "VPNAPIError",
+    "v2hub_client",
+]
 
 # Convenience alias so handlers can catch a single base class
 V2HubError = VPNAPIError
@@ -40,14 +69,20 @@ class V2HubService:
     """
     Thin async facade used by handlers.
     Uses a fresh context-manager client per call to stay stateless.
+
+    Nothing here is cached in the bot's own database: user tokens,
+    provider ownership, and authorization state are always read fresh
+    from the Admin API.
     """
+
+    # ── Users ────────────────────────────────────────────────────────────────
 
     async def create_user(self, user_id: int) -> str:
         """Create user and return api_token."""
         async with _make_client() as admin:
             try:
                 user: UserResponse = await admin.create_user(user_id)
-            except:
+            except VPNAPIError:
                 user = await admin.get_user(user_id)
 
             return user.api_token
@@ -63,8 +98,117 @@ class V2HubService:
     async def refresh_token(self, user_id: int) -> str:
         """Rotate token for an existing user, return new api_token."""
         async with _make_client() as admin:
-            user = await admin.refresh_token(user_id)
-            return user.new_api_token
+            result = await admin.refresh_token(user_id)
+            return result.new_api_token
+
+    # ── Providers ────────────────────────────────────────────────────────────
+    # Nothing about a provider (hash, token, url, status) or about who
+    # owns it is cached in the bot's own database: it's always fetched
+    # fresh here from the Admin API.
+
+    async def get_provider_by_name(self, provider_name: str) -> ProviderResponse | None:
+        """Look up a provider by its public name, or None if it doesn't exist."""
+        async with _make_client() as admin:
+            try:
+                return await admin.get_provider_by_name(provider_name)
+            except NotFoundError:
+                return None
+
+    async def get_provider_by_owner_id(self, owner_id: int) -> ProviderResponse | None:
+        """Look up the provider owned by this bot user, or None if they don't own one."""
+        async with _make_client() as admin:
+            try:
+                return await admin.get_provider_by_owner_id(owner_id)
+            except NotFoundError:
+                return None
+
+    async def get_user_connections(self, user_id: int) -> ConnectionsResponse:
+        """Return all known provider connections/authorizations for a user."""
+        async with _make_client() as admin:
+            return await admin.get_user_providers(user_id)
+
+    async def create_provider(
+        self,
+        owner_user_id: int,
+        provider_name: str,
+        provider_url: str | None = None,
+    ) -> ProviderResponse:
+        """Create a new provider account owned by the given bot user.
+
+        Looks up the owner's `user_hash` (required by the Admin API as
+        `owner_hash`) from their `user_id` first. The owner must already
+        exist as a regular v2hub user — call `create_user`/`get_user`
+        beforehand if needed.
+
+        Only meant to be called by an administrator, e.g. after confirming
+        an applicant out-of-band; never as a side effect of user actions.
+
+        Raises:
+            NotFoundError: the owner has no v2hub account yet.
+            ConflictError: a provider with this name already exists.
+        """
+        async with _make_client() as admin:
+            owner = await admin.get_user(owner_user_id)
+            return await admin.create_provider(
+                owner_hash=owner.user_hash,
+                provider_name=provider_name,
+                provider_url=provider_url,
+            )
+
+    async def refresh_provider_token(self, provider_hash: str) -> str:
+        """Rotate a provider's API token, return the new token."""
+        async with _make_client() as admin:
+            result = await admin.refresh_provider_token(provider_hash=provider_hash)
+            return result.new_api_token
+
+    # ── Provider authorization ──────────────────────────────────────────────
+
+    async def get_provider_authorization(
+        self, provider_name: str, user_id: int
+    ) -> ProviderAuthorizationInfoResponse | None:
+        """Return current authorization state, or None if it doesn't exist."""
+        async with _make_client() as admin:
+            try:
+                return await admin.get_provider_authorization(
+                    provider_name=provider_name,
+                    user_id=user_id,
+                )
+            except NotFoundError:
+                return None
+
+    async def process_provider_authorization(
+        self,
+        user_id: int,
+        provider_name: str,
+        hmac: str | None = None,
+    ) -> ProviderAuthorizationInfoResponse:
+        """Process a `conn_*` deep link. The hmac is forwarded unchanged."""
+        async with _make_client() as admin:
+            return await admin.process_provider_authorization(
+                user_id=user_id,
+                provider_name=provider_name,
+                hmac=hmac,
+            )
+
+    async def approve_provider_authorization(
+        self, user_id: int, provider_name: str
+    ) -> ProviderAuthorizationInfoResponse:
+        """Approve a PENDING authorization."""
+        async with _make_client() as admin:
+            return await admin.approve_provider_authorization(
+                user_id=user_id,
+                provider_name=provider_name,
+            )
+
+    async def reject_provider_authorization(
+        self, user_id: int, provider_name: str
+    ) -> ProviderAuthorizationInfoResponse:
+        """Reject a PENDING request, or revoke/delete an existing authorization."""
+        async with _make_client() as admin:
+            return await admin.reject_provider_authorization(
+                user_id=user_id,
+                provider_name=provider_name,
+            )
 
 
 # Module-level singleton used by all handlers
