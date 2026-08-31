@@ -1,6 +1,6 @@
 """simplify user model
 
-Revision ID: 00002
+Revision ID: 0002
 Revises: 0001
 Create Date: 2026-08-31 07:00:00.000000
 
