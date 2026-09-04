@@ -15,6 +15,7 @@ REQUIRED_ENV = {
     "DATABASE_URL": "postgresql+asyncpg://postgres:secret@db:5432/v2hub",
     "V2HUB_API_URL": "https://api.v2hub.example.com",
     "V2HUB_SECRET_KEY": "your_hmac_sha256_secret_here",
+    "BOT_ADMINS": [],
 }
 
 
@@ -46,6 +47,7 @@ def test_settings_load_from_environment(
     )
     assert settings.v2hub_api_url == "https://api.v2hub.example.com"
     assert settings.v2hub_secret_key == "your_hmac_sha256_secret_here"
+    assert settings.bot_admins == []
 
 
 def test_settings_optional_fields_default_to_none(

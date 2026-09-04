@@ -8,7 +8,7 @@ that a Telegram user_id has started the bot.
 
 API:
     AsyncAdminClient(base_url, secret_key)
-        .create_user(user_id)   → user.api_token
+        .create_user(user_id)   → user
         .get_user(user_id)      → user (has .user_hash, used as owner_hash)
         .refresh_token(user_id) → user.new_api_token
         .delete_user(user_id)   → None
@@ -19,6 +19,9 @@ API:
         .get_provider_by_name(provider_name)              → provider | 404
         .get_provider_by_owner_id(owner_id)                → provider | 404
         .create_provider(owner_hash, provider_name, provider_url) → provider (incl. api_token)
+        .delete_provider(provider_hash)                     → None
+        .update_provider_name(provider_hash, provider_name)    → provider
+        .update_provider_url(provider_hash, provider_url)      → provider
         .refresh_provider_token(provider_hash)              → new_api_token
 
         .get_user_providers(user_id)                         → all connections for a user
@@ -32,17 +35,26 @@ Errors from v2hub:
 """
 
 import logging
+from datetime import datetime
+from typing import Literal
 
 from v2hub import AuthenticationError, AuthorizationError, ConflictError, NotFoundError, VPNAPIError
 from v2hub.models import ConnectionsResponse
 from v2hub_admin import AsyncAdminClient
-from v2hub_admin.models import ProviderAuthorizationInfoResponse, ProviderResponse, UserResponse
+from v2hub_admin.models import (
+    AllProvidersResponse,
+    ProviderAuthorizationInfoResponse,
+    ProviderResponse,
+    StatsResponse,
+    UserResponse,
+)
 from v2hub_bot.config import settings
 
 logger = logging.getLogger(__name__)
 
 # Re-export for handlers to catch
 __all__ = [
+    "AllProvidersResponse",
     "AuthenticationError",
     "AuthorizationError",
     "ConflictError",
@@ -77,7 +89,7 @@ class V2HubService:
 
     # ── Users ────────────────────────────────────────────────────────────────
 
-    async def create_user(self, user_id: int) -> str:
+    async def create_user(self, user_id: int) -> UserResponse:
         """Create user and return api_token."""
         async with _make_client() as admin:
             try:
@@ -85,7 +97,7 @@ class V2HubService:
             except VPNAPIError:
                 user = await admin.get_user(user_id)
 
-            return user.api_token
+            return user
 
     async def get_user(self, user_id: int) -> UserResponse | None:
         """Return user object or None if not found."""
@@ -100,6 +112,16 @@ class V2HubService:
         async with _make_client() as admin:
             result = await admin.refresh_token(user_id)
             return result.new_api_token
+
+    async def delete_user(self, user_id: int) -> None:
+        """Permanently delete a user's v2hub account.
+
+        The server cascades this to owned data according to its own
+        rules; the bot additionally forgets the local `started the bot`
+        record for this user_id (see db.crud.delete_local_user).
+        """
+        async with _make_client() as admin:
+            await admin.delete_user(user_id)
 
     # ── Providers ────────────────────────────────────────────────────────────
     # Nothing about a provider (hash, token, url, status) or about who
@@ -161,6 +183,55 @@ class V2HubService:
             result = await admin.refresh_provider_token(provider_hash=provider_hash)
             return result.new_api_token
 
+    # ── Provider administration (admin panel CRUD) ──────────────────────────
+    # Full lifecycle management for admins: list, inspect, update, and
+    # delete any provider account, regardless of who owns it.
+
+    async def get_all_providers(self) -> AllProvidersResponse:
+        """Return every provider as a provider_name -> provider_hash mapping."""
+        async with _make_client() as admin:
+            return await admin.get_providers()
+
+    async def get_provider_by_hash(self, provider_hash: str) -> ProviderResponse | None:
+        """Look up a provider by its hash, or None if it doesn't exist."""
+        async with _make_client() as admin:
+            try:
+                return await admin.get_provider(provider_hash)
+            except NotFoundError:
+                return None
+
+    async def delete_provider(self, provider_hash: str) -> None:
+        """Permanently delete a provider account.
+
+        The server cascades this to provider-owned data according to its
+        own rules; the bot performs no local cleanup since it never
+        caches provider data.
+        """
+        async with _make_client() as admin:
+            await admin.delete_provider(provider_hash=provider_hash)
+
+    async def update_provider_name(
+        self, provider_hash: str, provider_name: str
+    ) -> ProviderResponse:
+        """Rename a provider.
+
+        Raises:
+            ConflictError: the new name is already in use.
+        """
+        async with _make_client() as admin:
+            return await admin.update_provider_name(
+                provider_hash=provider_hash, provider_name=provider_name
+            )
+
+    async def update_provider_url(
+        self, provider_hash: str, provider_url: str | None
+    ) -> ProviderResponse:
+        """Update (or clear, with None) a provider's URL."""
+        async with _make_client() as admin:
+            return await admin.update_provider_url(
+                provider_hash=provider_hash, provider_url=provider_url
+            )
+
     # ── Provider authorization ──────────────────────────────────────────────
 
     async def get_provider_authorization(
@@ -209,6 +280,16 @@ class V2HubService:
                 user_id=user_id,
                 provider_name=provider_name,
             )
+
+    async def get_stats(
+        self,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        period: Literal["day", "week", "month"] | None = None,
+    ) -> StatsResponse:
+        """Retrieve server statistics for the specified date range or period."""
+        async with _make_client() as admin:
+            return await admin.get_stats(start_date=start_date, end_date=end_date, period=period)
 
 
 # Module-level singleton used by all handlers

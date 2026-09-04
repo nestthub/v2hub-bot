@@ -4,7 +4,7 @@ from aiogram.types import CallbackQuery, Message
 
 from v2hub_bot.locales import ru as t
 from v2hub_bot.services import V2HubError, v2hub_client
-from v2hub_bot.services.keyboards import back_to_menu, token_actions
+from v2hub_bot.services.keyboards import back, token_actions
 
 router = Router()
 
@@ -53,19 +53,20 @@ async def cb_token_generate(call: CallbackQuery) -> None:
     await call.answer(t.TOKEN_GENERATING)
 
     try:
-        new_token = await v2hub_client.create_user(user_id=call.from_user.id)
+        user = await v2hub_client.create_user(user_id=call.from_user.id)
+        new_token = user.api_token
     except V2HubError as exc:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.TOKEN_ERROR_GENERATE.format(error=exc),
-                reply_markup=back_to_menu(),
+                reply_markup=back(),
             )
         return
 
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
             t.TOKEN_CREATED.format(token=new_token),
-            reply_markup=back_to_menu(),
+            reply_markup=back(),
         )
 
 
@@ -85,12 +86,12 @@ async def cb_token_refresh(call: CallbackQuery) -> None:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.TOKEN_ERROR_REFRESH.format(error=exc),
-                reply_markup=back_to_menu(),
+                reply_markup=back(),
             )
         return
 
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
             t.TOKEN_REFRESHED.format(token=new_token),
-            reply_markup=back_to_menu(),
+            reply_markup=back(),
         )

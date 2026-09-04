@@ -4,6 +4,7 @@ from aiogram import F, Router
 from aiogram.filters import CommandObject, CommandStart
 from aiogram.types import CallbackQuery, Message
 
+from v2hub_bot.config import settings
 from v2hub_bot.db import async_session, get_or_create_user
 from v2hub_bot.locales import ru as t
 from v2hub_bot.services import V2HubError, v2hub_client
@@ -57,7 +58,9 @@ async def _ensure_token(user_id: int) -> tuple[str | None, bool]:
         return existing.api_token, False
 
     try:
-        new_token = await v2hub_client.create_user(user_id=user_id)
+        user = await v2hub_client.create_user(user_id=user_id)
+        new_token = user.api_token
+
     except V2HubError:
         return None, False
 
@@ -113,7 +116,7 @@ async def cmd_start(message: Message) -> None:
     else:
         await message.answer(
             t.WELCOME_RETURNING.format(name=name),
-            reply_markup=main_menu(has_token=bool(token)),
+            reply_markup=main_menu(has_token=bool(token), is_admin=user.id in settings.bot_admins),
         )
 
 
@@ -126,7 +129,10 @@ async def cb_menu(call: CallbackQuery) -> None:
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
             t.WELCOME_RETURNING.format(name=name),
-            reply_markup=main_menu(has_token=bool(user and user.api_token)),
+            reply_markup=main_menu(
+                has_token=bool(user and user.api_token),
+                is_admin=call.from_user.id in settings.bot_admins,
+            ),
         )
     await call.answer()
 
@@ -140,6 +146,9 @@ async def cb_extended_menu(call: CallbackQuery) -> None:
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
             t.WELCOME_RETURNING.format(name=name),
-            reply_markup=extended_menu(has_token=bool(user and user.api_token)),
+            reply_markup=extended_menu(
+                has_token=bool(user and user.api_token),
+                is_admin=call.from_user.id in settings.bot_admins,
+            ),
         )
     await call.answer()

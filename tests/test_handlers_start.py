@@ -58,7 +58,11 @@ async def test_cmd_start_new_user_sends_welcome_and_token(sample_user_id: int) -
         patch("v2hub_bot.handlers.start.async_session", _session_cm(fake_session)),
         patch("v2hub_bot.handlers.start.get_or_create_user", AsyncMock()) as get_or_create_mock,
         patch.object(start.v2hub_client, "get_user", AsyncMock(return_value=None)),
-        patch.object(start.v2hub_client, "create_user", AsyncMock(return_value="new-token")),
+        patch.object(
+            start.v2hub_client,
+            "create_user",
+            AsyncMock(return_value=MagicMock(api_token="new-token")),
+        ),
     ):
         await start.cmd_start(message)
 

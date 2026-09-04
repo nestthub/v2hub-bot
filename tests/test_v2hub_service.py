@@ -30,16 +30,18 @@ def _make_fake_client() -> MagicMock:
 
 
 @pytest.mark.asyncio
-async def test_create_user_returns_token_on_success() -> None:
+async def test_create_user_returns_user_on_success() -> None:
     fake_client = _make_fake_client()
     admin = await fake_client.__aenter__()
-    admin.create_user.return_value = MagicMock(api_token="fresh-token")
+    fake_user = MagicMock(api_token="fresh-token")
+    admin.create_user.return_value = fake_user
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
         service = V2HubService()
-        token = await service.create_user(user_id=1)
+        user = await service.create_user(user_id=1)
 
-    assert token == "fresh-token"
+    assert user is fake_user
+    assert user.api_token == "fresh-token"
 
 
 @pytest.mark.asyncio
@@ -47,13 +49,15 @@ async def test_create_user_falls_back_to_get_user_if_already_exists() -> None:
     fake_client = _make_fake_client()
     admin = await fake_client.__aenter__()
     admin.create_user.side_effect = VPNAPIError("user already exists")
-    admin.get_user.return_value = MagicMock(api_token="already-existing-token")
+    fake_user = MagicMock(api_token="already-existing-token")
+    admin.get_user.return_value = fake_user
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
         service = V2HubService()
-        token = await service.create_user(user_id=1)
+        user = await service.create_user(user_id=1)
 
-    assert token == "already-existing-token"
+    assert user is fake_user
+    assert user.api_token == "already-existing-token"
     admin.get_user.assert_awaited_once_with(1)
 
 
@@ -339,3 +343,27 @@ async def test_reject_provider_authorization_success() -> None:
         result = await service.reject_provider_authorization(user_id=1, provider_name="vpn123")
 
     assert result is fake_auth
+
+
+@pytest.mark.asyncio
+async def test_delete_user_calls_admin_delete_user() -> None:
+    fake_client = _make_fake_client()
+    admin = await fake_client.__aenter__()
+
+    with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
+        service = V2HubService()
+        await service.delete_user(user_id=7)
+
+    admin.delete_user.assert_awaited_once_with(7)
+
+
+@pytest.mark.asyncio
+async def test_delete_user_propagates_not_found() -> None:
+    fake_client = _make_fake_client()
+    admin = await fake_client.__aenter__()
+    admin.delete_user.side_effect = NotFoundError("no such user")
+
+    with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
+        service = V2HubService()
+        with pytest.raises(NotFoundError):
+            await service.delete_user(user_id=7)
