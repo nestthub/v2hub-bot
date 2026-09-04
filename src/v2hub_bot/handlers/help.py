@@ -10,11 +10,11 @@ router = Router()
 
 @router.message(Command("help"))
 async def cmd_help(message: Message) -> None:
-    await message.answer(t.HELP_TEXT, reply_markup=keyboards.back_to_menu())
+    await message.answer(t.HELP_TEXT, reply_markup=keyboards.back())
 
 
 @router.callback_query(F.data == "help")
 async def cb_help(call: CallbackQuery) -> None:
     if call.message and isinstance(call.message, Message):
-        await call.message.edit_text(t.HELP_TEXT, reply_markup=keyboards.back_to_menu())
+        await call.message.edit_text(t.HELP_TEXT, reply_markup=keyboards.back())
         await call.answer()

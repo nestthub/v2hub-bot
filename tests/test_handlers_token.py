@@ -107,7 +107,9 @@ async def test_cb_token_generate_success_shows_new_token_without_touching_local_
     assert not hasattr(token, "async_session")
 
     with patch.object(
-        token.v2hub_client, "create_user", AsyncMock(return_value="brand-new-token")
+        token.v2hub_client,
+        "create_user",
+        AsyncMock(return_value=MagicMock(api_token="brand-new-token")),
     ) as create_mock:
         await token.cb_token_generate(call)
 

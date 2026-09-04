@@ -1,4 +1,5 @@
 from .v2hub import (
+    AllProvidersResponse,
     AuthenticationError,
     AuthorizationError,
     ConflictError,
@@ -11,6 +12,7 @@ from .v2hub import (
 )
 
 __all__ = [
+    "AllProvidersResponse",
     "AuthenticationError",
     "AuthorizationError",
     "ConflictError",

@@ -79,7 +79,7 @@ def test_token_actions_without_token_shows_generate() -> None:
 
 
 def test_back_to_menu_only_has_menu_button() -> None:
-    markup = keyboards.back_to_menu()
+    markup = keyboards.back()
 
     callbacks = _flat_callback_data(markup)
     assert callbacks == ["menu"]
@@ -129,7 +129,7 @@ def test_provider_management_has_token_and_back() -> None:
 
     callbacks = _flat_callback_data(markup)
     assert "provider:token" in callbacks
-    assert "menu" in callbacks
+    assert "menu:extended" in callbacks
 
 
 def test_provider_token_actions_has_refresh_and_back() -> None:
@@ -177,3 +177,63 @@ def test_my_providers_lists_each_provider_and_back() -> None:
     assert "provider:view:vpn123" in callbacks
     assert "provider:view:vpn456" in callbacks
     assert "menu" in callbacks
+
+
+def test_main_menu_without_admin_hides_admin_panel_button() -> None:
+    markup = keyboards.main_menu(has_token=False, is_admin=False)
+
+    callbacks = _flat_callback_data(markup)
+    assert "admin:panel" not in callbacks
+
+
+def test_main_menu_with_admin_shows_admin_panel_button() -> None:
+    markup = keyboards.main_menu(has_token=False, is_admin=True)
+
+    callbacks = _flat_callback_data(markup)
+    assert "admin:panel" in callbacks
+
+
+def test_extended_menu_with_admin_shows_admin_panel_button() -> None:
+    markup = keyboards.extended_menu(has_token=False, is_admin=True)
+
+    callbacks = _flat_callback_data(markup)
+    assert "admin:panel" in callbacks
+
+
+def test_admin_panel_lists_all_sections_and_back() -> None:
+    markup = keyboards.admin_panel()
+
+    callbacks = _flat_callback_data(markup)
+    assert "admin:stats" in callbacks
+    assert "admin:users" in callbacks
+    assert "admin:providers" in callbacks
+    assert "admin:broadcast" in callbacks
+    assert "menu" in callbacks
+
+
+def test_stats_lists_all_periods_and_back_to_panel() -> None:
+    markup = keyboards.stats()
+
+    callbacks = _flat_callback_data(markup)
+    assert "admin:stats:day" in callbacks
+    assert "admin:stats:week" in callbacks
+    assert "admin:stats:month" in callbacks
+    assert "admin:stats:all" in callbacks
+    assert "admin:stats:optional" in callbacks
+    assert "admin:panel" in callbacks
+
+
+def test_admin_broadcast_confirm_has_confirm_and_cancel() -> None:
+    markup = keyboards.admin_broadcast_confirm()
+
+    callbacks = _flat_callback_data(markup)
+    assert "admin:broadcast:confirm" in callbacks
+    assert "admin:broadcast:cancel" in callbacks
+
+
+def test_back_with_custom_callback_data_shows_back_label() -> None:
+    markup = keyboards.back(callback_data="admin:panel")
+
+    button = markup.inline_keyboard[0][0]
+    assert button.callback_data == "admin:panel"
+    assert button.text == "Назад"

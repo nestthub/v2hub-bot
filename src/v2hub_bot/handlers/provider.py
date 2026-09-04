@@ -13,7 +13,7 @@ from v2hub_bot.services import (
     v2hub_client,
 )
 from v2hub_bot.services.keyboards import (
-    back_to_menu,
+    back,
     my_providers,
     provider_intro,
     provider_management,
@@ -173,11 +173,9 @@ async def cb_provider_menu(call: CallbackQuery) -> None:
         await call.answer()
         return
 
-    status = t.PROVIDER_STATUS_ACTIVE if provider.is_active else t.PROVIDER_STATUS_INACTIVE
     text = t.PROVIDER_INFO.format(
         provider_name=html.escape(provider.provider_name),
         provider_url=html.escape(provider.provider_url or "—"),
-        status=status,
     )
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(text, reply_markup=provider_management())
@@ -196,7 +194,7 @@ async def cb_provider_token(call: CallbackQuery) -> None:
 
     if provider is None:
         if call.message and isinstance(call.message, Message):
-            await call.message.edit_text(t.PROVIDER_NOT_FOUND_FOR_ROLE, reply_markup=back_to_menu())
+            await call.message.edit_text(t.PROVIDER_NOT_FOUND_FOR_ROLE, reply_markup=back())
         await call.answer()
         return
 
@@ -212,7 +210,7 @@ async def cb_provider_token_refresh(call: CallbackQuery) -> None:
 
     if provider is None:
         if call.message and isinstance(call.message, Message):
-            await call.message.edit_text(t.PROVIDER_NOT_FOUND_FOR_ROLE, reply_markup=back_to_menu())
+            await call.message.edit_text(t.PROVIDER_NOT_FOUND_FOR_ROLE, reply_markup=back())
         await call.answer()
         return
 
@@ -255,7 +253,7 @@ async def cb_my_providers(call: CallbackQuery) -> None:
         if not my_connections:
             await call.message.edit_text(
                 t.MY_PROVIDERS_EMPTY,
-                reply_markup=back_to_menu(),
+                reply_markup=back(),
             )
         else:
             await call.message.edit_text(
@@ -278,7 +276,7 @@ async def cb_provider_view(call: CallbackQuery) -> None:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.PROVIDER_NOT_FOUND.format(provider_name=html.escape(provider_name)),
-                reply_markup=back_to_menu(),
+                reply_markup=back(),
             )
         await call.answer()
         return
@@ -321,12 +319,12 @@ async def cb_provider_approve(call: CallbackQuery) -> None:
             if "maximum allowed" in str(exc):
                 await call.message.edit_text(
                     t.PROVIDER_LIMIT_ERROR,
-                    reply_markup=back_to_menu(),
+                    reply_markup=back(),
                 )
             else:
                 await call.message.edit_text(
                     t.PROVIDER_APPROVE_ERROR.format(error=exc),
-                    reply_markup=back_to_menu(),
+                    reply_markup=back(),
                 )
         return
 
@@ -354,14 +352,14 @@ async def cb_provider_reject(call: CallbackQuery) -> None:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.PROVIDER_REJECT_ERROR.format(error=exc),
-                reply_markup=back_to_menu(),
+                reply_markup=back(),
             )
         return
 
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
             t.PROVIDER_REJECTED.format(provider_name=html.escape(provider_name)),
-            reply_markup=back_to_menu(),
+            reply_markup=back(),
         )
 
 
@@ -382,7 +380,7 @@ async def cb_provider_disconnect(call: CallbackQuery) -> None:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.PROVIDER_DISCONNECT_ERROR.format(error=exc),
-                reply_markup=back_to_menu(),
+                reply_markup=back(),
             )
         return
 
@@ -395,4 +393,4 @@ async def cb_provider_disconnect(call: CallbackQuery) -> None:
         text = t.PROVIDER_DISCONNECTED_REVOKED.format(provider_name=escaped_name)
 
     if call.message and isinstance(call.message, Message):
-        await call.message.edit_text(text, reply_markup=back_to_menu())
+        await call.message.edit_text(text, reply_markup=back())

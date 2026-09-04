@@ -19,6 +19,7 @@ os.environ.setdefault("SUPPORT_URL", "https://t.me/support_test")
 os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
 os.environ.setdefault("V2HUB_API_URL", "https://v2hub.example.com")
 os.environ.setdefault("V2HUB_SECRET_KEY", "test-secret-key")
+os.environ.setdefault("BOT_ADMINS", "[7]")
 
 from v2hub_bot.db.models import Base, User
 
@@ -26,6 +27,12 @@ from v2hub_bot.db.models import Base, User
 @pytest.fixture
 def sample_user_id() -> int:
     return 42
+
+
+@pytest.fixture
+def sample_admin_id() -> int:
+    """Matches the BOT_ADMINS test env var (see above)."""
+    return 7
 
 
 @pytest_asyncio.fixture
