@@ -6,7 +6,7 @@ import pytest
 
 from v2hub import ConflictError, NotFoundError, VPNAPIError
 from v2hub_admin import AsyncAdminClient
-from v2hub_bot.services.v2hub import V2HubService, _make_client
+from v2hub_bot.services.v2hub import _make_client, v2hubService
 
 pytestmark = pytest.mark.unit
 
@@ -37,7 +37,7 @@ async def test_create_user_returns_user_on_success() -> None:
     admin.create_user.return_value = fake_user
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         user = await service.create_user(user_id=1)
 
     assert user is fake_user
@@ -53,7 +53,7 @@ async def test_create_user_falls_back_to_get_user_if_already_exists() -> None:
     admin.get_user.return_value = fake_user
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         user = await service.create_user(user_id=1)
 
     assert user is fake_user
@@ -69,7 +69,7 @@ async def test_get_user_returns_user_on_success() -> None:
     admin.get_user.return_value = fake_user
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.get_user(user_id=5)
 
     assert result is fake_user
@@ -82,7 +82,7 @@ async def test_get_user_returns_none_on_vpn_api_error() -> None:
     admin.get_user.side_effect = VPNAPIError("not found")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.get_user(user_id=5)
 
     assert result is None
@@ -95,7 +95,7 @@ async def test_refresh_token_returns_new_token() -> None:
     admin.refresh_token.return_value = MagicMock(new_api_token="rotated-token")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         token = await service.refresh_token(user_id=7)
 
     assert token == "rotated-token"
@@ -108,7 +108,7 @@ async def test_refresh_token_propagates_error() -> None:
     admin.refresh_token.side_effect = VPNAPIError("refresh failed")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         with pytest.raises(VPNAPIError):
             await service.refresh_token(user_id=7)
 
@@ -126,7 +126,7 @@ async def test_get_provider_by_name_returns_provider() -> None:
     admin.get_provider_by_name.return_value = fake_provider
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.get_provider_by_name("vpn123")
 
     assert result is fake_provider
@@ -140,7 +140,7 @@ async def test_get_provider_by_name_returns_none_on_not_found() -> None:
     admin.get_provider_by_name.side_effect = NotFoundError("gone")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.get_provider_by_name("unknown")
 
     assert result is None
@@ -154,7 +154,7 @@ async def test_get_provider_by_owner_id_returns_provider() -> None:
     admin.get_provider_by_owner_id.return_value = fake_provider
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.get_provider_by_owner_id(42)
 
     assert result is fake_provider
@@ -168,7 +168,7 @@ async def test_get_provider_by_owner_id_returns_none_when_user_owns_no_provider(
     admin.get_provider_by_owner_id.side_effect = NotFoundError("no provider")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.get_provider_by_owner_id(42)
 
     assert result is None
@@ -184,7 +184,7 @@ async def test_create_provider_looks_up_owner_hash_then_creates() -> None:
     admin.create_provider.return_value = fake_provider
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.create_provider(
             owner_user_id=42, provider_name="vpn123", provider_url="https://vpn123.example.com"
         )
@@ -205,7 +205,7 @@ async def test_create_provider_propagates_not_found_when_owner_has_no_account() 
     admin.get_user.side_effect = NotFoundError("no such user")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         with pytest.raises(NotFoundError):
             await service.create_provider(owner_user_id=42, provider_name="vpn123")
 
@@ -221,7 +221,7 @@ async def test_create_provider_propagates_conflict_when_name_taken() -> None:
     admin.create_provider.side_effect = ConflictError("provider already exists")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         with pytest.raises(ConflictError):
             await service.create_provider(owner_user_id=42, provider_name="vpn123")
 
@@ -233,7 +233,7 @@ async def test_refresh_provider_token_returns_new_token() -> None:
     admin.refresh_provider_token.return_value = MagicMock(new_api_token="new-provider-token")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.refresh_provider_token("provider-hash-1")
 
     assert result == "new-provider-token"
@@ -248,7 +248,7 @@ async def test_get_user_connections_returns_connections_response() -> None:
     admin.get_user_providers.return_value = fake_connections
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.get_user_connections(user_id=1)
 
     assert result is fake_connections
@@ -266,7 +266,7 @@ async def test_get_provider_authorization_returns_state() -> None:
     admin.get_provider_authorization.return_value = fake_auth
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.get_provider_authorization("vpn123", user_id=1)
 
     assert result is fake_auth
@@ -280,7 +280,7 @@ async def test_get_provider_authorization_returns_none_on_404() -> None:
     admin.get_provider_authorization.side_effect = NotFoundError("no auth record")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.get_provider_authorization("vpn123", user_id=1)
 
     assert result is None
@@ -294,7 +294,7 @@ async def test_process_provider_authorization_forwards_hmac_unchanged() -> None:
     admin.process_provider_authorization.return_value = fake_auth
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.process_provider_authorization(
             user_id=1, provider_name="vpn123", hmac="raw-hmac-value"
         )
@@ -313,7 +313,7 @@ async def test_approve_provider_authorization_success() -> None:
     admin.approve_provider_authorization.return_value = fake_auth
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.approve_provider_authorization(user_id=1, provider_name="vpn123")
 
     assert result is fake_auth
@@ -326,7 +326,7 @@ async def test_approve_provider_authorization_propagates_conflict() -> None:
     admin.approve_provider_authorization.side_effect = ConflictError("not pending")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         with pytest.raises(ConflictError):
             await service.approve_provider_authorization(user_id=1, provider_name="vpn123")
 
@@ -339,7 +339,7 @@ async def test_reject_provider_authorization_success() -> None:
     admin.reject_provider_authorization.return_value = fake_auth
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         result = await service.reject_provider_authorization(user_id=1, provider_name="vpn123")
 
     assert result is fake_auth
@@ -351,7 +351,7 @@ async def test_delete_user_calls_admin_delete_user() -> None:
     admin = await fake_client.__aenter__()
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         await service.delete_user(user_id=7)
 
     admin.delete_user.assert_awaited_once_with(7)
@@ -364,6 +364,6 @@ async def test_delete_user_propagates_not_found() -> None:
     admin.delete_user.side_effect = NotFoundError("no such user")
 
     with patch("v2hub_bot.services.v2hub._make_client", return_value=fake_client):
-        service = V2HubService()
+        service = v2hubService()
         with pytest.raises(NotFoundError):
             await service.delete_user(user_id=7)

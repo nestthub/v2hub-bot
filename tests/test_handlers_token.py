@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery, Message
 from aiogram.types import User as TgUser
 
 from v2hub_bot.handlers import token
-from v2hub_bot.services import V2HubError
+from v2hub_bot.services import v2hubError
 
 pytestmark = pytest.mark.unit
 
@@ -122,7 +122,7 @@ async def test_cb_token_generate_success_shows_new_token_without_touching_local_
 async def test_cb_token_generate_error_shows_error_message(sample_user_id: int) -> None:
     call = _callback(_tg_user(sample_user_id))
 
-    with patch.object(token.v2hub_client, "create_user", AsyncMock(side_effect=V2HubError("boom"))):
+    with patch.object(token.v2hub_client, "create_user", AsyncMock(side_effect=v2hubError("boom"))):
         await token.cb_token_generate(call)
 
     call.message.edit_text.assert_awaited_once()
@@ -166,7 +166,7 @@ async def test_cb_token_refresh_error_shows_error_message(sample_user_id: int) -
     with (
         patch.object(token.v2hub_client, "get_user", AsyncMock(return_value=server_user)),
         patch.object(
-            token.v2hub_client, "refresh_token", AsyncMock(side_effect=V2HubError("refresh failed"))
+            token.v2hub_client, "refresh_token", AsyncMock(side_effect=v2hubError("refresh failed"))
         ),
     ):
         await token.cb_token_refresh(call)

@@ -1,11 +1,11 @@
-# V2Hub Telegram Bot
+# v2hub Telegram Bot
 
-A Telegram bot for managing VPN subscriptions through the **V2Hub** service. The bot's main
+A Telegram bot for managing VPN subscriptions through the **v2hub** service. The bot's main
 interface is a Mini App (control panel) launched directly from the chat.
 
-### 🌐 Part of the [V2Hub Ecosystem](https://github.com/nestthub/nestthub/blob/main/ecosystems/v2hub/README.md)
+### 🌐 Part of the [v2hub Ecosystem](https://github.com/nestthub/nestthub/blob/main/ecosystems/v2hub/README.md)
 
-This package is one component of V2Hub — see the full project overview, architecture, and all related repositories.
+This package is one component of v2hub — see the full project overview, architecture, and all related repositories.
 
 ## Features
 
@@ -24,7 +24,7 @@ This package is one component of V2Hub — see the full project overview, archit
 - Python 3.11 or 3.12
 - PostgreSQL (or Docker, see below)
 - A Telegram bot token from [@BotFather](https://t.me/BotFather)
-- Access credentials for the V2Hub Admin API
+- Access credentials for the v2hub Admin API
 
 ## Getting Started
 
@@ -55,8 +55,8 @@ Settings are loaded from environment variables / `.env` via `pydantic-settings`.
 | `MINIAPP_URL`      | URL of the Mini App control panel                               |
 | `SUPPORT_URL`      | Link shown on the "Contact support" button                      |
 | `DATABASE_URL`     | Async SQLAlchemy database URL (e.g. `postgresql+asyncpg://...`) |
-| `V2HUB_API_URL`    | Base URL of the V2Hub Admin API                                 |
-| `V2HUB_SECRET_KEY` | HMAC-SHA256 secret for the V2Hub Admin API                      |
+| `V2HUB_API_URL`    | Base URL of the v2hub Admin API                                 |
+| `V2HUB_SECRET_KEY` | HMAC-SHA256 secret for the v2hub Admin API                      |
 
 ## Bot Commands
 
@@ -95,7 +95,7 @@ tests/
 ├── test_config.py             # Settings validation
 ├── test_models.py               # ORM model behavior
 ├── test_crud.py                   # Database CRUD helpers
-├── test_v2hub_service.py             # V2Hub Admin API facade
+├── test_v2hub_service.py             # v2hub Admin API facade
 ├── test_keyboards.py                    # Inline keyboard construction
 ├── test_throttle_middleware.py             # Rate-limiting middleware
 ├── test_handlers_start.py                    # /start and menu callback

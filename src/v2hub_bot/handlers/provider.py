@@ -9,8 +9,8 @@ from v2hub_bot.locales import ru as t
 from v2hub_bot.services import (
     ConflictError,
     NotFoundError,
-    V2HubError,
     v2hub_client,
+    v2hubError,
 )
 from v2hub_bot.services.keyboards import (
     back,
@@ -130,7 +130,7 @@ async def _process_connection_link(
             provider_name=provider_name,
             hmac=hmac,
         )
-    except V2HubError as exc:
+    except v2hubError as exc:
         await message.answer(t.PROVIDER_CONNECTION_LINK_INVALID.format(error=exc))
         return
 
@@ -218,7 +218,7 @@ async def cb_provider_token_refresh(call: CallbackQuery) -> None:
 
     try:
         new_token = await v2hub_client.refresh_provider_token(provider.provider_hash)
-    except V2HubError as exc:
+    except v2hubError as exc:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.PROVIDER_TOKEN_ERROR_REFRESH.format(error=exc),
@@ -314,7 +314,7 @@ async def cb_provider_approve(call: CallbackQuery) -> None:
             user_id=call.from_user.id,
             provider_name=provider_name,
         )
-    except (NotFoundError, ConflictError, V2HubError) as exc:
+    except (NotFoundError, ConflictError, v2hubError) as exc:
         if call.message and isinstance(call.message, Message):
             if "maximum allowed" in str(exc):
                 await call.message.edit_text(
@@ -348,7 +348,7 @@ async def cb_provider_reject(call: CallbackQuery) -> None:
             user_id=call.from_user.id,
             provider_name=provider_name,
         )
-    except (NotFoundError, ConflictError, V2HubError) as exc:
+    except (NotFoundError, ConflictError, v2hubError) as exc:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.PROVIDER_REJECT_ERROR.format(error=exc),
@@ -376,7 +376,7 @@ async def cb_provider_disconnect(call: CallbackQuery) -> None:
             user_id=call.from_user.id,
             provider_name=provider_name,
         )
-    except (NotFoundError, V2HubError) as exc:
+    except (NotFoundError, v2hubError) as exc:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.PROVIDER_DISCONNECT_ERROR.format(error=exc),

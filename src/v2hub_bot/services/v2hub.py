@@ -61,13 +61,13 @@ __all__ = [
     "NotFoundError",
     "ProviderAuthorizationInfoResponse",
     "ProviderResponse",
-    "V2HubError",
     "VPNAPIError",
+    "v2hubError",
     "v2hub_client",
 ]
 
 # Convenience alias so handlers can catch a single base class
-V2HubError = VPNAPIError
+v2hubError = VPNAPIError
 
 
 def _make_client() -> AsyncAdminClient:
@@ -77,7 +77,7 @@ def _make_client() -> AsyncAdminClient:
     )
 
 
-class V2HubService:
+class v2hubService:
     """
     Thin async facade used by handlers.
     Uses a fresh context-manager client per call to stay stateless.
@@ -293,4 +293,4 @@ class V2HubService:
 
 
 # Module-level singleton used by all handlers
-v2hub_client = V2HubService()
+v2hub_client = v2hubService()

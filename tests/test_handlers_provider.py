@@ -12,7 +12,7 @@ from v2hub.models import (
     ProviderAuthorizationStatus,
 )
 from v2hub_bot.handlers import provider as provider_handler
-from v2hub_bot.services import ConflictError, NotFoundError, V2HubError
+from v2hub_bot.services import ConflictError, NotFoundError, v2hubError
 
 pytestmark = pytest.mark.unit
 
@@ -232,7 +232,7 @@ async def test_conn_deep_link_invalid_hmac_shows_error() -> None:
     with patch.object(
         provider_handler.v2hub_client,
         "process_provider_authorization",
-        AsyncMock(side_effect=V2HubError("invalid hmac")),
+        AsyncMock(side_effect=v2hubError("invalid hmac")),
     ):
         await provider_handler.handle_provider_deep_link(
             message,
@@ -408,7 +408,7 @@ async def test_cb_provider_disconnect_error_shows_message() -> None:
     with patch.object(
         provider_handler.v2hub_client,
         "reject_provider_authorization",
-        AsyncMock(side_effect=V2HubError("boom")),
+        AsyncMock(side_effect=v2hubError("boom")),
     ):
         await provider_handler.cb_provider_disconnect(call)
 
@@ -628,7 +628,7 @@ async def test_cb_provider_token_refresh_handles_error() -> None:
         patch.object(
             provider_handler.v2hub_client,
             "refresh_provider_token",
-            AsyncMock(side_effect=V2HubError("refresh failed")),
+            AsyncMock(side_effect=v2hubError("refresh failed")),
         ),
     ):
         await provider_handler.cb_provider_token_refresh(call)

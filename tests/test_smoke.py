@@ -51,14 +51,14 @@ def test_db_package_exports_only_local_user_helpers() -> None:
 
 
 def test_services_package_exports_expected_symbols() -> None:
-    from v2hub_bot.services import V2HubError, v2hub_client
+    from v2hub_bot.services import v2hub_client, v2hubError
 
     assert v2hub_client is not None
-    assert issubclass(V2HubError, Exception)
+    assert issubclass(v2hubError, Exception)
 
 
 def test_v2hub_service_exposes_provider_ownership_lookup() -> None:
     """get_provider_by_owner_id replaces the old local Provider table lookup."""
-    from v2hub_bot.services.v2hub import V2HubService
+    from v2hub_bot.services.v2hub import v2hubService
 
-    assert hasattr(V2HubService, "get_provider_by_owner_id")
+    assert hasattr(v2hubService, "get_provider_by_owner_id")

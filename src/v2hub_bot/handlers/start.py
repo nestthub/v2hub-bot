@@ -6,9 +6,10 @@ from aiogram.types import CallbackQuery, Message
 
 from v2hub_bot.config import settings
 from v2hub_bot.db import async_session, get_or_create_user
+from v2hub_bot.handlers.token import _token_info_text
 from v2hub_bot.locales import ru as t
-from v2hub_bot.services import V2HubError, v2hub_client
-from v2hub_bot.services.keyboards import extended_menu, main_menu, token_first_time
+from v2hub_bot.services import v2hub_client, v2hubError
+from v2hub_bot.services.keyboards import extended_menu, main_menu, token_actions, token_first_time
 
 router = Router()
 
@@ -61,7 +62,7 @@ async def _ensure_token(user_id: int) -> tuple[str | None, bool]:
         user = await v2hub_client.create_user(user_id=user_id)
         new_token = user.api_token
 
-    except V2HubError:
+    except v2hubError:
         return None, False
 
     return new_token, True
@@ -72,6 +73,11 @@ async def cmd_start_deep_link(message: Message, command: CommandObject) -> None:
     """Handle /start with a payload: `provider_*` and `conn_*` deep links."""
     user = message.from_user
     if not user:
+        return
+
+    if command.args == "token":
+        text, has_token, _ = await _token_info_text(user.id)
+        await message.answer(text, reply_markup=token_actions(has_token))
         return
 
     parsed = parse_deep_link_payload(command.args)

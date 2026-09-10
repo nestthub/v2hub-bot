@@ -13,7 +13,7 @@ from v2hub_bot.db import get_user as get_local_user
 from v2hub_bot.handlers.admin_states import AdminStates
 from v2hub_bot.locales import ru as t
 from v2hub_bot.middlewares import AdminMiddleware
-from v2hub_bot.services import V2HubError, keyboards, v2hub_client
+from v2hub_bot.services import keyboards, v2hub_client, v2hubError
 from v2hub_bot.utils import parse_keyboard
 
 if TYPE_CHECKING:
@@ -162,7 +162,7 @@ async def _render_stats(
         stats = await v2hub_client.get_stats(
             start_date=start_date, end_date=end_date, period=period
         )
-    except V2HubError as exc:
+    except v2hubError as exc:
         if (
             isinstance(event, CallbackQuery)
             and event.message
@@ -367,7 +367,7 @@ async def admin_users_delete_execute(call: CallbackQuery, state: FSMContext) -> 
 
     try:
         await v2hub_client.delete_user(user_id)
-    except V2HubError as exc:
+    except v2hubError as exc:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.ADMIN_USERS_DELETE_ERROR.format(error=exc),
@@ -797,7 +797,7 @@ async def _finish_provider_create(
             provider_name=provider_name,
             provider_url=provider_url,
         )
-    except V2HubError as exc:
+    except v2hubError as exc:
         text = (
             t.ADMIN_PROVIDER_CREATE_CONFLICT.format(provider_name=provider_name)
             if "already exists" in str(exc).lower() or "conflict" in str(exc).lower()
@@ -863,7 +863,7 @@ async def admin_provider_rename_receive(message: Message, state: FSMContext) -> 
 
     try:
         await v2hub_client.update_provider_name(provider_hash, new_name)
-    except V2HubError as exc:
+    except v2hubError as exc:
         text = (
             t.ADMIN_PROVIDER_RENAME_CONFLICT.format(provider_name=new_name)
             if "already" in str(exc).lower() or "conflict" in str(exc).lower()
@@ -950,7 +950,7 @@ async def _apply_provider_url(
 ) -> None:
     try:
         await v2hub_client.update_provider_url(provider_hash, provider_url)
-    except V2HubError as exc:
+    except v2hubError as exc:
         await target.answer(
             t.ADMIN_PROVIDER_UPDATE_ERROR.format(error=exc),
             reply_markup=keyboards.back(callback_data=f"admin:provider:view:{provider_hash}"),
@@ -1014,7 +1014,7 @@ async def admin_provider_delete_execute(call: CallbackQuery, state: FSMContext) 
 
     try:
         await v2hub_client.delete_provider(provider_hash)
-    except V2HubError as exc:
+    except v2hubError as exc:
         await call.message.edit_text(
             t.ADMIN_PROVIDER_DELETE_ERROR.format(error=exc),
             reply_markup=keyboards.back(callback_data="admin:providers"),

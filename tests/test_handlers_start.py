@@ -8,7 +8,7 @@ from aiogram.types import CallbackQuery, Message
 from aiogram.types import User as TgUser
 
 from v2hub_bot.handlers import start
-from v2hub_bot.services import V2HubError
+from v2hub_bot.services import v2hubError
 
 pytestmark = pytest.mark.unit
 
@@ -108,7 +108,7 @@ async def test_cmd_start_v2hub_error_falls_back_to_returning_flow(sample_user_id
         patch("v2hub_bot.handlers.start.async_session", _session_cm(fake_session)),
         patch("v2hub_bot.handlers.start.get_or_create_user", AsyncMock()),
         patch.object(start.v2hub_client, "get_user", AsyncMock(return_value=None)),
-        patch.object(start.v2hub_client, "create_user", AsyncMock(side_effect=V2HubError("boom"))),
+        patch.object(start.v2hub_client, "create_user", AsyncMock(side_effect=v2hubError("boom"))),
     ):
         await start.cmd_start(message)
 
@@ -156,6 +156,36 @@ def _command_object(args: str | None) -> MagicMock:
     from aiogram.filters import CommandObject
 
     return CommandObject(prefix="/", command="start", args=args)
+
+
+@pytest.mark.asyncio
+async def test_cmd_start_deep_link_token_shows_token_actions(sample_user_id: int) -> None:
+    user = _tg_user(sample_user_id)
+    message = _message(user)
+
+    expected_text = "Your token"
+    has_token = True
+    expected_markup = MagicMock()
+
+    with (
+        patch(
+            "v2hub_bot.handlers.start._token_info_text",
+            AsyncMock(return_value=(expected_text, has_token, None)),
+        ) as token_info_mock,
+        patch(
+            "v2hub_bot.handlers.start.token_actions",
+            MagicMock(return_value=expected_markup),
+        ) as token_actions_mock,
+    ):
+        await start.cmd_start_deep_link(message, _command_object("token"))
+
+    token_info_mock.assert_awaited_once_with(sample_user_id)
+    token_actions_mock.assert_called_once_with(has_token)
+
+    message.answer.assert_awaited_once_with(
+        expected_text,
+        reply_markup=expected_markup,
+    )
 
 
 @pytest.mark.asyncio

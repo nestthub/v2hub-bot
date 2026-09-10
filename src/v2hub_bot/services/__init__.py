@@ -6,9 +6,9 @@ from .v2hub import (
     NotFoundError,
     ProviderAuthorizationInfoResponse,
     ProviderResponse,
-    V2HubError,
     VPNAPIError,
     v2hub_client,
+    v2hubError,
 )
 
 __all__ = [
@@ -19,7 +19,7 @@ __all__ = [
     "NotFoundError",
     "ProviderAuthorizationInfoResponse",
     "ProviderResponse",
-    "V2HubError",
     "VPNAPIError",
+    "v2hubError",
     "v2hub_client",
 ]

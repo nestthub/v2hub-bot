@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message
 
 from v2hub_bot.locales import ru as t
-from v2hub_bot.services import V2HubError, v2hub_client
+from v2hub_bot.services import v2hub_client, v2hubError
 from v2hub_bot.services.keyboards import back, token_actions
 
 router = Router()
@@ -55,7 +55,7 @@ async def cb_token_generate(call: CallbackQuery) -> None:
     try:
         user = await v2hub_client.create_user(user_id=call.from_user.id)
         new_token = user.api_token
-    except V2HubError as exc:
+    except v2hubError as exc:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.TOKEN_ERROR_GENERATE.format(error=exc),
@@ -82,7 +82,7 @@ async def cb_token_refresh(call: CallbackQuery) -> None:
 
     try:
         new_token = await v2hub_client.refresh_token(user_id=call.from_user.id)
-    except V2HubError as exc:
+    except v2hubError as exc:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
                 t.TOKEN_ERROR_REFRESH.format(error=exc),

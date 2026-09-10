@@ -10,7 +10,7 @@ from aiogram.types import User as TgUser
 from v2hub_admin.models import AllProvidersResponse, ProviderResponse
 from v2hub_bot.handlers import admin
 from v2hub_bot.handlers.admin_states import AdminStates
-from v2hub_bot.services import V2HubError
+from v2hub_bot.services import v2hubError
 
 pytestmark = pytest.mark.unit
 
@@ -246,7 +246,7 @@ async def test_admin_provider_create_conflict_shows_conflict_message() -> None:
     with patch.object(
         admin.v2hub_client,
         "create_provider",
-        AsyncMock(side_effect=V2HubError("Provider already exists")),
+        AsyncMock(side_effect=v2hubError("Provider already exists")),
     ):
         await admin.admin_provider_create_receive_url(message, state)
 
@@ -343,7 +343,7 @@ async def test_admin_provider_delete_execute_handles_error() -> None:
         patch.object(
             admin.v2hub_client,
             "delete_provider",
-            AsyncMock(side_effect=V2HubError("boom")),
+            AsyncMock(side_effect=v2hubError("boom")),
         ),
     ):
         await admin.admin_provider_delete_execute(call, state)
