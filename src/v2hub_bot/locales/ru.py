@@ -303,6 +303,7 @@ BTN_WRITE_SUPPORT = "Написать в поддержку"
 # ── Кнопки Админа ───────────────────────────────────────────────────────────────────
 
 BTN_ADMIN_PANEL = "Админ-панель"
+BTN_ADMIN_PANEL_SETTINGS = "Настройки панели"
 BTN_ADMIN_STATS = "Статистика"
 BTN_ADMIN_USERS = "Пользователи"
 BTN_ADMIN_PROVIDERS = "Провайдеры"

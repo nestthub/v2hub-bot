@@ -460,46 +460,59 @@ def support() -> InlineKeyboardMarkup:
 
 def admin_panel() -> InlineKeyboardMarkup:
     """Клавиатура администратора"""
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                text=t.BTN_ADMIN_STATS,
+                callback_data="admin:stats",
+                icon_custom_emoji_id="5994378914636500516",
+                style="primary",
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text=t.BTN_ADMIN_USERS,
+                callback_data="admin:users",
+                icon_custom_emoji_id="5886412370347036129",
+                style="primary",
+            ),
+            InlineKeyboardButton(
+                text=t.BTN_ADMIN_PROVIDERS,
+                callback_data="admin:providers",
+                icon_custom_emoji_id="5931347928810526429",
+                style="primary",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text=t.BTN_ADMIN_BROADCAST,
+                callback_data="admin:broadcast",
+                icon_custom_emoji_id="5771868281212245617",
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text=t.BTN_BACK,
+                callback_data="menu",
+                icon_custom_emoji_id="5875082500023258804",
+            )
+        ],
+    ]
+
+    if settings.admin_panel_url:
+        keyboard.insert(
+            0,
             [
                 InlineKeyboardButton(
-                    text=t.BTN_ADMIN_STATS,
-                    callback_data="admin:stats",
-                    icon_custom_emoji_id="5994378914636500516",
-                    style="primary",
+                    text=t.BTN_ADMIN_PANEL_SETTINGS,
+                    web_app=WebAppInfo(url=settings.admin_panel_url),
+                    icon_custom_emoji_id="5985833664884250583",
+                    style="success",
                 )
             ],
-            [
-                InlineKeyboardButton(
-                    text=t.BTN_ADMIN_USERS,
-                    callback_data="admin:users",
-                    icon_custom_emoji_id="5886412370347036129",
-                    style="primary",
-                ),
-                InlineKeyboardButton(
-                    text=t.BTN_ADMIN_PROVIDERS,
-                    callback_data="admin:providers",
-                    icon_custom_emoji_id="5931347928810526429",
-                    style="primary",
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    text=t.BTN_ADMIN_BROADCAST,
-                    callback_data="admin:broadcast",
-                    icon_custom_emoji_id="5771868281212245617",
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text=t.BTN_BACK,
-                    callback_data="menu",
-                    icon_custom_emoji_id="5875082500023258804",
-                )
-            ],
-        ]
-    )
+        )
+
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
 
 def stats() -> InlineKeyboardMarkup:

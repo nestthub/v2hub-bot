@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     v2hub_api_url: str
     v2hub_secret_key: str  # HMAC-SHA256 secret
 
+    admin_panel_url: str | None = None
+
     bot_admins: list[int]
 
 
