@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
-from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
-from aiogram.types import User as TgUser
+from helpers import ADMIN_ID, make_callback, make_message, make_provider, make_state, t, tg_user
 
-from v2hub_admin.models import AllProvidersResponse, ProviderResponse
+from v2hub_admin.models import AllProvidersResponse
 from v2hub_bot.handlers import admin
 from v2hub_bot.handlers.admin_states import AdminStates
 from v2hub_bot.services import v2hubError
@@ -15,69 +13,14 @@ from v2hub_bot.services import v2hubError
 pytestmark = pytest.mark.unit
 
 
-def _tg_user(user_id: int = 7) -> MagicMock:
-    user = MagicMock(spec=TgUser)
-    user.id = user_id
-    return user
-
-
-def _message(user: MagicMock | None = None, text: str | None = None) -> MagicMock:
-    message = MagicMock(spec=Message)
-    message.from_user = user
-    message.text = text
-    message.html_text = text
-    message.answer = AsyncMock()
-    message.edit_text = AsyncMock()
-    return message
-
-
-def _callback(user: MagicMock, data: str) -> MagicMock:
-    call = MagicMock(spec=CallbackQuery)
-    call.from_user = user
-    call.data = data
-    call.message = MagicMock(spec=Message)
-    call.message.edit_text = AsyncMock()
-    call.message.answer = AsyncMock()
-    call.answer = AsyncMock()
-    return call
-
-
-def _state() -> MagicMock:
-    state = MagicMock(spec=FSMContext)
-    state.clear = AsyncMock()
-    state.set_state = AsyncMock()
-    state.update_data = AsyncMock()
-    state.get_data = AsyncMock(return_value={})
-    return state
-
-
-def _provider(
-    *,
-    provider_hash: str = "hash1",
-    provider_name: str = "vpn123",
-    owner_hash: str = "owner-hash",
-    provider_url: str | None = "https://example.com",
-    api_token: str = "token123",
-    is_active: bool = True,
-) -> ProviderResponse:
-    return ProviderResponse(
-        provider_hash=provider_hash,
-        owner_hash=owner_hash,
-        provider_name=provider_name,
-        api_token=api_token,
-        provider_url=provider_url,
-        is_active=is_active,
-    )
-
-
 # ── Список провайдеров ───────────────────────────────────────────────────────
 
 
 @pytest.mark.asyncio
 async def test_admin_providers_lists_all_providers() -> None:
-    user = _tg_user()
-    call = _callback(user, "admin:providers")
-    state = _state()
+    user = tg_user(ADMIN_ID)
+    call = make_callback(user, "admin:providers")
+    state = make_state()
 
     all_providers = AllProvidersResponse(provider_hashes={"vpn123": "hash1"})
 
@@ -94,9 +37,9 @@ async def test_admin_providers_lists_all_providers() -> None:
 
 @pytest.mark.asyncio
 async def test_admin_providers_empty_shows_empty_text() -> None:
-    user = _tg_user()
-    call = _callback(user, "admin:providers")
-    state = _state()
+    user = tg_user(ADMIN_ID)
+    call = make_callback(user, "admin:providers")
+    state = make_state()
 
     with patch.object(
         admin.v2hub_client,
@@ -106,7 +49,7 @@ async def test_admin_providers_empty_shows_empty_text() -> None:
         await admin.admin_providers(call, state)
 
     text, _kwargs = call.message.edit_text.await_args
-    assert text[0] == admin.t.ADMIN_PROVIDERS_LIST_EMPTY
+    assert text[0] == t("ADMIN_PROVIDERS_LIST_EMPTY")
 
 
 # ── Просмотр деталей ─────────────────────────────────────────────────────────
@@ -114,12 +57,12 @@ async def test_admin_providers_empty_shows_empty_text() -> None:
 
 @pytest.mark.asyncio
 async def test_admin_provider_view_shows_details() -> None:
-    user = _tg_user()
-    call = _callback(user, "admin:provider:view:hash1")
-    state = _state()
+    user = tg_user(ADMIN_ID)
+    call = make_callback(user, "admin:provider:view:hash1")
+    state = make_state()
 
     with patch.object(
-        admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=_provider())
+        admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=make_provider())
     ):
         await admin.admin_provider_view(call, state)
 
@@ -130,15 +73,15 @@ async def test_admin_provider_view_shows_details() -> None:
 
 @pytest.mark.asyncio
 async def test_admin_provider_view_not_found() -> None:
-    user = _tg_user()
-    call = _callback(user, "admin:provider:view:missing")
-    state = _state()
+    user = tg_user(ADMIN_ID)
+    call = make_callback(user, "admin:provider:view:missing")
+    state = make_state()
 
     with patch.object(admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=None)):
         await admin.admin_provider_view(call, state)
 
     text, _kwargs = call.message.edit_text.await_args
-    assert text[0] == admin.t.ADMIN_PROVIDER_NOT_FOUND
+    assert text[0] == t("ADMIN_PROVIDER_NOT_FOUND")
 
 
 # ── Создание провайдера ───────────────────────────────────────────────────────
@@ -146,9 +89,9 @@ async def test_admin_provider_view_not_found() -> None:
 
 @pytest.mark.asyncio
 async def test_admin_provider_create_start_prompts_for_owner() -> None:
-    user = _tg_user()
-    call = _callback(user, "admin:provider:create")
-    state = _state()
+    user = tg_user(ADMIN_ID)
+    call = make_callback(user, "admin:provider:create")
+    state = make_state()
 
     await admin.admin_provider_create_start(call, state)
 
@@ -158,8 +101,8 @@ async def test_admin_provider_create_start_prompts_for_owner() -> None:
 
 @pytest.mark.asyncio
 async def test_admin_provider_create_receive_owner_rejects_non_numeric() -> None:
-    message = _message(_tg_user(), text="not-a-number")
-    state = _state()
+    message = make_message(tg_user(ADMIN_ID), text="not-a-number")
+    state = make_state()
 
     await admin.admin_provider_create_receive_owner(message, state)
 
@@ -169,8 +112,8 @@ async def test_admin_provider_create_receive_owner_rejects_non_numeric() -> None
 
 @pytest.mark.asyncio
 async def test_admin_provider_create_receive_owner_stores_id_and_advances() -> None:
-    message = _message(_tg_user(), text="12345")
-    state = _state()
+    message = make_message(tg_user(ADMIN_ID), text="12345")
+    state = make_state()
 
     await admin.admin_provider_create_receive_owner(message, state)
 
@@ -180,20 +123,20 @@ async def test_admin_provider_create_receive_owner_stores_id_and_advances() -> N
 
 @pytest.mark.asyncio
 async def test_admin_provider_create_receive_name_rejects_empty() -> None:
-    message = _message(_tg_user(), text="   ")
-    state = _state()
+    message = make_message(tg_user(ADMIN_ID), text="   ")
+    state = make_state()
 
     await admin.admin_provider_create_receive_name(message, state)
 
     message.answer.assert_awaited_once()
     text, _kwargs = message.answer.await_args
-    assert text[0] == admin.t.ADMIN_PROVIDER_CREATE_NAME_INVALID
+    assert text[0] == t("ADMIN_PROVIDER_CREATE_NAME_INVALID")
 
 
 @pytest.mark.asyncio
 async def test_admin_provider_create_receive_name_advances_to_url_step() -> None:
-    message = _message(_tg_user(), text="vpn123")
-    state = _state()
+    message = make_message(tg_user(ADMIN_ID), text="vpn123")
+    state = make_state()
 
     await admin.admin_provider_create_receive_name(message, state)
 
@@ -203,12 +146,12 @@ async def test_admin_provider_create_receive_name_advances_to_url_step() -> None
 
 @pytest.mark.asyncio
 async def test_admin_provider_create_skip_url_creates_provider_without_url() -> None:
-    call = _callback(_tg_user(), "admin:provider:create:url:skip")
-    state = _state()
+    call = make_callback(tg_user(ADMIN_ID), "admin:provider:create:url:skip")
+    state = make_state()
     state.get_data = AsyncMock(return_value={"provider_owner_id": 12345, "provider_name": "vpn123"})
 
     with patch.object(
-        admin.v2hub_client, "create_provider", AsyncMock(return_value=_provider())
+        admin.v2hub_client, "create_provider", AsyncMock(return_value=make_provider())
     ) as create_mock:
         await admin.admin_provider_create_skip_url(call, state)
 
@@ -221,12 +164,12 @@ async def test_admin_provider_create_skip_url_creates_provider_without_url() -> 
 
 @pytest.mark.asyncio
 async def test_admin_provider_create_receive_url_creates_provider_with_url() -> None:
-    message = _message(_tg_user(), text="https://vpn.example.com")
-    state = _state()
+    message = make_message(tg_user(ADMIN_ID), text="https://vpn.example.com")
+    state = make_state()
     state.get_data = AsyncMock(return_value={"provider_owner_id": 12345, "provider_name": "vpn123"})
 
     with patch.object(
-        admin.v2hub_client, "create_provider", AsyncMock(return_value=_provider())
+        admin.v2hub_client, "create_provider", AsyncMock(return_value=make_provider())
     ) as create_mock:
         await admin.admin_provider_create_receive_url(message, state)
 
@@ -239,8 +182,8 @@ async def test_admin_provider_create_receive_url_creates_provider_with_url() -> 
 
 @pytest.mark.asyncio
 async def test_admin_provider_create_conflict_shows_conflict_message() -> None:
-    message = _message(_tg_user(), text="https://vpn.example.com")
-    state = _state()
+    message = make_message(tg_user(ADMIN_ID), text="https://vpn.example.com")
+    state = make_state()
     state.get_data = AsyncMock(return_value={"provider_owner_id": 12345, "provider_name": "vpn123"})
 
     with patch.object(
@@ -252,7 +195,7 @@ async def test_admin_provider_create_conflict_shows_conflict_message() -> None:
 
     message.answer.assert_awaited_once()
     text, _kwargs = message.answer.await_args
-    assert text[0] == admin.t.ADMIN_PROVIDER_CREATE_CONFLICT.format(provider_name="vpn123")
+    assert text[0] == t("ADMIN_PROVIDER_CREATE_CONFLICT").format(provider_name="vpn123")
 
 
 # ── Переименование ────────────────────────────────────────────────────────────
@@ -260,11 +203,11 @@ async def test_admin_provider_create_conflict_shows_conflict_message() -> None:
 
 @pytest.mark.asyncio
 async def test_admin_provider_rename_start_prompts_and_stores_hash() -> None:
-    call = _callback(_tg_user(), "admin:provider:rename:hash1")
-    state = _state()
+    call = make_callback(tg_user(ADMIN_ID), "admin:provider:rename:hash1")
+    state = make_state()
 
     with patch.object(
-        admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=_provider())
+        admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=make_provider())
     ):
         await admin.admin_provider_rename_start(call, state)
 
@@ -274,8 +217,8 @@ async def test_admin_provider_rename_start_prompts_and_stores_hash() -> None:
 
 @pytest.mark.asyncio
 async def test_admin_provider_rename_receive_updates_name() -> None:
-    message = _message(_tg_user(), text="new-name")
-    state = _state()
+    message = make_message(tg_user(ADMIN_ID), text="new-name")
+    state = make_state()
     state.get_data = AsyncMock(return_value={"provider_hash": "hash1"})
 
     with (
@@ -285,7 +228,7 @@ async def test_admin_provider_rename_receive_updates_name() -> None:
         patch.object(
             admin.v2hub_client,
             "get_provider_by_hash",
-            AsyncMock(return_value=_provider(provider_name="new-name")),
+            AsyncMock(return_value=make_provider(provider_name="new-name")),
         ),
     ):
         await admin.admin_provider_rename_receive(message, state)
@@ -299,11 +242,11 @@ async def test_admin_provider_rename_receive_updates_name() -> None:
 
 @pytest.mark.asyncio
 async def test_admin_provider_delete_confirm_shows_warning() -> None:
-    call = _callback(_tg_user(), "admin:provider:del:hash1")
-    state = _state()
+    call = make_callback(tg_user(ADMIN_ID), "admin:provider:del:hash1")
+    state = make_state()
 
     with patch.object(
-        admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=_provider())
+        admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=make_provider())
     ):
         await admin.admin_provider_delete_confirm(call, state)
 
@@ -313,12 +256,12 @@ async def test_admin_provider_delete_confirm_shows_warning() -> None:
 
 @pytest.mark.asyncio
 async def test_admin_provider_delete_execute_calls_delete_and_confirms() -> None:
-    call = _callback(_tg_user(), "admin:provider:del_ok:hash1")
-    state = _state()
+    call = make_callback(tg_user(ADMIN_ID), "admin:provider:del_ok:hash1")
+    state = make_state()
 
     with (
         patch.object(
-            admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=_provider())
+            admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=make_provider())
         ),
         patch.object(
             admin.v2hub_client, "delete_provider", AsyncMock(return_value=None)
@@ -333,12 +276,12 @@ async def test_admin_provider_delete_execute_calls_delete_and_confirms() -> None
 
 @pytest.mark.asyncio
 async def test_admin_provider_delete_execute_handles_error() -> None:
-    call = _callback(_tg_user(), "admin:provider:del_ok:hash1")
-    state = _state()
+    call = make_callback(tg_user(ADMIN_ID), "admin:provider:del_ok:hash1")
+    state = make_state()
 
     with (
         patch.object(
-            admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=_provider())
+            admin.v2hub_client, "get_provider_by_hash", AsyncMock(return_value=make_provider())
         ),
         patch.object(
             admin.v2hub_client,

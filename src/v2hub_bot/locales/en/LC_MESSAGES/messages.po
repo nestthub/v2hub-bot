@@ -1,0 +1,642 @@
+# v2hub Telegram bot — English translation.
+# msgid = message key; msgstr = text (Telegram HTML, {placeholders} preserved).
+msgid ""
+msgstr ""
+"Project-Id-Version: v2hub-bot\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);"
+
+msgid "WELCOME_NEW"
+msgstr ""
+"<tg-emoji emoji-id=\"5906995262378741881\">👋</tg-emoji> Hello, <b>{name}</b>!\n"
+"\n"
+"<b>v2hub</b> is your personal VPN manager.\n"
+"\n"
+"Connect a device once via a subscription link and forget about manual setup for good. All changes are applied automatically on each of your devices: phone, laptop, tablet, and your family members' devices."
+
+msgid "WELCOME_RETURNING"
+msgstr ""
+"<tg-emoji emoji-id=\"5906995262378741881\">👋</tg-emoji> Welcome back, <b>{name}</b>!\n"
+"\n"
+"Everything is under control — manage your connections through the panel."
+
+msgid "TOKEN_NONE"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>Access token</b>\n"
+"\n"
+"You don't have a token yet — you won't be able to log in to the panel without it.\n"
+"Tap the button below to get one right now."
+
+msgid "TOKEN_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>Your access token</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> Never share your token with anyone: it gives full access to your account."
+
+msgid "TOKEN_GENERATING"
+msgstr "⏳ Creating token…"
+
+msgid "TOKEN_CREATED"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> <b>Token is ready!</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"Copy it and paste it when logging in to the control panel.\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> Never share your token with anyone: it gives full access to your account."
+
+msgid "TOKEN_REFRESHING"
+msgstr "⏳ Refreshing token…"
+
+msgid "TOKEN_REFRESHED"
+msgstr ""
+"<tg-emoji emoji-id=\"6005843436479975944\">🔄</tg-emoji> <b>Token refreshed!</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"The old token has been deactivated — paste the new one in the control panel.\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> Never share your token with anyone: it gives full access to your account."
+
+msgid "TOKEN_NO_ACTIVE"
+msgstr "You don't have an active token."
+
+msgid "TOKEN_ERROR_GENERATE"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to create token:\n"
+"<code>{error}</code>\n"
+"\n"
+"Please try again later or contact support."
+
+msgid "TOKEN_ERROR_REFRESH"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to refresh token:\n"
+"<code>{error}</code>\n"
+"\n"
+"Please try again later or contact support."
+
+msgid "HELP_TEXT"
+msgstr ""
+"<tg-emoji emoji-id=\"6030848053177486888\">❓</tg-emoji> <b>Help</b>\n"
+"\n"
+"<b>v2hub</b> is a VPN connection management service. Set up your device once, and all updates will be applied automatically.\n"
+"\n"
+"<b>Commands:</b>\n"
+"<blockquote>/start — main menu\n"
+"/token — access token\n"
+"/settings - bot settings\n"
+"/support — contact support</blockquote>\n"
+"\n"
+"<b>Getting started:</b>\n"
+"1. Get a token via /token\n"
+"2. Open the panel and paste the token when logging in\n"
+"3. Add your devices — changes will be applied automatically\n"
+"\n"
+"When you refresh your token, the old one is deactivated. Don't forget to paste the new one in the panel."
+
+msgid "SUPPORT_TEXT"
+msgstr ""
+"<tg-emoji emoji-id=\"5936017305585586269\">📩</tg-emoji> <b>Support</b>\n"
+"\n"
+"Something went wrong or have a question?\n"
+"We're here — write to us and we'll sort it out.\n"
+"\n"
+"The more detail you give, the faster we can help."
+
+msgid "PROVIDER_INTRO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>Provider</b>\n"
+"\n"
+"A provider is a v2hub partner with its own VPN service who can onboard users and manage their subscriptions via the API.\n"
+"\n"
+"<b>To become a provider, you need:</b>\n"
+"<blockquote>• an operating VPN service;\n"
+"• or a clearly confirmed intention to build a service on top of v2hub</blockquote>\n"
+"\n"
+"The provider role is granted by an administrator only. Contact support to get your own provider."
+
+msgid "PROVIDER_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>Your provider</b>\n"
+"\n"
+"<b>Name:</b> {provider_name}\n"
+"<b>URL:</b> {provider_url}"
+
+msgid "PROVIDER_TOKEN_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>Provider token</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> Never share this token with anyone: it gives full access to your provider's API."
+
+msgid "PROVIDER_TOKEN_REFRESHING"
+msgstr "⏳ Refreshing provider token…"
+
+msgid "PROVIDER_TOKEN_REFRESHED"
+msgstr ""
+"<tg-emoji emoji-id=\"6005843436479975944\">🔄</tg-emoji> <b>Provider token refreshed!</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"The old token has been deactivated."
+
+msgid "PROVIDER_TOKEN_ERROR_REFRESH"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to refresh provider token:\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_NOT_FOUND_FOR_ROLE"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Your provider account was not found. Please contact support."
+
+msgid "PROVIDER_PUBLIC_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>{provider_name}</b>\n"
+"\n"
+"<b>URL:</b> {provider_url}\n"
+"<b>Authorization status:</b> {status}"
+
+msgid "PROVIDER_STATUS_NONE"
+msgstr "not authorized"
+
+msgid "PROVIDER_STATUS_PENDING"
+msgstr "awaiting confirmation"
+
+msgid "PROVIDER_STATUS_APPROVED"
+msgstr "connected"
+
+msgid "PROVIDER_STATUS_REVOKED"
+msgstr "disconnected"
+
+msgid "PROVIDER_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Provider <code>{provider_name}</code> not found."
+
+msgid "PROVIDER_CONNECTION_REQUEST"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>Provider connection request</b>\n"
+"\n"
+"<b>{provider_name}</b>\n"
+"URL: {provider_url}\n"
+"\n"
+"The provider is requesting access to add subscriptions.\n"
+"\n"
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Connecting a provider <b>does not affect</b> your personal subscriptions — new ones are created alongside them.\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">🔒</tg-emoji> Approve or decline the request below."
+
+msgid "PROVIDER_CONNECTION_LINK_INVALID"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> The connection link is invalid or has expired. Ask the provider to send a new link.\n"
+"\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_APPROVING"
+msgstr "⏳ Confirming connection…"
+
+msgid "PROVIDER_APPROVED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Provider <b>{provider_name}</b> connected."
+
+msgid "PROVIDER_APPROVE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to confirm the connection:\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_LIMIT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> The maximum number of connected providers has been reached.\n"
+"Disconnect an unused provider to connect a new one."
+
+msgid "PROVIDER_REJECTING"
+msgstr "⏳ Declining request…"
+
+msgid "PROVIDER_REJECTED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> The request from provider <b>{provider_name}</b> was declined."
+
+msgid "PROVIDER_REJECT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to decline the request:\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_DISCONNECTING"
+msgstr "⏳ Disconnecting provider…"
+
+msgid "PROVIDER_DISCONNECTED_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Provider <b>{provider_name}</b> has been disconnected and removed from your providers list."
+
+msgid "PROVIDER_DISCONNECTED_REVOKED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Provider <b>{provider_name}</b> has been disconnected. "
+
+msgid "PROVIDER_DISCONNECT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to disconnect the provider:\n"
+"<code>{error}</code>"
+
+msgid "MY_PROVIDERS_EMPTY"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>My providers</b>\n"
+"\n"
+"You don't have any connected providers yet."
+
+msgid "MY_PROVIDERS_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>My providers</b>"
+
+msgid "DEEP_LINK_INVALID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> The link is corrupted or incomplete."
+
+msgid "BTN_PROVIDER"
+msgstr "Provider"
+
+msgid "BTN_MY_PROVIDERS"
+msgstr "My providers"
+
+msgid "BTN_PROVIDER_TOKEN"
+msgstr "Provider token"
+
+msgid "BTN_PROVIDER_REFRESH_TOKEN"
+msgstr "Refresh token"
+
+msgid "BTN_CONNECT"
+msgstr "Connect"
+
+msgid "BTN_REJECT"
+msgstr "Decline"
+
+msgid "BTN_DISCONNECT"
+msgstr "Disconnect"
+
+msgid "BTN_CONTACT_SUPPORT"
+msgstr "Contact the administrator"
+
+msgid "BTN_EXTENDED_MENU"
+msgstr "Extended menu"
+
+msgid "BTN_V2HUB_API"
+msgstr "About the project"
+
+msgid "BTN_V2HUB_GITHUB"
+msgstr "Our GitHub"
+
+msgid "THROTTLE_WARNING"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> Please wait a moment before the next command."
+
+msgid "BTN_OPEN_PANEL"
+msgstr "Open panel"
+
+msgid "BTN_MY_TOKEN"
+msgstr "My token"
+
+msgid "BTN_GET_TOKEN"
+msgstr "Get token"
+
+msgid "BTN_REFRESH_TOKEN"
+msgstr "Refresh token"
+
+msgid "BTN_SETTINGS"
+msgstr "Settings"
+
+msgid "SETTINGS_TEXT"
+msgstr "Customize the bot to your liking!"
+
+msgid "SETTINGS_LANGUAGE_TEXT"
+msgstr "Choose your interface language:"
+
+msgid "BTN_LANGUAGE"
+msgstr "Language"
+
+msgid "BTN_HELP"
+msgstr "Help"
+
+msgid "BTN_SUPPORT"
+msgstr "Support"
+
+msgid "BTN_BACK"
+msgstr "Back"
+
+msgid "BTN_MAIN_MENU"
+msgstr "Main menu"
+
+msgid "BTN_WRITE_SUPPORT"
+msgstr "Contact support"
+
+msgid "BTN_ADMIN_PANEL"
+msgstr "Admin panel"
+
+msgid "BTN_ADMIN_PANEL_SETTINGS"
+msgstr "Panel settings"
+
+msgid "BTN_ADMIN_STATS"
+msgstr "Statistics"
+
+msgid "BTN_ADMIN_USERS"
+msgstr "Users"
+
+msgid "BTN_ADMIN_PROVIDERS"
+msgstr "Providers"
+
+msgid "BTN_ADMIN_BROADCAST"
+msgstr "Broadcast"
+
+msgid "BTN_ADMIN_STATS_DAY"
+msgstr "Day"
+
+msgid "BTN_ADMIN_STATS_WEEK"
+msgstr "Week"
+
+msgid "BTN_ADMIN_STATS_MONTH"
+msgstr "Month"
+
+msgid "BTN_ADMIN_STATS_ALL"
+msgstr "All time"
+
+msgid "BTN_ADMIN_STATS_OPTIONAL"
+msgstr "Custom dates"
+
+msgid "ADMIN_STATS_SELECT"
+msgstr "<tg-emoji emoji-id=\"5994378914636500516\">📊</tg-emoji> Select the period for which you want statistics:"
+
+msgid "ADMIN_STATS_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"5994378914636500516\">📊</tg-emoji> Total users: <code>{total_users}</code>\n"
+"\n"
+"Statistics {period}:\n"
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> New users: <code>{new_users}</code>\n"
+"<tg-emoji emoji-id=\"6034923938486684992\">⭐</tg-emoji> New subscriptions: <code>{new_subs}</code>"
+
+msgid "ADMIN_STATS_GET_OPTIONAL_PERIOD"
+msgstr ""
+"<tg-emoji emoji-id=\"5850317551090800862\">⏱️</tg-emoji> Enter the period in the format:\n"
+"<code>YYYY-MM-DD : YYYY-MM-DD</code>\n"
+"\n"
+"You can specify only the start or the end of the period:\n"
+"<code>YYYY-MM-DD :</code> — from the given date\n"
+"<code>: YYYY-MM-DD</code> — up to the given date"
+
+msgid "ADMIN_STATS_PERIOD_INVALID"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Invalid period format. Please try again, for example:\n"
+"<code>2026-01-01 : 2026-02-01</code>"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_DAY"
+msgstr "for the last 24 hours"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_WEEK"
+msgstr "for the last week"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_MONTH"
+msgstr "for the last month"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_ALL"
+msgstr "for all time"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM"
+msgstr "from {start_date} to {end_date}"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM_START"
+msgstr "launch"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM_END"
+msgstr "today"
+
+msgid "ADMIN_STATS_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to get statistics:\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PANEL_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"5926783847453692661\">🛠</tg-emoji> <b>Admin panel</b>\n"
+"\n"
+"Choose a section:"
+
+msgid "BTN_ADMIN_USER_CREATE"
+msgstr "Create user"
+
+msgid "ADMIN_USERS_PROVIDERS_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> The user has no providers."
+
+msgid "ADMIN_USERS_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> Send the Telegram ID of the user you want to find."
+
+msgid "ADMIN_USERS_INVALID_ID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> The ID must be a number. Please try again."
+
+msgid "ADMIN_USERS_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> User with ID <code>{user_id}</code> not found."
+
+msgid "ADMIN_USERS_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> User information:\n"
+"ID: <code>{user_id}</code>\n"
+"Token: <tg-spoiler><code>{api_token}</code></tg-spoiler>\n"
+"Provider: <code>{provider_name}</code>\n"
+"First bot launch date: {created_at}\n"
+"Banned in the bot: {is_banned}"
+
+msgid "ADMIN_USERS_UNKNOWN"
+msgstr "unknown"
+
+msgid "BTN_ADMIN_USER_DELETE"
+msgstr "Delete user"
+
+msgid "ADMIN_USERS_DELETE_CONFIRM"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">⚠️</tg-emoji> Delete user <code>{user_id}</code>? This action is irreversible: their v2hub account and all associated data will be deleted."
+
+msgid "ADMIN_USERS_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> User <code>{user_id}</code> has been deleted."
+
+msgid "ADMIN_USERS_DELETE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to delete the user:\n"
+"<code>{error}</code>"
+
+msgid "BTN_ADMIN_BROADCAST_MODE_COPY"
+msgstr "Forward as is"
+
+msgid "BTN_ADMIN_BROADCAST_MODE_COMPOSE"
+msgstr "Compose message"
+
+msgid "ADMIN_BROADCAST_SELECT_MODE"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> How would you like to prepare the broadcast?\n"
+"\n"
+"<b>Forward as is</b> — send a finished message in full (text, media, formatting, buttons — if any), and it will be copied to each recipient unchanged.\n"
+"\n"
+"<b>Compose message</b> — send text or media, then add buttons (with a link or an action) separately."
+
+msgid "ADMIN_BROADCAST_PROMPT"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> Send the message you want to broadcast to users — it will be copied to recipients as is, along with any media and an already attached keyboard.\n"
+"\n"
+"Telegram HTML markup is supported."
+
+msgid "ADMIN_BROADCAST_CONTENT_PROMPT"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> Send text or media (with or without a caption) for the broadcast. In the next step you will be able to add buttons to it.\n"
+"\n"
+"Telegram HTML markup is supported."
+
+msgid "ADMIN_BROADCAST_KEYBOARD_BUILDER"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> <b>Adding a keyboard</b>\n"
+"\n"
+"Button format:\n"
+"<code>Text - callback_data</code>\n"
+"\n"
+"Several buttons in a row:\n"
+"<code>Catalog - catalog | Help - help</code>\n"
+"\n"
+"Link:\n"
+"<code>Website - https://example.com</code>\n"
+"\n"
+"Additional parameters:\n"
+"<code>Button - action [style=primary]</code>\n"
+"<code>Button - action [emoji=123456]</code>\n"
+"\n"
+"Styles: <code>success</code>, <code>primary</code>, <code>danger</code>.\n"
+"\n"
+"Start a new row on a new line.\n"
+"\n"
+"If you don't need a keyboard, tap “Skip”."
+
+msgid "ADMIN_BROADCAST_NO_CONTENT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to get the broadcast content. Please start over."
+
+msgid "ADMIN_BROADCAST_PREVIEW"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> This is how the broadcast will look. Recipients: <b>{count}</b>.\n"
+"\n"
+"Confirm sending?"
+
+msgid "ADMIN_BROADCAST_CANCELLED"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Broadcast cancelled."
+
+msgid "ADMIN_BROADCAST_STARTED"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> Broadcast started. Recipients: <b>{count}</b>."
+
+msgid "ADMIN_BROADCAST_PROGRESS"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> Broadcast in progress: {sent}/{total}"
+
+msgid "ADMIN_BROADCAST_DONE"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Broadcast completed.\n"
+"<blockquote>Total recipients: {total}\n"
+"Successfully delivered: {success}\n"
+"Failed to deliver: {failed}</blockquote>"
+
+msgid "BTN_ADMIN_BROADCAST_CONFIRM"
+msgstr "Send"
+
+msgid "BTN_ADMIN_BROADCAST_CANCEL"
+msgstr "Cancel"
+
+msgid "BTN_ADMIN_BROADCAST_NO_KEYBOARD"
+msgstr "No buttons"
+
+msgid "BTN_ADMIN_PROVIDER_CREATE"
+msgstr "Create provider"
+
+msgid "BTN_ADMIN_PROVIDER_RENAME"
+msgstr "Rename"
+
+msgid "BTN_ADMIN_PROVIDER_SET_URL"
+msgstr "Change URL"
+
+msgid "BTN_ADMIN_PROVIDER_DELETE"
+msgstr "Delete"
+
+msgid "BTN_ADMIN_PROVIDER_SKIP"
+msgstr "Skip"
+
+msgid "BTN_ADMIN_PROVIDER_CLEAR"
+msgstr "Clear"
+
+msgid "ADMIN_PROVIDERS_LIST_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> <b>Providers</b>\n"
+"\n"
+"Total: <b>{count}</b>.\n"
+"Select a provider or create a new one:"
+
+msgid "ADMIN_PROVIDERS_LIST_EMPTY"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> <b>Providers</b>\n"
+"\n"
+"There are no providers yet."
+
+msgid "ADMIN_PROVIDER_DETAILS"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> Provider <b>{provider_name}</b>\n"
+"Hash: <code>{provider_hash}</code>\n"
+"Owner hash: <code>{owner_hash}</code>\n"
+"URL: {provider_url}\n"
+"Token: <blockquote><tg-spoiler>{api_token}</tg-spoiler></blockquote>"
+
+msgid "ADMIN_PROVIDER_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Provider not found."
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_OWNER"
+msgstr ""
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> Send the Telegram ID of the user who will own the new provider.\n"
+"\n"
+"The user should already have a v2hub account — one will be created if necessary."
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_NAME"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> Send the name of the new provider (must be unique)."
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_URL"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> Send the provider's URL, or tap “Skip”."
+
+msgid "ADMIN_PROVIDER_CREATE_NAME_INVALID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> The name cannot be empty. Please try again."
+
+msgid "ADMIN_PROVIDER_CREATE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to create the provider:\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PROVIDER_CREATE_CONFLICT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> A provider named <b>{provider_name}</b> already exists."
+
+msgid "ADMIN_PROVIDER_CREATED"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Provider <b>{provider_name}</b> created.\n"
+"<blockquote>Owner: <code>{owner_id}</code>\n"
+"Token: <code>{api_token}</code></blockquote>"
+
+msgid "ADMIN_PROVIDER_RENAME_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> Send a new name for provider <b>{provider_name}</b>."
+
+msgid "ADMIN_PROVIDER_RENAMED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Provider renamed to <b>{provider_name}</b>."
+
+msgid "ADMIN_PROVIDER_RENAME_CONFLICT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> The name <b>{provider_name}</b> is already taken. Try another one."
+
+msgid "ADMIN_PROVIDER_SET_URL_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> Send a new URL for provider <b>{provider_name}</b>, or tap “Clear” to remove the URL."
+
+msgid "ADMIN_PROVIDER_URL_UPDATED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Provider URL updated."
+
+msgid "ADMIN_PROVIDER_UPDATE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to update the provider:\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PROVIDER_DELETE_CONFIRM"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">⚠️</tg-emoji> Delete provider <b>{provider_name}</b>? This action is irreversible."
+
+msgid "ADMIN_PROVIDER_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Provider <b>{provider_name}</b> has been deleted."
+
+msgid "ADMIN_PROVIDER_DELETE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Failed to delete the provider:\n"
+"<code>{error}</code>"

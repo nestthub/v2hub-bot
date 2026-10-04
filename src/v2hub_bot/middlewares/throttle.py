@@ -6,7 +6,7 @@ from typing import Any
 from aiogram import BaseMiddleware
 from aiogram.types import Message, TelegramObject
 
-from v2hub_bot.locales import ru as t
+from v2hub_bot.services.users import get_translator_for
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,8 @@ class ThrottleMiddleware(BaseMiddleware):
 
         if last is not None and now - last < self.rate_limit:
             logger.debug("Throttled user %s", user.id)
-            await event.answer(t.THROTTLE_WARNING)
+            t = await get_translator_for(user)
+            await event.answer(t("THROTTLE_WARNING"))
             return
 
         self._last_call[user.id] = now

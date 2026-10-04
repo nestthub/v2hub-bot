@@ -11,9 +11,9 @@ from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 from v2hub_bot.db import async_session, delete_local_user, get_all_user_ids
 from v2hub_bot.db import get_user as get_local_user
 from v2hub_bot.handlers.admin_states import AdminStates
-from v2hub_bot.locales import ru as t
+from v2hub_bot.locales.i18n import Translator
 from v2hub_bot.middlewares import AdminMiddleware
-from v2hub_bot.services import keyboards, v2hub_client, v2hubError
+from v2hub_bot.services import get_user_info_and_translator, keyboards, v2hub_client, v2hubError
 from v2hub_bot.utils import parse_keyboard
 
 if TYPE_CHECKING:
@@ -24,13 +24,6 @@ logger = logging.getLogger(__name__)
 router = Router()
 router.callback_query.middleware(AdminMiddleware())
 router.message.middleware(AdminMiddleware())
-
-_PERIOD_LABELS = {
-    "day": t.ADMIN_STATS_PERIOD_LABEL_DAY,
-    "week": t.ADMIN_STATS_PERIOD_LABEL_WEEK,
-    "month": t.ADMIN_STATS_PERIOD_LABEL_MONTH,
-    "all": t.ADMIN_STATS_PERIOD_LABEL_ALL,
-}
 
 # Keep strong references to in-flight broadcast tasks so they are not
 # garbage-collected while still running (asyncio only keeps weak references).
@@ -50,8 +43,12 @@ _BROADCAST_MIN_INTERVAL = 1 / _BROADCAST_MAX_PER_SECOND
 async def admin_panel(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
 
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.message and isinstance(call.message, Message):
-        await call.message.edit_text(t.ADMIN_PANEL_TITLE, reply_markup=keyboards.admin_panel())
+        await call.message.edit_text(t("ADMIN_PANEL_TITLE"), reply_markup=keyboards.admin_panel(t))
     await call.answer()
 
 
@@ -62,8 +59,12 @@ async def admin_panel(call: CallbackQuery, state: FSMContext) -> None:
 async def admin_stats(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
 
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.message and isinstance(call.message, Message):
-        await call.message.edit_text(t.ADMIN_STATS_SELECT, reply_markup=keyboards.stats())
+        await call.message.edit_text(t("ADMIN_STATS_SELECT"), reply_markup=keyboards.stats(t))
     await call.answer()
 
 
@@ -74,10 +75,14 @@ async def get_stats(call: CallbackQuery, state: FSMContext) -> None:
 
     selected = call.data.split(":")[-1]
 
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if selected == "optional":
         await call.message.edit_text(
-            t.ADMIN_STATS_GET_OPTIONAL_PERIOD,
-            reply_markup=keyboards.back(callback_data="admin:stats"),
+            t("ADMIN_STATS_GET_OPTIONAL_PERIOD"),
+            reply_markup=keyboards.back(t, callback_data="admin:stats"),
         )
         await state.set_state(AdminStates.waiting_stats_period)
         await call.answer()
@@ -95,7 +100,14 @@ async def get_stats(call: CallbackQuery, state: FSMContext) -> None:
     }
     period = period_map[selected]
 
-    await _render_stats(call, period=period, label=_PERIOD_LABELS[selected])
+    _PERIOD_LABELS = {
+        "day": t("ADMIN_STATS_PERIOD_LABEL_DAY"),
+        "week": t("ADMIN_STATS_PERIOD_LABEL_WEEK"),
+        "month": t("ADMIN_STATS_PERIOD_LABEL_MONTH"),
+        "all": t("ADMIN_STATS_PERIOD_LABEL_ALL"),
+    }
+
+    await _render_stats(call, period=period, label=_PERIOD_LABELS[selected], t=t)
     await call.answer()
 
 
@@ -104,20 +116,24 @@ async def receive_stats_period(message: Message, state: FSMContext) -> None:
     raw = (message.text or "").strip()
     start_date, end_date = _parse_period(raw)
 
+    user, t = await get_user_info_and_translator(message)
+    if not user:
+        return
+
     if start_date is None and end_date is None:
         await message.answer(
-            t.ADMIN_STATS_PERIOD_INVALID,
-            reply_markup=keyboards.back(callback_data="admin:stats"),
+            t("ADMIN_STATS_PERIOD_INVALID"),
+            reply_markup=keyboards.back(t, callback_data="admin:stats"),
         )
         return
 
-    label = t.ADMIN_STATS_PERIOD_LABEL_CUSTOM.format(
+    label = t("ADMIN_STATS_PERIOD_LABEL_CUSTOM").format(
         start_date=start_date.strftime("%Y-%m-%d")
         if start_date
-        else t.ADMIN_STATS_PERIOD_LABEL_CUSTOM_START,
+        else t("ADMIN_STATS_PERIOD_LABEL_CUSTOM_START"),
         end_date=end_date.strftime("%Y-%m-%d")
         if end_date
-        else t.ADMIN_STATS_PERIOD_LABEL_CUSTOM_END,
+        else t("ADMIN_STATS_PERIOD_LABEL_CUSTOM_END"),
     )
 
     await state.clear()
@@ -126,6 +142,7 @@ async def receive_stats_period(message: Message, state: FSMContext) -> None:
         start_date=start_date,
         end_date=end_date,
         label=label,
+        t=t,
     )
 
 
@@ -157,6 +174,7 @@ async def _render_stats(
     period: Literal["day", "week", "month"] | None = None,
     start_date: datetime | None = None,
     end_date: datetime | None = None,
+    t: Translator,
 ) -> None:
     try:
         stats = await v2hub_client.get_stats(
@@ -169,55 +187,56 @@ async def _render_stats(
             and isinstance(event.message, Message)
         ):
             await event.message.edit_text(
-                t.ADMIN_STATS_ERROR.format(error=exc),
-                reply_markup=keyboards.back(callback_data="admin:stats"),
+                t("ADMIN_STATS_ERROR").format(error=exc),
+                reply_markup=keyboards.back(t, callback_data="admin:stats"),
             )
 
         else:
             await event.answer(
-                t.ADMIN_STATS_ERROR.format(error=exc),
-                reply_markup=keyboards.back(callback_data="admin:stats"),
+                t("ADMIN_STATS_ERROR").format(error=exc),
+                reply_markup=keyboards.back(t, callback_data="admin:stats"),
             )
         return
 
     if isinstance(event, CallbackQuery) and event.message and isinstance(event.message, Message):
         await event.message.edit_text(
-            t.ADMIN_STATS_INFO.format(
+            t("ADMIN_STATS_INFO").format(
                 period=label,
                 total_users=stats.general.total_users,
                 new_users=stats.general.new_users,
                 new_subs=stats.general.new_subscriptions,
             ),
-            reply_markup=keyboards.back(callback_data="admin:stats"),
+            reply_markup=keyboards.back(t, callback_data="admin:stats"),
         )
 
     else:
         await event.answer(
-            t.ADMIN_STATS_INFO.format(
+            t("ADMIN_STATS_INFO").format(
                 period=label,
                 total_users=stats.general.total_users,
                 new_users=stats.general.new_users,
                 new_subs=stats.general.new_subscriptions,
             ),
-            reply_markup=keyboards.back(callback_data="admin:stats"),
+            reply_markup=keyboards.back(t, callback_data="admin:stats"),
         )
 
 
 # ── Users ─────────────────────────────────────────────────────────────────────
 
 
-async def _admin_users_view(user_id: int, event: Message | CallbackQuery) -> None:
+async def _admin_users_view(user_id: int, event: Message | CallbackQuery, t: Translator) -> None:
     user = await v2hub_client.get_user(user_id)
+
     if user is None:
         if isinstance(event, Message):
             await event.answer(
-                t.ADMIN_USERS_NOT_FOUND.format(user_id=user_id),
-                reply_markup=keyboards.admin_users_result(user_id=user_id, is_exist=False),
+                t("ADMIN_USERS_NOT_FOUND").format(user_id=user_id),
+                reply_markup=keyboards.admin_users_result(user_id=user_id, t=t, is_exist=False),
             )
         elif event.message and isinstance(event.message, Message):
             await event.message.edit_text(
-                t.ADMIN_USERS_NOT_FOUND.format(user_id=user_id),
-                reply_markup=keyboards.admin_users_result(user_id=user_id, is_exist=False),
+                t("ADMIN_USERS_NOT_FOUND").format(user_id=user_id),
+                reply_markup=keyboards.admin_users_result(user_id=user_id, t=t, is_exist=False),
             )
         return
 
@@ -229,11 +248,12 @@ async def _admin_users_view(user_id: int, event: Message | CallbackQuery) -> Non
         local_user = await get_local_user(session, user_id)
 
     created_at = (
-        local_user.created_at.strftime("%Y-%m-%d %H:%M") if local_user else t.ADMIN_USERS_UNKNOWN
+        local_user.created_at.strftime("%Y-%m-%d %H:%M") if local_user else t("ADMIN_USERS_UNKNOWN")
     )
-    is_banned = "да" if local_user and local_user.is_banned else "нет"
 
-    text = t.ADMIN_USERS_INFO.format(
+    is_banned = "yes" if local_user and local_user.is_banned else "no"
+
+    text = t("ADMIN_USERS_INFO").format(
         user_id=user_id,
         api_token=user.api_token,
         provider_name=provider_name or "-",
@@ -241,7 +261,7 @@ async def _admin_users_view(user_id: int, event: Message | CallbackQuery) -> Non
         is_banned=is_banned,
     )
 
-    reply_markup = keyboards.admin_users_result(user_id=user_id, provider=provider)
+    reply_markup = keyboards.admin_users_result(user_id=user_id, t=t, provider=provider)
 
     if isinstance(event, Message):
         await event.answer(text=text, reply_markup=reply_markup)
@@ -251,10 +271,14 @@ async def _admin_users_view(user_id: int, event: Message | CallbackQuery) -> Non
 
 @router.callback_query(F.data == "admin:users")
 async def admin_users(call: CallbackQuery, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
-            t.ADMIN_USERS_PROMPT,
-            reply_markup=keyboards.back(callback_data="admin:panel"),
+            t("ADMIN_USERS_PROMPT"),
+            reply_markup=keyboards.back(t, callback_data="admin:panel"),
         )
     await state.set_state(AdminStates.waiting_user_id)
     await call.answer()
@@ -264,21 +288,29 @@ async def admin_users(call: CallbackQuery, state: FSMContext) -> None:
 async def receive_user_id(message: Message, state: FSMContext) -> None:
     raw = (message.text or "").strip()
 
+    user, t = await get_user_info_and_translator(message)
+    if not user:
+        return
+
     if not raw.lstrip("-").isdigit():
         await message.answer(
-            t.ADMIN_USERS_INVALID_ID,
-            reply_markup=keyboards.back(callback_data="admin:panel"),
+            t("ADMIN_USERS_INVALID_ID"),
+            reply_markup=keyboards.back(t, callback_data="admin:panel"),
         )
         return
 
     user_id = int(raw)
     await state.clear()
 
-    await _admin_users_view(user_id, message)
+    await _admin_users_view(user_id, message, t)
 
 
 @router.callback_query(F.data.startswith("admin:users:create:"))
 async def admin_users_create(call: CallbackQuery) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.data and len(call.data.split(":")) == 4 and call.data.split(":")[-1].isdigit():
         user_id = int(call.data.split(":")[-1])
     else:
@@ -287,26 +319,34 @@ async def admin_users_create(call: CallbackQuery) -> None:
 
     await v2hub_client.create_user(user_id)
 
-    await _admin_users_view(user_id, call)
+    await _admin_users_view(user_id, call, t)
 
     await call.answer()
 
 
 @router.callback_query(F.data.startswith("admin:users:view:"))
 async def admin_users_view(call: CallbackQuery) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.data and len(call.data.split(":")) == 4 and call.data.split(":")[-1].isdigit():
         user_id = int(call.data.split(":")[-1])
     else:
         await call.answer()
         return
 
-    await _admin_users_view(user_id, call)
+    await _admin_users_view(user_id, call, t)
 
     await call.answer()
 
 
 @router.callback_query(F.data.startswith("admin:users:providers:"))
 async def admin_users_providers(call: CallbackQuery) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.data and len(call.data.split(":")) == 4 and call.data.split(":")[-1].isdigit():
         user_id = int(call.data.split(":")[-1])
     else:
@@ -324,13 +364,13 @@ async def admin_users_providers(call: CallbackQuery) -> None:
     if call.message and isinstance(call.message, Message):
         if not my_connections:
             await call.message.edit_text(
-                t.ADMIN_USERS_PROVIDERS_NOT_FOUND,
-                reply_markup=keyboards.back(f"admin:users:view:{user_id}"),
+                t("ADMIN_USERS_PROVIDERS_NOT_FOUND"),
+                reply_markup=keyboards.back(t, f"admin:users:view:{user_id}"),
             )
         else:
             await call.message.edit_text(
-                t.MY_PROVIDERS_TITLE,
-                reply_markup=keyboards.my_providers(my_connections),
+                t("MY_PROVIDERS_TITLE"),
+                reply_markup=keyboards.my_providers(my_connections, t),
             )
 
     await call.answer()
@@ -343,6 +383,10 @@ async def admin_users_providers(call: CallbackQuery) -> None:
 async def admin_users_delete_confirm(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
 
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if not (call.data and len(call.data.split(":")) == 4 and call.data.split(":")[-1].isdigit()):
         await call.answer()
         return
@@ -350,8 +394,8 @@ async def admin_users_delete_confirm(call: CallbackQuery, state: FSMContext) -> 
 
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
-            t.ADMIN_USERS_DELETE_CONFIRM.format(user_id=user_id),
-            reply_markup=keyboards.admin_user_delete_confirm(user_id),
+            t("ADMIN_USERS_DELETE_CONFIRM").format(user_id=user_id),
+            reply_markup=keyboards.admin_user_delete_confirm(user_id, t),
         )
     await call.answer()
 
@@ -359,6 +403,10 @@ async def admin_users_delete_confirm(call: CallbackQuery, state: FSMContext) -> 
 @router.callback_query(F.data.startswith("admin:users:del_ok:"))
 async def admin_users_delete_execute(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
+
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
 
     if not (call.data and len(call.data.split(":")) == 4 and call.data.split(":")[-1].isdigit()):
         await call.answer()
@@ -370,8 +418,8 @@ async def admin_users_delete_execute(call: CallbackQuery, state: FSMContext) -> 
     except v2hubError as exc:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
-                t.ADMIN_USERS_DELETE_ERROR.format(error=exc),
-                reply_markup=keyboards.back(callback_data="admin:panel"),
+                t("ADMIN_USERS_DELETE_ERROR").format(error=exc),
+                reply_markup=keyboards.back(t, callback_data="admin:panel"),
             )
         await call.answer()
         return
@@ -381,8 +429,8 @@ async def admin_users_delete_execute(call: CallbackQuery, state: FSMContext) -> 
 
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
-            t.ADMIN_USERS_DELETED.format(user_id=user_id),
-            reply_markup=keyboards.back(callback_data="admin:panel"),
+            t("ADMIN_USERS_DELETED").format(user_id=user_id),
+            reply_markup=keyboards.back(t, callback_data="admin:panel"),
         )
     await call.answer()
 
@@ -407,10 +455,14 @@ async def admin_users_delete_execute(call: CallbackQuery, state: FSMContext) -> 
 async def admin_broadcast(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
 
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
-            t.ADMIN_BROADCAST_SELECT_MODE,
-            reply_markup=keyboards.admin_broadcast_mode_select(),
+            t("ADMIN_BROADCAST_SELECT_MODE"),
+            reply_markup=keyboards.admin_broadcast_mode_select(t),
         )
     await state.set_state(AdminStates.choosing_broadcast_mode)
     await call.answer()
@@ -418,10 +470,14 @@ async def admin_broadcast(call: CallbackQuery, state: FSMContext) -> None:
 
 @router.callback_query(AdminStates.choosing_broadcast_mode, F.data == "admin:broadcast:mode:copy")
 async def admin_broadcast_mode_copy(call: CallbackQuery, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
-            t.ADMIN_BROADCAST_PROMPT,
-            reply_markup=keyboards.back(callback_data="admin:broadcast"),
+            t("ADMIN_BROADCAST_PROMPT"),
+            reply_markup=keyboards.back(t, callback_data="admin:broadcast"),
         )
     await state.set_state(AdminStates.waiting_broadcast_message)
     await call.answer()
@@ -431,10 +487,14 @@ async def admin_broadcast_mode_copy(call: CallbackQuery, state: FSMContext) -> N
     AdminStates.choosing_broadcast_mode, F.data == "admin:broadcast:mode:compose"
 )
 async def admin_broadcast_mode_compose(call: CallbackQuery, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
-            t.ADMIN_BROADCAST_CONTENT_PROMPT,
-            reply_markup=keyboards.back(callback_data="admin:broadcast"),
+            t("ADMIN_BROADCAST_CONTENT_PROMPT"),
+            reply_markup=keyboards.back(t, callback_data="admin:broadcast"),
         )
     await state.set_state(AdminStates.waiting_broadcast_content)
     await call.answer()
@@ -445,8 +505,12 @@ async def admin_broadcast_mode_compose(call: CallbackQuery, state: FSMContext) -
 
 @router.message(AdminStates.waiting_broadcast_message)
 async def receive_broadcast_message(message: Message, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(message)
+    if not user:
+        return
+
     await _stage_broadcast_source(message, state)
-    await _show_broadcast_preview(message, state)
+    await _show_broadcast_preview(message, state, t)
 
 
 # ── "Compose message" mode ────────────────────────────────────────────────────
@@ -454,11 +518,15 @@ async def receive_broadcast_message(message: Message, state: FSMContext) -> None
 
 @router.message(AdminStates.waiting_broadcast_content)
 async def receive_broadcast_content(message: Message, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(message)
+    if not user:
+        return
+
     await _stage_broadcast_source(message, state)
     await state.set_state(AdminStates.waiting_broadcast_keyboard)
     await message.answer(
-        t.ADMIN_BROADCAST_KEYBOARD_BUILDER,
-        reply_markup=keyboards.admin_broadcast_keyboard_builder(),
+        t("ADMIN_BROADCAST_KEYBOARD_BUILDER"),
+        reply_markup=keyboards.admin_broadcast_keyboard_builder(t),
     )
 
 
@@ -478,6 +546,10 @@ async def _stage_broadcast_source(message: Message, state: FSMContext) -> None:
 
 @router.message(AdminStates.waiting_broadcast_keyboard)
 async def receive_broadcast_keyboard(message: Message, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(message)
+    if not user:
+        return
+
     keyboard_text = message.html_text
 
     keyboard_data = parse_keyboard(keyboard_text)
@@ -486,19 +558,23 @@ async def receive_broadcast_keyboard(message: Message, state: FSMContext) -> Non
 
     await state.update_data(reply_markup=reply_markup.model_dump() if reply_markup else None)
 
-    await _show_broadcast_preview(message, state)
+    await _show_broadcast_preview(message, state, t)
 
 
 @router.callback_query(
     AdminStates.waiting_broadcast_keyboard, F.data == "admin:broadcast:kb:finish"
 )
 async def admin_broadcast_kb_finish(call: CallbackQuery, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.message and isinstance(call.message, Message):
-        await _show_broadcast_preview(call.message, state)
+        await _show_broadcast_preview(call.message, state, t)
     await call.answer()
 
 
-async def _show_broadcast_preview(message: Message, state: FSMContext) -> None:
+async def _show_broadcast_preview(message: Message, state: FSMContext, t: Translator) -> None:
     data = await state.get_data()
     source_chat_id: int | None = data.get("broadcast_chat_id")
     source_message_id: int | None = data.get("broadcast_message_id")
@@ -508,7 +584,8 @@ async def _show_broadcast_preview(message: Message, state: FSMContext) -> None:
 
     if source_chat_id is None or source_message_id is None or message.bot is None:
         await message.answer(
-            t.ADMIN_BROADCAST_NO_CONTENT, reply_markup=keyboards.back(callback_data="admin:panel")
+            t("ADMIN_BROADCAST_NO_CONTENT"),
+            reply_markup=keyboards.back(t, callback_data="admin:panel"),
         )
         await state.clear()
         return
@@ -531,25 +608,32 @@ async def _show_broadcast_preview(message: Message, state: FSMContext) -> None:
         await state.update_data(broadcast_message_id=final_message_id.message_id)
 
     await message.answer(
-        t.ADMIN_BROADCAST_PREVIEW.format(count=len(user_ids)),
-        reply_markup=keyboards.admin_broadcast_confirm(),
+        t("ADMIN_BROADCAST_PREVIEW").format(count=len(user_ids)),
+        reply_markup=keyboards.admin_broadcast_confirm(t),
     )
 
 
 @router.callback_query(AdminStates.confirming_broadcast, F.data == "admin:broadcast:cancel")
 async def cancel_broadcast(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
 
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
-            t.ADMIN_BROADCAST_CANCELLED,
-            reply_markup=keyboards.back(callback_data="admin:panel"),
+            t("ADMIN_BROADCAST_CANCELLED"),
+            reply_markup=keyboards.back(t, callback_data="admin:panel"),
         )
     await call.answer()
 
 
 @router.callback_query(AdminStates.confirming_broadcast, F.data == "admin:broadcast:confirm")
 async def confirm_broadcast(call: CallbackQuery, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     data = await state.get_data()
     source_chat_id: int | None = data.get("broadcast_chat_id")
     source_message_id: int | None = data.get("broadcast_message_id")
@@ -568,7 +652,7 @@ async def confirm_broadcast(call: CallbackQuery, state: FSMContext) -> None:
         await call.answer()
         return
 
-    await call.message.edit_text(t.ADMIN_BROADCAST_STARTED.format(count=len(recipient_ids)))
+    await call.message.edit_text(t("ADMIN_BROADCAST_STARTED").format(count=len(recipient_ids)))
     await call.answer()
 
     bot = call.message.bot
@@ -585,6 +669,7 @@ async def confirm_broadcast(call: CallbackQuery, state: FSMContext) -> None:
             reply_markup=reply_markup,
             source_message_id=source_message_id,
             recipient_ids=recipient_ids,
+            t=t,
         )
     )
     _broadcast_tasks.add(task)
@@ -599,6 +684,7 @@ async def _run_broadcast(
     source_chat_id: int,
     source_message_id: int,
     recipient_ids: list[int],
+    t: Translator,
 ) -> None:
     """Deliver the prepared broadcast to every recipient.
 
@@ -635,12 +721,12 @@ async def _run_broadcast(
         if i % 25 == 0 or i == total:
             with contextlib.suppress(Exception):
                 await progress_message.edit_text(
-                    t.ADMIN_BROADCAST_PROGRESS.format(sent=i, total=total)
+                    t("ADMIN_BROADCAST_PROGRESS").format(sent=i, total=total)
                 )
 
     await progress_message.edit_text(
-        t.ADMIN_BROADCAST_DONE.format(total=total, success=success, failed=failed),
-        reply_markup=keyboards.back(callback_data="admin:panel"),
+        t("ADMIN_BROADCAST_DONE").format(total=total, success=success, failed=failed),
+        reply_markup=keyboards.back(t, callback_data="admin:panel"),
     )
 
 
@@ -658,44 +744,47 @@ def _extract_hash(call: CallbackQuery, prefix: str) -> str | None:
     return provider_hash or None
 
 
-async def _render_provider_details(message: Message, provider_hash: str) -> None:
+async def _render_provider_details(message: Message, provider_hash: str, t: Translator) -> None:
     provider = await v2hub_client.get_provider_by_hash(provider_hash)
 
     if provider is None:
         await message.edit_text(
-            t.ADMIN_PROVIDER_NOT_FOUND,
-            reply_markup=keyboards.back(callback_data="admin:providers"),
+            t("ADMIN_PROVIDER_NOT_FOUND"),
+            reply_markup=keyboards.back(t, callback_data="admin:providers"),
         )
         return
 
     await message.edit_text(
-        t.ADMIN_PROVIDER_DETAILS.format(
+        t("ADMIN_PROVIDER_DETAILS").format(
             provider_name=provider.provider_name,
             provider_hash=provider.provider_hash,
             owner_hash=provider.owner_hash,
             provider_url=provider.provider_url or "—",
             api_token=provider.api_token,
         ),
-        reply_markup=keyboards.admin_provider_details(provider.provider_hash),
+        reply_markup=keyboards.admin_provider_details(provider.provider_hash, t),
     )
 
 
 @router.callback_query(F.data == "admin:providers")
 async def admin_providers(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
 
     all_providers = await v2hub_client.get_all_providers()
 
     if call.message and isinstance(call.message, Message):
         if not all_providers.provider_hashes:
             await call.message.edit_text(
-                t.ADMIN_PROVIDERS_LIST_EMPTY,
-                reply_markup=keyboards.admin_providers_list({}),
+                t("ADMIN_PROVIDERS_LIST_EMPTY"),
+                reply_markup=keyboards.admin_providers_list({}, t),
             )
         else:
             await call.message.edit_text(
-                t.ADMIN_PROVIDERS_LIST_TITLE.format(count=len(all_providers.provider_hashes)),
-                reply_markup=keyboards.admin_providers_list(all_providers.provider_hashes),
+                t("ADMIN_PROVIDERS_LIST_TITLE").format(count=len(all_providers.provider_hashes)),
+                reply_markup=keyboards.admin_providers_list(all_providers.provider_hashes, t),
             )
     await call.answer()
 
@@ -703,13 +792,16 @@ async def admin_providers(call: CallbackQuery, state: FSMContext) -> None:
 @router.callback_query(F.data.startswith("admin:provider:view:"))
 async def admin_provider_view(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
 
     provider_hash = _extract_hash(call, "admin:provider:view:")
     if provider_hash is None or not call.message or not isinstance(call.message, Message):
         await call.answer()
         return
 
-    await _render_provider_details(call.message, provider_hash)
+    await _render_provider_details(call.message, provider_hash, t)
     await call.answer()
 
 
@@ -718,10 +810,14 @@ async def admin_provider_view(call: CallbackQuery, state: FSMContext) -> None:
 
 @router.callback_query(F.data == "admin:provider:create")
 async def admin_provider_create_start(call: CallbackQuery, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
-            t.ADMIN_PROVIDER_CREATE_PROMPT_OWNER,
-            reply_markup=keyboards.back(callback_data="admin:providers"),
+            t("ADMIN_PROVIDER_CREATE_PROMPT_OWNER"),
+            reply_markup=keyboards.back(t, callback_data="admin:providers"),
         )
     await state.set_state(AdminStates.waiting_provider_create_owner_id)
     await call.answer()
@@ -729,39 +825,47 @@ async def admin_provider_create_start(call: CallbackQuery, state: FSMContext) ->
 
 @router.message(AdminStates.waiting_provider_create_owner_id)
 async def admin_provider_create_receive_owner(message: Message, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(message)
+    if not user:
+        return
+
     raw = (message.text or "").strip()
 
     if not raw.lstrip("-").isdigit():
         await message.answer(
-            t.ADMIN_USERS_INVALID_ID,
-            reply_markup=keyboards.back(callback_data="admin:providers"),
+            t("ADMIN_USERS_INVALID_ID"),
+            reply_markup=keyboards.back(t, callback_data="admin:providers"),
         )
         return
 
     await state.update_data(provider_owner_id=int(raw))
     await state.set_state(AdminStates.waiting_provider_create_name)
     await message.answer(
-        t.ADMIN_PROVIDER_CREATE_PROMPT_NAME,
-        reply_markup=keyboards.back(callback_data="admin:providers"),
+        t("ADMIN_PROVIDER_CREATE_PROMPT_NAME"),
+        reply_markup=keyboards.back(t, callback_data="admin:providers"),
     )
 
 
 @router.message(AdminStates.waiting_provider_create_name)
 async def admin_provider_create_receive_name(message: Message, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(message)
+    if not user:
+        return
+
     provider_name = (message.text or "").strip()
 
     if not provider_name:
         await message.answer(
-            t.ADMIN_PROVIDER_CREATE_NAME_INVALID,
-            reply_markup=keyboards.back(callback_data="admin:providers"),
+            t("ADMIN_PROVIDER_CREATE_NAME_INVALID"),
+            reply_markup=keyboards.back(t, callback_data="admin:providers"),
         )
         return
 
     await state.update_data(provider_name=provider_name)
     await state.set_state(AdminStates.waiting_provider_create_url)
     await message.answer(
-        t.ADMIN_PROVIDER_CREATE_PROMPT_URL,
-        reply_markup=keyboards.admin_provider_create_url(),
+        t("ADMIN_PROVIDER_CREATE_PROMPT_URL"),
+        reply_markup=keyboards.admin_provider_create_url(t),
     )
 
 
@@ -769,19 +873,31 @@ async def admin_provider_create_receive_name(message: Message, state: FSMContext
     AdminStates.waiting_provider_create_url, F.data == "admin:provider:create:url:skip"
 )
 async def admin_provider_create_skip_url(call: CallbackQuery, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     target = call.message if isinstance(call.message, Message) else None
-    await _finish_provider_create(target, state, provider_url=None)
+    await _finish_provider_create(target, state, provider_url=None, t=t)
     await call.answer()
 
 
 @router.message(AdminStates.waiting_provider_create_url)
 async def admin_provider_create_receive_url(message: Message, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(message)
+    if not user:
+        return
+
     provider_url = (message.text or "").strip() or None
-    await _finish_provider_create(message, state, provider_url=provider_url)
+    await _finish_provider_create(message, state, provider_url=provider_url, t=t)
 
 
 async def _finish_provider_create(
-    target: Message | None, state: FSMContext, *, provider_url: str | None
+    target: Message | None,
+    state: FSMContext,
+    *,
+    provider_url: str | None,
+    t: Translator,
 ) -> None:
     data = await state.get_data()
     owner_id: int | None = data.get("provider_owner_id")
@@ -799,20 +915,20 @@ async def _finish_provider_create(
         )
     except v2hubError as exc:
         text = (
-            t.ADMIN_PROVIDER_CREATE_CONFLICT.format(provider_name=provider_name)
+            t("ADMIN_PROVIDER_CREATE_CONFLICT").format(provider_name=provider_name)
             if "already exists" in str(exc).lower() or "conflict" in str(exc).lower()
-            else t.ADMIN_PROVIDER_CREATE_ERROR.format(error=exc)
+            else t("ADMIN_PROVIDER_CREATE_ERROR").format(error=exc)
         )
-        await target.answer(text, reply_markup=keyboards.back(callback_data="admin:providers"))
+        await target.answer(text, reply_markup=keyboards.back(t, callback_data="admin:providers"))
         return
 
     await target.answer(
-        t.ADMIN_PROVIDER_CREATED.format(
+        t("ADMIN_PROVIDER_CREATED").format(
             provider_name=provider.provider_name,
             owner_id=owner_id,
             api_token=provider.api_token,
         ),
-        reply_markup=keyboards.admin_provider_details(provider.provider_hash),
+        reply_markup=keyboards.admin_provider_details(provider.provider_hash, t),
     )
 
 
@@ -821,6 +937,10 @@ async def _finish_provider_create(
 
 @router.callback_query(F.data.startswith("admin:provider:rename:"))
 async def admin_provider_rename_start(call: CallbackQuery, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     provider_hash = _extract_hash(call, "admin:provider:rename:")
     if provider_hash is None or not call.message or not isinstance(call.message, Message):
         await call.answer()
@@ -829,8 +949,8 @@ async def admin_provider_rename_start(call: CallbackQuery, state: FSMContext) ->
     provider = await v2hub_client.get_provider_by_hash(provider_hash)
     if provider is None:
         await call.message.edit_text(
-            t.ADMIN_PROVIDER_NOT_FOUND,
-            reply_markup=keyboards.back(callback_data="admin:providers"),
+            t("ADMIN_PROVIDER_NOT_FOUND"),
+            reply_markup=keyboards.back(t, callback_data="admin:providers"),
         )
         await call.answer()
         return
@@ -838,14 +958,18 @@ async def admin_provider_rename_start(call: CallbackQuery, state: FSMContext) ->
     await state.update_data(provider_hash=provider_hash)
     await state.set_state(AdminStates.waiting_provider_rename)
     await call.message.edit_text(
-        t.ADMIN_PROVIDER_RENAME_PROMPT.format(provider_name=provider.provider_name),
-        reply_markup=keyboards.back(callback_data=f"admin:provider:view:{provider_hash}"),
+        t("ADMIN_PROVIDER_RENAME_PROMPT").format(provider_name=provider.provider_name),
+        reply_markup=keyboards.back(t, callback_data=f"admin:provider:view:{provider_hash}"),
     )
     await call.answer()
 
 
 @router.message(AdminStates.waiting_provider_rename)
 async def admin_provider_rename_receive(message: Message, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(message)
+    if not user:
+        return
+
     data = await state.get_data()
     provider_hash: str | None = data.get("provider_hash")
     new_name = (message.text or "").strip()
@@ -856,8 +980,8 @@ async def admin_provider_rename_receive(message: Message, state: FSMContext) -> 
 
     if not new_name:
         await message.answer(
-            t.ADMIN_PROVIDER_CREATE_NAME_INVALID,
-            reply_markup=keyboards.back(callback_data=f"admin:provider:view:{provider_hash}"),
+            t("ADMIN_PROVIDER_CREATE_NAME_INVALID"),
+            reply_markup=keyboards.back(t, callback_data=f"admin:provider:view:{provider_hash}"),
         )
         return
 
@@ -865,27 +989,28 @@ async def admin_provider_rename_receive(message: Message, state: FSMContext) -> 
         await v2hub_client.update_provider_name(provider_hash, new_name)
     except v2hubError as exc:
         text = (
-            t.ADMIN_PROVIDER_RENAME_CONFLICT.format(provider_name=new_name)
+            t("ADMIN_PROVIDER_RENAME_CONFLICT").format(provider_name=new_name)
             if "already" in str(exc).lower() or "conflict" in str(exc).lower()
-            else t.ADMIN_PROVIDER_UPDATE_ERROR.format(error=exc)
+            else t("ADMIN_PROVIDER_UPDATE_ERROR").format(error=exc)
         )
         await message.answer(
-            text, reply_markup=keyboards.back(callback_data=f"admin:provider:view:{provider_hash}")
+            text,
+            reply_markup=keyboards.back(t, callback_data=f"admin:provider:view:{provider_hash}"),
         )
         return
 
-    await message.answer(t.ADMIN_PROVIDER_RENAMED.format(provider_name=new_name))
+    await message.answer(t("ADMIN_PROVIDER_RENAMED").format(provider_name=new_name))
     provider = await v2hub_client.get_provider_by_hash(provider_hash)
     if provider is not None:
         await message.answer(
-            t.ADMIN_PROVIDER_DETAILS.format(
+            t("ADMIN_PROVIDER_DETAILS").format(
                 provider_name=provider.provider_name,
                 provider_hash=provider.provider_hash,
                 owner_hash=provider.owner_hash,
                 provider_url=provider.provider_url or "—",
                 api_token=provider.api_token,
             ),
-            reply_markup=keyboards.admin_provider_details(provider.provider_hash),
+            reply_markup=keyboards.admin_provider_details(provider.provider_hash, t),
         )
 
 
@@ -894,6 +1019,10 @@ async def admin_provider_rename_receive(message: Message, state: FSMContext) -> 
 
 @router.callback_query(F.data.startswith("admin:provider:seturl:"))
 async def admin_provider_set_url_start(call: CallbackQuery, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
     provider_hash = _extract_hash(call, "admin:provider:seturl:")
     if provider_hash is None or not call.message or not isinstance(call.message, Message):
         await call.answer()
@@ -902,8 +1031,8 @@ async def admin_provider_set_url_start(call: CallbackQuery, state: FSMContext) -
     provider = await v2hub_client.get_provider_by_hash(provider_hash)
     if provider is None:
         await call.message.edit_text(
-            t.ADMIN_PROVIDER_NOT_FOUND,
-            reply_markup=keyboards.back(callback_data="admin:providers"),
+            t("ADMIN_PROVIDER_NOT_FOUND"),
+            reply_markup=keyboards.back(t, callback_data="admin:providers"),
         )
         await call.answer()
         return
@@ -911,8 +1040,8 @@ async def admin_provider_set_url_start(call: CallbackQuery, state: FSMContext) -
     await state.update_data(provider_hash=provider_hash)
     await state.set_state(AdminStates.waiting_provider_new_url)
     await call.message.edit_text(
-        t.ADMIN_PROVIDER_SET_URL_PROMPT.format(provider_name=provider.provider_name),
-        reply_markup=keyboards.admin_provider_set_url_prompt(provider_hash),
+        t("ADMIN_PROVIDER_SET_URL_PROMPT").format(provider_name=provider.provider_name),
+        reply_markup=keyboards.admin_provider_set_url_prompt(provider_hash, t),
     )
     await call.answer()
 
@@ -922,18 +1051,25 @@ async def admin_provider_set_url_start(call: CallbackQuery, state: FSMContext) -
 )
 async def admin_provider_clear_url(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
 
     provider_hash = _extract_hash(call, "admin:provider:clearurl:")
     if provider_hash is None or not call.message or not isinstance(call.message, Message):
         await call.answer()
         return
 
-    await _apply_provider_url(call.message, provider_hash, provider_url=None)
+    await _apply_provider_url(call.message, provider_hash, provider_url=None, t=t)
     await call.answer()
 
 
 @router.message(AdminStates.waiting_provider_new_url)
 async def admin_provider_set_url_receive(message: Message, state: FSMContext) -> None:
+    user, t = await get_user_info_and_translator(message)
+    if not user:
+        return
+
     data = await state.get_data()
     provider_hash: str | None = data.get("provider_hash")
     await state.clear()
@@ -942,33 +1078,37 @@ async def admin_provider_set_url_receive(message: Message, state: FSMContext) ->
         return
 
     provider_url = (message.text or "").strip() or None
-    await _apply_provider_url(message, provider_hash, provider_url=provider_url)
+    await _apply_provider_url(message, provider_hash, provider_url=provider_url, t=t)
 
 
 async def _apply_provider_url(
-    target: Message, provider_hash: str, *, provider_url: str | None
+    target: Message,
+    provider_hash: str,
+    *,
+    provider_url: str | None,
+    t: Translator,
 ) -> None:
     try:
         await v2hub_client.update_provider_url(provider_hash, provider_url)
     except v2hubError as exc:
         await target.answer(
-            t.ADMIN_PROVIDER_UPDATE_ERROR.format(error=exc),
-            reply_markup=keyboards.back(callback_data=f"admin:provider:view:{provider_hash}"),
+            t("ADMIN_PROVIDER_UPDATE_ERROR").format(error=exc),
+            reply_markup=keyboards.back(t, callback_data=f"admin:provider:view:{provider_hash}"),
         )
         return
 
-    await target.answer(t.ADMIN_PROVIDER_URL_UPDATED)
+    await target.answer(t("ADMIN_PROVIDER_URL_UPDATED"))
     provider = await v2hub_client.get_provider_by_hash(provider_hash)
     if provider is not None:
         await target.answer(
-            t.ADMIN_PROVIDER_DETAILS.format(
+            t("ADMIN_PROVIDER_DETAILS").format(
                 provider_name=provider.provider_name,
                 provider_hash=provider.provider_hash,
                 owner_hash=provider.owner_hash,
                 provider_url=provider.provider_url or "—",
                 api_token=provider.api_token,
             ),
-            reply_markup=keyboards.admin_provider_details(provider.provider_hash),
+            reply_markup=keyboards.admin_provider_details(provider.provider_hash, t),
         )
 
 
@@ -978,6 +1118,9 @@ async def _apply_provider_url(
 @router.callback_query(F.data.startswith("admin:provider:del:"))
 async def admin_provider_delete_confirm(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
 
     provider_hash = _extract_hash(call, "admin:provider:del:")
     if provider_hash is None or not call.message or not isinstance(call.message, Message):
@@ -987,15 +1130,15 @@ async def admin_provider_delete_confirm(call: CallbackQuery, state: FSMContext) 
     provider = await v2hub_client.get_provider_by_hash(provider_hash)
     if provider is None:
         await call.message.edit_text(
-            t.ADMIN_PROVIDER_NOT_FOUND,
-            reply_markup=keyboards.back(callback_data="admin:providers"),
+            t("ADMIN_PROVIDER_NOT_FOUND"),
+            reply_markup=keyboards.back(t, callback_data="admin:providers"),
         )
         await call.answer()
         return
 
     await call.message.edit_text(
-        t.ADMIN_PROVIDER_DELETE_CONFIRM.format(provider_name=provider.provider_name),
-        reply_markup=keyboards.admin_provider_delete_confirm(provider_hash),
+        t("ADMIN_PROVIDER_DELETE_CONFIRM").format(provider_name=provider.provider_name),
+        reply_markup=keyboards.admin_provider_delete_confirm(provider_hash, t),
     )
     await call.answer()
 
@@ -1003,6 +1146,9 @@ async def admin_provider_delete_confirm(call: CallbackQuery, state: FSMContext) 
 @router.callback_query(F.data.startswith("admin:provider:del_ok:"))
 async def admin_provider_delete_execute(call: CallbackQuery, state: FSMContext) -> None:
     await state.clear()
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
 
     provider_hash = _extract_hash(call, "admin:provider:del_ok:")
     if provider_hash is None or not call.message or not isinstance(call.message, Message):
@@ -1016,14 +1162,14 @@ async def admin_provider_delete_execute(call: CallbackQuery, state: FSMContext) 
         await v2hub_client.delete_provider(provider_hash)
     except v2hubError as exc:
         await call.message.edit_text(
-            t.ADMIN_PROVIDER_DELETE_ERROR.format(error=exc),
-            reply_markup=keyboards.back(callback_data="admin:providers"),
+            t("ADMIN_PROVIDER_DELETE_ERROR").format(error=exc),
+            reply_markup=keyboards.back(t, callback_data="admin:providers"),
         )
         await call.answer()
         return
 
     await call.message.edit_text(
-        t.ADMIN_PROVIDER_DELETED.format(provider_name=provider_name),
-        reply_markup=keyboards.back(callback_data="admin:providers"),
+        t("ADMIN_PROVIDER_DELETED").format(provider_name=provider_name),
+        reply_markup=keyboards.back(t, callback_data="admin:providers"),
     )
     await call.answer()

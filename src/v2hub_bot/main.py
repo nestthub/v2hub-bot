@@ -8,6 +8,7 @@ from aiogram.enums import ParseMode
 from v2hub_bot.config import settings
 from v2hub_bot.handlers import admin, provider, start, support, token
 from v2hub_bot.handlers import help as help_handler
+from v2hub_bot.handlers import settings as settings_handler
 from v2hub_bot.middlewares import ThrottleMiddleware
 
 logging.basicConfig(
@@ -35,6 +36,7 @@ async def main() -> None:
     dp.include_router(support.router)
     dp.include_router(help_handler.router)
     dp.include_router(admin.router)
+    dp.include_router(settings_handler.router)
 
     logger.info("Bot started")
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())

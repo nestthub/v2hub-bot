@@ -1,0 +1,642 @@
+# v2hub Telegram bot — Persian translation.
+# msgid = message key; msgstr = text (Telegram HTML, {placeholders} preserved).
+msgid ""
+msgstr ""
+"Project-Id-Version: v2hub-bot\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);"
+
+msgid "WELCOME_NEW"
+msgstr ""
+"<tg-emoji emoji-id=\"5906995262378741881\">👋</tg-emoji> سلام، <b>{name}</b>!\n"
+"\n"
+"<b>v2hub</b> مدیر شخصی VPN شماست.\n"
+"\n"
+"فقط یک بار دستگاه خود را با لینک اشتراک متصل کنید و برای همیشه از تنظیمات دستی خلاص شوید. همه تغییرات به‌صورت خودکار روی تمام دستگاه‌های شما اعمال می‌شود: گوشی، لپ‌تاپ، تبلت و دستگاه‌های اعضای خانواده."
+
+msgid "WELCOME_RETURNING"
+msgstr ""
+"<tg-emoji emoji-id=\"5906995262378741881\">👋</tg-emoji> خوش آمدید، <b>{name}</b>!\n"
+"\n"
+"همه‌چیز تحت کنترل است — اتصالات خود را از طریق پنل مدیریت کنید."
+
+msgid "TOKEN_NONE"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>توکن دسترسی</b>\n"
+"\n"
+"هنوز توکنی ندارید — بدون آن نمی‌توانید وارد پنل شوید.\n"
+"برای دریافت فوری آن، دکمه زیر را بزنید."
+
+msgid "TOKEN_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>توکن دسترسی شما</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> توکن را به هیچ‌کس ندهید: این توکن دسترسی کامل به حساب شما را فراهم می‌کند."
+
+msgid "TOKEN_GENERATING"
+msgstr "⏳ در حال ساخت توکن…"
+
+msgid "TOKEN_CREATED"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> <b>توکن آماده است!</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"آن را کپی کنید و هنگام ورود به پنل مدیریت وارد کنید.\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> توکن را به هیچ‌کس ندهید: این توکن دسترسی کامل به حساب شما را فراهم می‌کند."
+
+msgid "TOKEN_REFRESHING"
+msgstr "⏳ در حال به‌روزرسانی توکن…"
+
+msgid "TOKEN_REFRESHED"
+msgstr ""
+"<tg-emoji emoji-id=\"6005843436479975944\">🔄</tg-emoji> <b>توکن به‌روزرسانی شد!</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"توکن قبلی غیرفعال شد — توکن جدید را در پنل مدیریت وارد کنید.\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> توکن را به هیچ‌کس ندهید: این توکن دسترسی کامل به حساب شما را فراهم می‌کند."
+
+msgid "TOKEN_NO_ACTIVE"
+msgstr "شما توکن فعالی ندارید."
+
+msgid "TOKEN_ERROR_GENERATE"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> ساخت توکن ناموفق بود:\n"
+"<code>{error}</code>\n"
+"\n"
+"لطفاً بعداً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید."
+
+msgid "TOKEN_ERROR_REFRESH"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> به‌روزرسانی توکن ناموفق بود:\n"
+"<code>{error}</code>\n"
+"\n"
+"لطفاً بعداً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید."
+
+msgid "HELP_TEXT"
+msgstr ""
+"<tg-emoji emoji-id=\"6030848053177486888\">❓</tg-emoji> <b>راهنما</b>\n"
+"\n"
+"<b>v2hub</b> یک سرویس مدیریت اتصالات VPN است. دستگاه خود را فقط یک بار تنظیم کنید و همه به‌روزرسانی‌ها به‌صورت خودکار اعمال می‌شوند.\n"
+"\n"
+"<b>دستورها:</b>\n"
+"<blockquote>/start — منوی اصلی\n"
+"/token — توکن دسترسی\n"
+"/settings - تنظیمات ربات\n"
+"/support — تماس با پشتیبانی</blockquote>\n"
+"\n"
+"<b>نحوه شروع:</b>\n"
+"۱. با /token توکن دریافت کنید\n"
+"۲. پنل را باز کنید و هنگام ورود توکن را وارد کنید\n"
+"۳. دستگاه‌ها را اضافه کنید — تغییرات به‌صورت خودکار اعمال می‌شوند\n"
+"\n"
+"با به‌روزرسانی توکن، توکن قبلی غیرفعال می‌شود. فراموش نکنید توکن جدید را در پنل وارد کنید."
+
+msgid "SUPPORT_TEXT"
+msgstr ""
+"<tg-emoji emoji-id=\"5936017305585586269\">📩</tg-emoji> <b>پشتیبانی</b>\n"
+"\n"
+"مشکلی پیش آمده یا سؤالی دارید؟\n"
+"ما در دسترس هستیم — برای ما بنویسید تا موضوع را حل کنیم.\n"
+"\n"
+"هرچه توضیح دقیق‌تری بدهید، سریع‌تر کمک می‌کنیم."
+
+msgid "PROVIDER_INTRO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>ارائه‌دهنده</b>\n"
+"\n"
+"ارائه‌دهنده شریک v2hub با سرویس VPN اختصاصی است که می‌تواند کاربران را متصل کند و اشتراک‌های آن‌ها را از طریق API مدیریت کند.\n"
+"\n"
+"<b>برای ارائه‌دهنده شدن لازم است:</b>\n"
+"<blockquote>• سرویس VPN فعال داشته باشید؛\n"
+"• یا قصد تأییدشده و روشنی برای ساخت سرویس بر پایه v2hub داشته باشید</blockquote>\n"
+"\n"
+"نقش ارائه‌دهنده فقط توسط مدیر داده می‌شود. برای دریافت ارائه‌دهنده اختصاصی با پشتیبانی تماس بگیرید."
+
+msgid "PROVIDER_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>ارائه‌دهنده شما</b>\n"
+"\n"
+"<b>نام:</b> {provider_name}\n"
+"<b>URL:</b> {provider_url}"
+
+msgid "PROVIDER_TOKEN_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>توکن ارائه‌دهنده</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> این توکن را به هیچ‌کس ندهید: دسترسی کامل به API ارائه‌دهنده شما را فراهم می‌کند."
+
+msgid "PROVIDER_TOKEN_REFRESHING"
+msgstr "⏳ در حال به‌روزرسانی توکن ارائه‌دهنده…"
+
+msgid "PROVIDER_TOKEN_REFRESHED"
+msgstr ""
+"<tg-emoji emoji-id=\"6005843436479975944\">🔄</tg-emoji> <b>توکن ارائه‌دهنده به‌روزرسانی شد!</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"توکن قبلی غیرفعال شد."
+
+msgid "PROVIDER_TOKEN_ERROR_REFRESH"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> به‌روزرسانی توکن ارائه‌دهنده ناموفق بود:\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_NOT_FOUND_FOR_ROLE"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> حساب ارائه‌دهنده شما یافت نشد. با پشتیبانی تماس بگیرید."
+
+msgid "PROVIDER_PUBLIC_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>{provider_name}</b>\n"
+"\n"
+"<b>URL:</b> {provider_url}\n"
+"<b>وضعیت مجوز:</b> {status}"
+
+msgid "PROVIDER_STATUS_NONE"
+msgstr "مجاز نشده"
+
+msgid "PROVIDER_STATUS_PENDING"
+msgstr "در انتظار تأیید"
+
+msgid "PROVIDER_STATUS_APPROVED"
+msgstr "متصل"
+
+msgid "PROVIDER_STATUS_REVOKED"
+msgstr "قطع شده"
+
+msgid "PROVIDER_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> ارائه‌دهنده <code>{provider_name}</code> یافت نشد."
+
+msgid "PROVIDER_CONNECTION_REQUEST"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>درخواست اتصال ارائه‌دهنده</b>\n"
+"\n"
+"<b>{provider_name}</b>\n"
+"URL: {provider_url}\n"
+"\n"
+"ارائه‌دهنده درخواست دسترسی برای افزودن اشتراک را دارد.\n"
+"\n"
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> اتصال ارائه‌دهنده <b>بر اشتراک‌های شخصی شما تأثیری نمی‌گذارد</b> — اشتراک‌های جدید در کنار آن‌ها ساخته می‌شوند.\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">🔒</tg-emoji> درخواست را در زیر تأیید یا رد کنید."
+
+msgid "PROVIDER_CONNECTION_LINK_INVALID"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> لینک اتصال نامعتبر است یا منقضی شده. از ارائه‌دهنده بخواهید لینک جدیدی ارسال کند.\n"
+"\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_APPROVING"
+msgstr "⏳ در حال تأیید اتصال…"
+
+msgid "PROVIDER_APPROVED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> ارائه‌دهنده <b>{provider_name}</b> متصل شد."
+
+msgid "PROVIDER_APPROVE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> تأیید اتصال ناموفق بود:\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_LIMIT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> به حداکثر تعداد ارائه‌دهندگان متصل رسیده‌اید.\n"
+"برای اتصال ارائه‌دهنده جدید، یک ارائه‌دهنده بلااستفاده را قطع کنید."
+
+msgid "PROVIDER_REJECTING"
+msgstr "⏳ در حال رد درخواست…"
+
+msgid "PROVIDER_REJECTED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> درخواست ارائه‌دهنده <b>{provider_name}</b> رد شد."
+
+msgid "PROVIDER_REJECT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> رد درخواست ناموفق بود:\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_DISCONNECTING"
+msgstr "⏳ در حال قطع ارائه‌دهنده…"
+
+msgid "PROVIDER_DISCONNECTED_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> ارائه‌دهنده <b>{provider_name}</b> قطع شد و از فهرست ارائه‌دهندگان شما حذف شد."
+
+msgid "PROVIDER_DISCONNECTED_REVOKED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> ارائه‌دهنده <b>{provider_name}</b> قطع شد. "
+
+msgid "PROVIDER_DISCONNECT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> قطع ارائه‌دهنده ناموفق بود:\n"
+"<code>{error}</code>"
+
+msgid "MY_PROVIDERS_EMPTY"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>ارائه‌دهندگان من</b>\n"
+"\n"
+"هنوز ارائه‌دهنده متصلی ندارید."
+
+msgid "MY_PROVIDERS_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>ارائه‌دهندگان من</b>"
+
+msgid "DEEP_LINK_INVALID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> لینک خراب یا ناقص است."
+
+msgid "BTN_PROVIDER"
+msgstr "ارائه‌دهنده"
+
+msgid "BTN_MY_PROVIDERS"
+msgstr "ارائه‌دهندگان من"
+
+msgid "BTN_PROVIDER_TOKEN"
+msgstr "توکن ارائه‌دهنده"
+
+msgid "BTN_PROVIDER_REFRESH_TOKEN"
+msgstr "به‌روزرسانی توکن"
+
+msgid "BTN_CONNECT"
+msgstr "اتصال"
+
+msgid "BTN_REJECT"
+msgstr "رد کردن"
+
+msgid "BTN_DISCONNECT"
+msgstr "قطع کردن"
+
+msgid "BTN_CONTACT_SUPPORT"
+msgstr "تماس با مدیر"
+
+msgid "BTN_EXTENDED_MENU"
+msgstr "منوی پیشرفته"
+
+msgid "BTN_V2HUB_API"
+msgstr "درباره پروژه"
+
+msgid "BTN_V2HUB_GITHUB"
+msgstr "گیت‌هاب ما"
+
+msgid "THROTTLE_WARNING"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> لطفاً پیش از دستور بعدی کمی صبر کنید."
+
+msgid "BTN_OPEN_PANEL"
+msgstr "باز کردن پنل"
+
+msgid "BTN_MY_TOKEN"
+msgstr "توکن من"
+
+msgid "BTN_GET_TOKEN"
+msgstr "دریافت توکن"
+
+msgid "BTN_REFRESH_TOKEN"
+msgstr "به‌روزرسانی توکن"
+
+msgid "BTN_SETTINGS"
+msgstr "تنظیمات"
+
+msgid "SETTINGS_TEXT"
+msgstr "ربات را مطابق سلیقه خود تنظیم کنید!"
+
+msgid "SETTINGS_LANGUAGE_TEXT"
+msgstr "زبان رابط کاربری را انتخاب کنید:"
+
+msgid "BTN_LANGUAGE"
+msgstr "زبان"
+
+msgid "BTN_HELP"
+msgstr "راهنما"
+
+msgid "BTN_SUPPORT"
+msgstr "پشتیبانی"
+
+msgid "BTN_BACK"
+msgstr "بازگشت"
+
+msgid "BTN_MAIN_MENU"
+msgstr "منوی اصلی"
+
+msgid "BTN_WRITE_SUPPORT"
+msgstr "تماس با پشتیبانی"
+
+msgid "BTN_ADMIN_PANEL"
+msgstr "پنل مدیریت"
+
+msgid "BTN_ADMIN_PANEL_SETTINGS"
+msgstr "تنظیمات پنل"
+
+msgid "BTN_ADMIN_STATS"
+msgstr "آمار"
+
+msgid "BTN_ADMIN_USERS"
+msgstr "کاربران"
+
+msgid "BTN_ADMIN_PROVIDERS"
+msgstr "ارائه‌دهندگان"
+
+msgid "BTN_ADMIN_BROADCAST"
+msgstr "ارسال همگانی"
+
+msgid "BTN_ADMIN_STATS_DAY"
+msgstr "روز"
+
+msgid "BTN_ADMIN_STATS_WEEK"
+msgstr "هفته"
+
+msgid "BTN_ADMIN_STATS_MONTH"
+msgstr "ماه"
+
+msgid "BTN_ADMIN_STATS_ALL"
+msgstr "همه زمان‌ها"
+
+msgid "BTN_ADMIN_STATS_OPTIONAL"
+msgstr "تعیین تاریخ"
+
+msgid "ADMIN_STATS_SELECT"
+msgstr "<tg-emoji emoji-id=\"5994378914636500516\">📊</tg-emoji> بازه‌ای را که می‌خواهید آمار آن را ببینید انتخاب کنید:"
+
+msgid "ADMIN_STATS_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"5994378914636500516\">📊</tg-emoji> مجموع کاربران: <code>{total_users}</code>\n"
+"\n"
+"آمار {period}:\n"
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> کاربران جدید: <code>{new_users}</code>\n"
+"<tg-emoji emoji-id=\"6034923938486684992\">⭐</tg-emoji> اشتراک‌های جدید: <code>{new_subs}</code>"
+
+msgid "ADMIN_STATS_GET_OPTIONAL_PERIOD"
+msgstr ""
+"<tg-emoji emoji-id=\"5850317551090800862\">⏱️</tg-emoji> بازه را با این قالب وارد کنید:\n"
+"<code>YYYY-MM-DD : YYYY-MM-DD</code>\n"
+"\n"
+"می‌توانید فقط ابتدا یا انتهای بازه را مشخص کنید:\n"
+"<code>YYYY-MM-DD :</code> — از تاریخ مشخص‌شده\n"
+"<code>: YYYY-MM-DD</code> — تا تاریخ مشخص‌شده"
+
+msgid "ADMIN_STATS_PERIOD_INVALID"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> قالب بازه نامعتبر است. دوباره تلاش کنید، برای مثال:\n"
+"<code>2026-01-01 : 2026-02-01</code>"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_DAY"
+msgstr "برای ۲۴ ساعت گذشته"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_WEEK"
+msgstr "برای هفته گذشته"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_MONTH"
+msgstr "برای ماه گذشته"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_ALL"
+msgstr "برای کل دوره"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM"
+msgstr "از {start_date} تا {end_date}"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM_START"
+msgstr "راه‌اندازی"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM_END"
+msgstr "امروز"
+
+msgid "ADMIN_STATS_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> دریافت آمار ناموفق بود:\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PANEL_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"5926783847453692661\">🛠</tg-emoji> <b>پنل مدیریت</b>\n"
+"\n"
+"یک بخش را انتخاب کنید:"
+
+msgid "BTN_ADMIN_USER_CREATE"
+msgstr "ایجاد کاربر"
+
+msgid "ADMIN_USERS_PROVIDERS_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> این کاربر ارائه‌دهنده‌ای ندارد."
+
+msgid "ADMIN_USERS_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> شناسه تلگرام کاربری را که می‌خواهید پیدا کنید ارسال کنید."
+
+msgid "ADMIN_USERS_INVALID_ID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> شناسه باید عدد باشد. دوباره تلاش کنید."
+
+msgid "ADMIN_USERS_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> کاربری با شناسه <code>{user_id}</code> یافت نشد."
+
+msgid "ADMIN_USERS_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> اطلاعات کاربر:\n"
+"شناسه: <code>{user_id}</code>\n"
+"توکن: <tg-spoiler><code>{api_token}</code></tg-spoiler>\n"
+"ارائه‌دهنده: <code>{provider_name}</code>\n"
+"تاریخ اولین اجرای ربات: {created_at}\n"
+"مسدود در ربات: {is_banned}"
+
+msgid "ADMIN_USERS_UNKNOWN"
+msgstr "نامشخص"
+
+msgid "BTN_ADMIN_USER_DELETE"
+msgstr "حذف کاربر"
+
+msgid "ADMIN_USERS_DELETE_CONFIRM"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">⚠️</tg-emoji> کاربر <code>{user_id}</code> حذف شود؟ این عمل بازگشت‌ناپذیر است: حساب v2hub او و تمام اطلاعات مرتبط حذف خواهد شد."
+
+msgid "ADMIN_USERS_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> کاربر <code>{user_id}</code> حذف شد."
+
+msgid "ADMIN_USERS_DELETE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> حذف کاربر ناموفق بود:\n"
+"<code>{error}</code>"
+
+msgid "BTN_ADMIN_BROADCAST_MODE_COPY"
+msgstr "ارسال همان‌طور که هست"
+
+msgid "BTN_ADMIN_BROADCAST_MODE_COMPOSE"
+msgstr "ساخت پیام"
+
+msgid "ADMIN_BROADCAST_SELECT_MODE"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> می‌خواهید ارسال همگانی را چگونه آماده کنید؟\n"
+"\n"
+"<b>ارسال همان‌طور که هست</b> — پیام آماده را کامل ارسال کنید (متن، رسانه، قالب‌بندی، دکمه‌ها — در صورت وجود)، بدون تغییر برای هر گیرنده کپی می‌شود.\n"
+"\n"
+"<b>ساخت پیام</b> — متن یا رسانه ارسال کنید و سپس دکمه‌ها (با لینک یا عملکرد) را جداگانه اضافه کنید."
+
+msgid "ADMIN_BROADCAST_PROMPT"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> پیامی را که می‌خواهید برای کاربران ارسال کنید بفرستید — همان‌طور که هست، همراه با هر رسانه و کیبورد پیوست‌شده برای گیرندگان کپی می‌شود.\n"
+"\n"
+"قالب‌بندی HTML تلگرام پشتیبانی می‌شود."
+
+msgid "ADMIN_BROADCAST_CONTENT_PROMPT"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> متن یا رسانه (با کپشن یا بدون آن) را برای ارسال همگانی بفرستید. در مرحله بعد می‌توانید دکمه‌ها را به آن اضافه کنید.\n"
+"\n"
+"قالب‌بندی HTML تلگرام پشتیبانی می‌شود."
+
+msgid "ADMIN_BROADCAST_KEYBOARD_BUILDER"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> <b>افزودن کیبورد</b>\n"
+"\n"
+"قالب دکمه:\n"
+"<code>متن - callback_data</code>\n"
+"\n"
+"چند دکمه در یک ردیف:\n"
+"<code>کاتالوگ - catalog | راهنما - help</code>\n"
+"\n"
+"لینک:\n"
+"<code>وب‌سایت - https://example.com</code>\n"
+"\n"
+"پارامترهای اضافی:\n"
+"<code>دکمه - action [style=primary]</code>\n"
+"<code>دکمه - action [emoji=123456]</code>\n"
+"\n"
+"سبک‌ها: <code>success</code>، <code>primary</code>، <code>danger</code>.\n"
+"\n"
+"برای ردیف جدید، از خط جدید شروع کنید.\n"
+"\n"
+"اگر کیبورد لازم نیست، «رد کردن» را بزنید."
+
+msgid "ADMIN_BROADCAST_NO_CONTENT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> دریافت محتوای ارسال همگانی ناموفق بود. از ابتدا شروع کنید."
+
+msgid "ADMIN_BROADCAST_PREVIEW"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> ارسال همگانی این‌گونه نمایش داده می‌شود. تعداد گیرندگان: <b>{count}</b>.\n"
+"\n"
+"ارسال تأیید شود؟"
+
+msgid "ADMIN_BROADCAST_CANCELLED"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> ارسال همگانی لغو شد."
+
+msgid "ADMIN_BROADCAST_STARTED"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> ارسال همگانی آغاز شد. تعداد گیرندگان: <b>{count}</b>."
+
+msgid "ADMIN_BROADCAST_PROGRESS"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> ارسال همگانی در حال انجام: {sent}/{total}"
+
+msgid "ADMIN_BROADCAST_DONE"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> ارسال همگانی تکمیل شد.\n"
+"<blockquote>مجموع گیرندگان: {total}\n"
+"تحویل موفق: {success}\n"
+"تحویل ناموفق: {failed}</blockquote>"
+
+msgid "BTN_ADMIN_BROADCAST_CONFIRM"
+msgstr "ارسال"
+
+msgid "BTN_ADMIN_BROADCAST_CANCEL"
+msgstr "لغو"
+
+msgid "BTN_ADMIN_BROADCAST_NO_KEYBOARD"
+msgstr "بدون دکمه"
+
+msgid "BTN_ADMIN_PROVIDER_CREATE"
+msgstr "ایجاد ارائه‌دهنده"
+
+msgid "BTN_ADMIN_PROVIDER_RENAME"
+msgstr "تغییر نام"
+
+msgid "BTN_ADMIN_PROVIDER_SET_URL"
+msgstr "تغییر URL"
+
+msgid "BTN_ADMIN_PROVIDER_DELETE"
+msgstr "حذف"
+
+msgid "BTN_ADMIN_PROVIDER_SKIP"
+msgstr "رد کردن"
+
+msgid "BTN_ADMIN_PROVIDER_CLEAR"
+msgstr "پاک کردن"
+
+msgid "ADMIN_PROVIDERS_LIST_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> <b>ارائه‌دهندگان</b>\n"
+"\n"
+"مجموع: <b>{count}</b>.\n"
+"یک ارائه‌دهنده انتخاب کنید یا ارائه‌دهنده جدید بسازید:"
+
+msgid "ADMIN_PROVIDERS_LIST_EMPTY"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> <b>ارائه‌دهندگان</b>\n"
+"\n"
+"هنوز ارائه‌دهنده‌ای وجود ندارد."
+
+msgid "ADMIN_PROVIDER_DETAILS"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> ارائه‌دهنده <b>{provider_name}</b>\n"
+"Hash: <code>{provider_hash}</code>\n"
+"Owner hash: <code>{owner_hash}</code>\n"
+"URL: {provider_url}\n"
+"توکن: <blockquote><tg-spoiler>{api_token}</tg-spoiler></blockquote>"
+
+msgid "ADMIN_PROVIDER_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> ارائه‌دهنده یافت نشد."
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_OWNER"
+msgstr ""
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> شناسه تلگرام کاربری را که مالک ارائه‌دهنده جدید خواهد بود ارسال کنید.\n"
+"\n"
+"کاربر باید از قبل حساب v2hub داشته باشد — در صورت نیاز ساخته می‌شود."
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_NAME"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> نام ارائه‌دهنده جدید را ارسال کنید (باید منحصربه‌فرد باشد)."
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_URL"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> URL ارائه‌دهنده را ارسال کنید یا «رد کردن» را بزنید."
+
+msgid "ADMIN_PROVIDER_CREATE_NAME_INVALID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> نام نمی‌تواند خالی باشد. دوباره تلاش کنید."
+
+msgid "ADMIN_PROVIDER_CREATE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> ایجاد ارائه‌دهنده ناموفق بود:\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PROVIDER_CREATE_CONFLICT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> ارائه‌دهنده‌ای با نام <b>{provider_name}</b> از قبل وجود دارد."
+
+msgid "ADMIN_PROVIDER_CREATED"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> ارائه‌دهنده <b>{provider_name}</b> ایجاد شد.\n"
+"<blockquote>Owner: <code>{owner_id}</code>\n"
+"توکن: <code>{api_token}</code></blockquote>"
+
+msgid "ADMIN_PROVIDER_RENAME_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> نام جدید ارائه‌دهنده <b>{provider_name}</b> را ارسال کنید."
+
+msgid "ADMIN_PROVIDER_RENAMED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> نام ارائه‌دهنده به <b>{provider_name}</b> تغییر کرد."
+
+msgid "ADMIN_PROVIDER_RENAME_CONFLICT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> نام <b>{provider_name}</b> قبلاً گرفته شده است. نام دیگری امتحان کنید."
+
+msgid "ADMIN_PROVIDER_SET_URL_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> URL جدید ارائه‌دهنده <b>{provider_name}</b> را ارسال کنید یا برای حذف URL «پاک کردن» را بزنید."
+
+msgid "ADMIN_PROVIDER_URL_UPDATED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> URL ارائه‌دهنده به‌روزرسانی شد."
+
+msgid "ADMIN_PROVIDER_UPDATE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> به‌روزرسانی ارائه‌دهنده ناموفق بود:\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PROVIDER_DELETE_CONFIRM"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">⚠️</tg-emoji> ارائه‌دهنده <b>{provider_name}</b> حذف شود؟ این عمل بازگشت‌ناپذیر است."
+
+msgid "ADMIN_PROVIDER_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> ارائه‌دهنده <b>{provider_name}</b> حذف شد."
+
+msgid "ADMIN_PROVIDER_DELETE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> حذف ارائه‌دهنده ناموفق بود:\n"
+"<code>{error}</code>"

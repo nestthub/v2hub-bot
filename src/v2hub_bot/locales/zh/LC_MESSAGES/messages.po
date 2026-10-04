@@ -1,0 +1,642 @@
+# v2hub Telegram bot — Simplified Chinese translation.
+# msgid = message key; msgstr = text (Telegram HTML, {placeholders} preserved).
+msgid ""
+msgstr ""
+"Project-Id-Version: v2hub-bot\n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;"
+
+msgid "WELCOME_NEW"
+msgstr ""
+"<tg-emoji emoji-id=\"5906995262378741881\">👋</tg-emoji> 你好，<b>{name}</b>！\n"
+"\n"
+"<b>v2hub</b> 是您的个人 VPN 管理器。\n"
+"\n"
+"只需通过订阅链接连接一次设备，从此告别手动配置。所有更改都会自动应用到您的每台设备：手机、笔记本电脑、平板电脑以及家人的设备。"
+
+msgid "WELCOME_RETURNING"
+msgstr ""
+"<tg-emoji emoji-id=\"5906995262378741881\">👋</tg-emoji> 欢迎回来，<b>{name}</b>！\n"
+"\n"
+"一切尽在掌控——通过面板管理您的连接。"
+
+msgid "TOKEN_NONE"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>访问令牌</b>\n"
+"\n"
+"您还没有令牌——没有令牌就无法登录面板。\n"
+"点击下方按钮即可立即获取。"
+
+msgid "TOKEN_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>您的访问令牌</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> 请勿将令牌透露给任何人：它拥有您账户的完全访问权限。"
+
+msgid "TOKEN_GENERATING"
+msgstr "⏳ 正在创建令牌…"
+
+msgid "TOKEN_CREATED"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> <b>令牌已生成！</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"请复制并在登录控制面板时粘贴。\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> 请勿将令牌透露给任何人：它拥有您账户的完全访问权限。"
+
+msgid "TOKEN_REFRESHING"
+msgstr "⏳ 正在更新令牌…"
+
+msgid "TOKEN_REFRESHED"
+msgstr ""
+"<tg-emoji emoji-id=\"6005843436479975944\">🔄</tg-emoji> <b>令牌已更新！</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"旧令牌已失效——请在控制面板中粘贴新令牌。\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> 请勿将令牌透露给任何人：它拥有您账户的完全访问权限。"
+
+msgid "TOKEN_NO_ACTIVE"
+msgstr "您没有有效的令牌。"
+
+msgid "TOKEN_ERROR_GENERATE"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 创建令牌失败：\n"
+"<code>{error}</code>\n"
+"\n"
+"请稍后重试或联系客服。"
+
+msgid "TOKEN_ERROR_REFRESH"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 更新令牌失败：\n"
+"<code>{error}</code>\n"
+"\n"
+"请稍后重试或联系客服。"
+
+msgid "HELP_TEXT"
+msgstr ""
+"<tg-emoji emoji-id=\"6030848053177486888\">❓</tg-emoji> <b>帮助</b>\n"
+"\n"
+"<b>v2hub</b> 是一项 VPN 连接管理服务。只需设置一次设备，所有更新都会自动应用。\n"
+"\n"
+"<b>命令：</b>\n"
+"<blockquote>/start — 主菜单\n"
+"/token — 访问令牌\n"
+"/settings - 机器人设置\n"
+"/support — 联系客服</blockquote>\n"
+"\n"
+"<b>如何开始：</b>\n"
+"1. 通过 /token 获取令牌\n"
+"2. 打开面板并在登录时粘贴令牌\n"
+"3. 添加设备——更改将自动应用\n"
+"\n"
+"更新令牌后，旧令牌将失效。请记得在面板中粘贴新令牌。"
+
+msgid "SUPPORT_TEXT"
+msgstr ""
+"<tg-emoji emoji-id=\"5936017305585586269\">📩</tg-emoji> <b>客服</b>\n"
+"\n"
+"遇到问题或有疑问？\n"
+"我们随时在线——给我们留言，我们会帮您解决。\n"
+"\n"
+"描述得越详细，我们处理得越快。"
+
+msgid "PROVIDER_INTRO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>服务商</b>\n"
+"\n"
+"服务商是拥有自有 VPN 服务的 v2hub 合作伙伴，可通过 API 接入用户并管理其订阅。\n"
+"\n"
+"<b>成为服务商的条件：</b>\n"
+"<blockquote>• 拥有正在运营的 VPN 服务；\n"
+"• 或有明确确认的、基于 v2hub 搭建服务的意向</blockquote>\n"
+"\n"
+"服务商角色仅由管理员授予。请联系客服以获取您自己的服务商。"
+
+msgid "PROVIDER_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>您的服务商</b>\n"
+"\n"
+"<b>名称：</b>{provider_name}\n"
+"<b>URL：</b>{provider_url}"
+
+msgid "PROVIDER_TOKEN_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>服务商令牌</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> 请勿将此令牌透露给任何人：它拥有您服务商 API 的完全访问权限。"
+
+msgid "PROVIDER_TOKEN_REFRESHING"
+msgstr "⏳ 正在更新服务商令牌…"
+
+msgid "PROVIDER_TOKEN_REFRESHED"
+msgstr ""
+"<tg-emoji emoji-id=\"6005843436479975944\">🔄</tg-emoji> <b>服务商令牌已更新！</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"旧令牌已失效。"
+
+msgid "PROVIDER_TOKEN_ERROR_REFRESH"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 更新服务商令牌失败：\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_NOT_FOUND_FOR_ROLE"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 未找到您的服务商账户。请联系客服。"
+
+msgid "PROVIDER_PUBLIC_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>{provider_name}</b>\n"
+"\n"
+"<b>URL：</b>{provider_url}\n"
+"<b>授权状态：</b>{status}"
+
+msgid "PROVIDER_STATUS_NONE"
+msgstr "未授权"
+
+msgid "PROVIDER_STATUS_PENDING"
+msgstr "等待确认"
+
+msgid "PROVIDER_STATUS_APPROVED"
+msgstr "已连接"
+
+msgid "PROVIDER_STATUS_REVOKED"
+msgstr "已断开"
+
+msgid "PROVIDER_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 未找到服务商 <code>{provider_name}</code>。"
+
+msgid "PROVIDER_CONNECTION_REQUEST"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>服务商连接请求</b>\n"
+"\n"
+"<b>{provider_name}</b>\n"
+"URL：{provider_url}\n"
+"\n"
+"该服务商请求获得添加订阅的权限。\n"
+"\n"
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 连接服务商<b>不会影响</b>您的个人订阅——新订阅将与现有订阅并存。\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">🔒</tg-emoji> 请在下方确认或拒绝该请求。"
+
+msgid "PROVIDER_CONNECTION_LINK_INVALID"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 连接链接无效或已过期。请让服务商发送新的链接。\n"
+"\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_APPROVING"
+msgstr "⏳ 正在确认连接…"
+
+msgid "PROVIDER_APPROVED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 服务商 <b>{provider_name}</b> 已连接。"
+
+msgid "PROVIDER_APPROVE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 确认连接失败：\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_LIMIT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 已达到可连接服务商的最大数量。\n"
+"请断开不使用的服务商以连接新的服务商。"
+
+msgid "PROVIDER_REJECTING"
+msgstr "⏳ 正在拒绝请求…"
+
+msgid "PROVIDER_REJECTED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 来自服务商 <b>{provider_name}</b> 的请求已被拒绝。"
+
+msgid "PROVIDER_REJECT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 拒绝请求失败：\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_DISCONNECTING"
+msgstr "⏳ 正在断开服务商…"
+
+msgid "PROVIDER_DISCONNECTED_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 服务商 <b>{provider_name}</b> 已断开并从您的服务商列表中移除。"
+
+msgid "PROVIDER_DISCONNECTED_REVOKED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 服务商 <b>{provider_name}</b> 已断开。"
+
+msgid "PROVIDER_DISCONNECT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 断开服务商失败：\n"
+"<code>{error}</code>"
+
+msgid "MY_PROVIDERS_EMPTY"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>我的服务商</b>\n"
+"\n"
+"您还没有已连接的服务商。"
+
+msgid "MY_PROVIDERS_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>我的服务商</b>"
+
+msgid "DEEP_LINK_INVALID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 链接已损坏或不完整。"
+
+msgid "BTN_PROVIDER"
+msgstr "服务商"
+
+msgid "BTN_MY_PROVIDERS"
+msgstr "我的服务商"
+
+msgid "BTN_PROVIDER_TOKEN"
+msgstr "服务商令牌"
+
+msgid "BTN_PROVIDER_REFRESH_TOKEN"
+msgstr "更新令牌"
+
+msgid "BTN_CONNECT"
+msgstr "连接"
+
+msgid "BTN_REJECT"
+msgstr "拒绝"
+
+msgid "BTN_DISCONNECT"
+msgstr "断开"
+
+msgid "BTN_CONTACT_SUPPORT"
+msgstr "联系管理员"
+
+msgid "BTN_EXTENDED_MENU"
+msgstr "扩展菜单"
+
+msgid "BTN_V2HUB_API"
+msgstr "关于项目"
+
+msgid "BTN_V2HUB_GITHUB"
+msgstr "我们的 GitHub"
+
+msgid "THROTTLE_WARNING"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> 请稍等片刻再发送下一条命令。"
+
+msgid "BTN_OPEN_PANEL"
+msgstr "打开面板"
+
+msgid "BTN_MY_TOKEN"
+msgstr "我的令牌"
+
+msgid "BTN_GET_TOKEN"
+msgstr "获取令牌"
+
+msgid "BTN_REFRESH_TOKEN"
+msgstr "更新令牌"
+
+msgid "BTN_SETTINGS"
+msgstr "设置"
+
+msgid "SETTINGS_TEXT"
+msgstr "根据您的喜好设置机器人！"
+
+msgid "SETTINGS_LANGUAGE_TEXT"
+msgstr "选择界面语言："
+
+msgid "BTN_LANGUAGE"
+msgstr "语言"
+
+msgid "BTN_HELP"
+msgstr "帮助"
+
+msgid "BTN_SUPPORT"
+msgstr "客服"
+
+msgid "BTN_BACK"
+msgstr "返回"
+
+msgid "BTN_MAIN_MENU"
+msgstr "主菜单"
+
+msgid "BTN_WRITE_SUPPORT"
+msgstr "联系客服"
+
+msgid "BTN_ADMIN_PANEL"
+msgstr "管理面板"
+
+msgid "BTN_ADMIN_PANEL_SETTINGS"
+msgstr "面板设置"
+
+msgid "BTN_ADMIN_STATS"
+msgstr "统计"
+
+msgid "BTN_ADMIN_USERS"
+msgstr "用户"
+
+msgid "BTN_ADMIN_PROVIDERS"
+msgstr "服务商"
+
+msgid "BTN_ADMIN_BROADCAST"
+msgstr "群发消息"
+
+msgid "BTN_ADMIN_STATS_DAY"
+msgstr "天"
+
+msgid "BTN_ADMIN_STATS_WEEK"
+msgstr "周"
+
+msgid "BTN_ADMIN_STATS_MONTH"
+msgstr "月"
+
+msgid "BTN_ADMIN_STATS_ALL"
+msgstr "全部时间"
+
+msgid "BTN_ADMIN_STATS_OPTIONAL"
+msgstr "自定义日期"
+
+msgid "ADMIN_STATS_SELECT"
+msgstr "<tg-emoji emoji-id=\"5994378914636500516\">📊</tg-emoji> 请选择要查看统计数据的时间段："
+
+msgid "ADMIN_STATS_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"5994378914636500516\">📊</tg-emoji> 用户总数：<code>{total_users}</code>\n"
+"\n"
+"{period}统计：\n"
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> 新增用户：<code>{new_users}</code>\n"
+"<tg-emoji emoji-id=\"6034923938486684992\">⭐</tg-emoji> 新增订阅：<code>{new_subs}</code>"
+
+msgid "ADMIN_STATS_GET_OPTIONAL_PERIOD"
+msgstr ""
+"<tg-emoji emoji-id=\"5850317551090800862\">⏱️</tg-emoji> 请按以下格式输入时间段：\n"
+"<code>YYYY-MM-DD : YYYY-MM-DD</code>\n"
+"\n"
+"也可以只指定起始或结束日期：\n"
+"<code>YYYY-MM-DD :</code> — 从指定日期起\n"
+"<code>: YYYY-MM-DD</code> — 截至指定日期"
+
+msgid "ADMIN_STATS_PERIOD_INVALID"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 时间段格式无效。请重试，例如：\n"
+"<code>2026-01-01 : 2026-02-01</code>"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_DAY"
+msgstr "过去 24 小时"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_WEEK"
+msgstr "过去一周"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_MONTH"
+msgstr "过去一个月"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_ALL"
+msgstr "全部时间"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM"
+msgstr "{start_date} 至 {end_date} 期间"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM_START"
+msgstr "上线"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM_END"
+msgstr "今天"
+
+msgid "ADMIN_STATS_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 获取统计数据失败：\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PANEL_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"5926783847453692661\">🛠</tg-emoji> <b>管理面板</b>\n"
+"\n"
+"请选择板块："
+
+msgid "BTN_ADMIN_USER_CREATE"
+msgstr "创建用户"
+
+msgid "ADMIN_USERS_PROVIDERS_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 该用户没有服务商。"
+
+msgid "ADMIN_USERS_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> 请发送要查找的用户的 Telegram ID。"
+
+msgid "ADMIN_USERS_INVALID_ID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> ID 必须是数字。请重试。"
+
+msgid "ADMIN_USERS_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 未找到 ID 为 <code>{user_id}</code> 的用户。"
+
+msgid "ADMIN_USERS_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> 用户信息：\n"
+"ID：<code>{user_id}</code>\n"
+"令牌：<tg-spoiler><code>{api_token}</code></tg-spoiler>\n"
+"服务商：<code>{provider_name}</code>\n"
+"首次启动机器人日期：{created_at}\n"
+"在机器人中被封禁：{is_banned}"
+
+msgid "ADMIN_USERS_UNKNOWN"
+msgstr "未知"
+
+msgid "BTN_ADMIN_USER_DELETE"
+msgstr "删除用户"
+
+msgid "ADMIN_USERS_DELETE_CONFIRM"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">⚠️</tg-emoji> 删除用户 <code>{user_id}</code>？此操作不可撤销：其 v2hub 账户及所有相关数据都将被删除。"
+
+msgid "ADMIN_USERS_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 用户 <code>{user_id}</code> 已删除。"
+
+msgid "ADMIN_USERS_DELETE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 删除用户失败：\n"
+"<code>{error}</code>"
+
+msgid "BTN_ADMIN_BROADCAST_MODE_COPY"
+msgstr "原样转发"
+
+msgid "BTN_ADMIN_BROADCAST_MODE_COMPOSE"
+msgstr "编写消息"
+
+msgid "ADMIN_BROADCAST_SELECT_MODE"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> 您想如何准备群发消息？\n"
+"\n"
+"<b>原样转发</b> — 发送完整的成品消息（文本、媒体、格式、按钮——如有），它将原封不动地复制给每位收件人。\n"
+"\n"
+"<b>编写消息</b> — 发送文本或媒体，然后单独添加按钮（链接或操作）。"
+
+msgid "ADMIN_BROADCAST_PROMPT"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> 请发送要群发给用户的消息——它将原样复制给收件人，包括所有媒体和已附加的键盘。\n"
+"\n"
+"支持 Telegram HTML 标记。"
+
+msgid "ADMIN_BROADCAST_CONTENT_PROMPT"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> 请发送用于群发的文本或媒体（可带或不带说明）。下一步您可以为其添加按钮。\n"
+"\n"
+"支持 Telegram HTML 标记。"
+
+msgid "ADMIN_BROADCAST_KEYBOARD_BUILDER"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> <b>添加键盘</b>\n"
+"\n"
+"按钮格式：\n"
+"<code>文字 - callback_data</code>\n"
+"\n"
+"同一行多个按钮：\n"
+"<code>目录 - catalog | 帮助 - help</code>\n"
+"\n"
+"链接：\n"
+"<code>网站 - https://example.com</code>\n"
+"\n"
+"附加参数：\n"
+"<code>按钮 - action [style=primary]</code>\n"
+"<code>按钮 - action [emoji=123456]</code>\n"
+"\n"
+"样式：<code>success</code>、<code>primary</code>、<code>danger</code>。\n"
+"\n"
+"新的一行请另起一行。\n"
+"\n"
+"如果不需要键盘，请点击“跳过”。"
+
+msgid "ADMIN_BROADCAST_NO_CONTENT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 无法获取群发内容。请重新开始。"
+
+msgid "ADMIN_BROADCAST_PREVIEW"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> 群发消息将如此显示。收件人：<b>{count}</b>。\n"
+"\n"
+"确认发送？"
+
+msgid "ADMIN_BROADCAST_CANCELLED"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 群发已取消。"
+
+msgid "ADMIN_BROADCAST_STARTED"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> 群发已开始。收件人：<b>{count}</b>。"
+
+msgid "ADMIN_BROADCAST_PROGRESS"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> 群发进行中：{sent}/{total}"
+
+msgid "ADMIN_BROADCAST_DONE"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 群发已完成。\n"
+"<blockquote>收件人总数：{total}\n"
+"成功送达：{success}\n"
+"送达失败：{failed}</blockquote>"
+
+msgid "BTN_ADMIN_BROADCAST_CONFIRM"
+msgstr "发送"
+
+msgid "BTN_ADMIN_BROADCAST_CANCEL"
+msgstr "取消"
+
+msgid "BTN_ADMIN_BROADCAST_NO_KEYBOARD"
+msgstr "无按钮"
+
+msgid "BTN_ADMIN_PROVIDER_CREATE"
+msgstr "创建服务商"
+
+msgid "BTN_ADMIN_PROVIDER_RENAME"
+msgstr "重命名"
+
+msgid "BTN_ADMIN_PROVIDER_SET_URL"
+msgstr "修改 URL"
+
+msgid "BTN_ADMIN_PROVIDER_DELETE"
+msgstr "删除"
+
+msgid "BTN_ADMIN_PROVIDER_SKIP"
+msgstr "跳过"
+
+msgid "BTN_ADMIN_PROVIDER_CLEAR"
+msgstr "清除"
+
+msgid "ADMIN_PROVIDERS_LIST_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> <b>服务商</b>\n"
+"\n"
+"总数：<b>{count}</b>。\n"
+"请选择服务商或创建新的服务商："
+
+msgid "ADMIN_PROVIDERS_LIST_EMPTY"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> <b>服务商</b>\n"
+"\n"
+"暂无服务商。"
+
+msgid "ADMIN_PROVIDER_DETAILS"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> 服务商 <b>{provider_name}</b>\n"
+"Hash：<code>{provider_hash}</code>\n"
+"Owner hash：<code>{owner_hash}</code>\n"
+"URL：{provider_url}\n"
+"令牌：<blockquote><tg-spoiler>{api_token}</tg-spoiler></blockquote>"
+
+msgid "ADMIN_PROVIDER_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 未找到服务商。"
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_OWNER"
+msgstr ""
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> 请发送将成为新服务商所有者的用户的 Telegram ID。\n"
+"\n"
+"该用户应已拥有 v2hub 账户——如有必要将自动创建。"
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_NAME"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> 请发送新服务商的名称（必须唯一）。"
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_URL"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> 请发送服务商的 URL，或点击“跳过”。"
+
+msgid "ADMIN_PROVIDER_CREATE_NAME_INVALID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 名称不能为空。请重试。"
+
+msgid "ADMIN_PROVIDER_CREATE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 创建服务商失败：\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PROVIDER_CREATE_CONFLICT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 名为 <b>{provider_name}</b> 的服务商已存在。"
+
+msgid "ADMIN_PROVIDER_CREATED"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 服务商 <b>{provider_name}</b> 已创建。\n"
+"<blockquote>Owner：<code>{owner_id}</code>\n"
+"令牌：<code>{api_token}</code></blockquote>"
+
+msgid "ADMIN_PROVIDER_RENAME_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> 请发送服务商 <b>{provider_name}</b> 的新名称。"
+
+msgid "ADMIN_PROVIDER_RENAMED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 服务商已重命名为 <b>{provider_name}</b>。"
+
+msgid "ADMIN_PROVIDER_RENAME_CONFLICT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 名称 <b>{provider_name}</b> 已被占用。请尝试其他名称。"
+
+msgid "ADMIN_PROVIDER_SET_URL_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> 请发送服务商 <b>{provider_name}</b> 的新 URL，或点击“清除”以移除 URL。"
+
+msgid "ADMIN_PROVIDER_URL_UPDATED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 服务商 URL 已更新。"
+
+msgid "ADMIN_PROVIDER_UPDATE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 更新服务商失败：\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PROVIDER_DELETE_CONFIRM"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">⚠️</tg-emoji> 删除服务商 <b>{provider_name}</b>？此操作不可撤销。"
+
+msgid "ADMIN_PROVIDER_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> 服务商 <b>{provider_name}</b> 已删除。"
+
+msgid "ADMIN_PROVIDER_DELETE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> 删除服务商失败：\n"
+"<code>{error}</code>"

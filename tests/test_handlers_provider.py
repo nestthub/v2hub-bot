@@ -3,8 +3,7 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from aiogram.types import CallbackQuery, Message
-from aiogram.types import User as TgUser
+from helpers import make_callback, make_message, t, tg_user
 
 from v2hub.models import (
     ConnectionResponse,
@@ -17,35 +16,11 @@ from v2hub_bot.services import ConflictError, NotFoundError, v2hubError
 pytestmark = pytest.mark.unit
 
 
-def _tg_user(user_id: int = 1) -> MagicMock:
-    user = MagicMock(spec=TgUser)
-    user.id = user_id
-    user.first_name = "Alice"
-    return user
-
-
-def _message(user: MagicMock | None = None) -> MagicMock:
-    message = MagicMock(spec=Message)
-    message.from_user = user
-    message.answer = AsyncMock()
-    return message
-
-
-def _callback(user: MagicMock, data: str) -> MagicMock:
-    call = MagicMock(spec=CallbackQuery)
-    call.from_user = user
-    call.data = data
-    call.message = MagicMock(spec=Message)
-    call.message.edit_text = AsyncMock()
-    call.answer = AsyncMock()
-    return call
-
-
 # ── Status helpers ────────────────────────────────────────────────────────────
 
 
 def test_status_label_none_means_not_authorized() -> None:
-    assert provider_handler._status_label(None) == provider_handler.t.PROVIDER_STATUS_NONE
+    assert provider_handler._status_label(None, t) == t("PROVIDER_STATUS_NONE")
 
 
 @pytest.mark.parametrize(
@@ -53,15 +28,15 @@ def test_status_label_none_means_not_authorized() -> None:
     [
         (
             ProviderAuthorizationStatus.PENDING,
-            provider_handler.t.PROVIDER_STATUS_PENDING,
+            t("PROVIDER_STATUS_PENDING"),
         ),
         (
             ProviderAuthorizationStatus.APPROVED,
-            provider_handler.t.PROVIDER_STATUS_APPROVED,
+            t("PROVIDER_STATUS_APPROVED"),
         ),
         (
             ProviderAuthorizationStatus.REVOKED,
-            provider_handler.t.PROVIDER_STATUS_REVOKED,
+            t("PROVIDER_STATUS_REVOKED"),
         ),
     ],
 )
@@ -69,7 +44,7 @@ def test_status_label_known_values(
     status: ProviderAuthorizationStatus,
     expected: str,
 ) -> None:
-    assert provider_handler._status_label(status) == expected
+    assert provider_handler._status_label(status, t) == expected
 
 
 def test_is_pending_and_is_approved() -> None:
@@ -80,20 +55,20 @@ def test_is_pending_and_is_approved() -> None:
 
 
 def test_extract_provider_name_from_valid_callback() -> None:
-    call = _callback(_tg_user(), "provider:approve:vpn123")
+    call = make_callback(tg_user(), "provider:approve:vpn123")
 
     assert provider_handler._extract_provider_name(call) == "vpn123"
 
 
 def test_extract_provider_name_returns_none_for_missing_data() -> None:
-    call = _callback(_tg_user(), "")
+    call = make_callback(tg_user(), "")
     call.data = None
 
     assert provider_handler._extract_provider_name(call) is None
 
 
 def test_extract_provider_name_returns_none_for_malformed_data() -> None:
-    call = _callback(_tg_user(), "provider:approve")
+    call = make_callback(tg_user(), "provider:approve")
 
     assert provider_handler._extract_provider_name(call) is None
 
@@ -103,7 +78,7 @@ def test_extract_provider_name_returns_none_for_malformed_data() -> None:
 
 @pytest.mark.asyncio
 async def test_provider_deep_link_with_existing_authorization_shows_status() -> None:
-    message = _message(_tg_user())
+    message = make_message(tg_user())
     fake_auth = MagicMock(
         provider_name="vpn123",
         provider_url="https://vpn123.example.com",
@@ -121,6 +96,7 @@ async def test_provider_deep_link_with_existing_authorization_shows_status() -> 
             "provider",
             "vpn123",
             None,
+            t=t,
         )
 
     message.answer.assert_awaited_once()
@@ -130,7 +106,7 @@ async def test_provider_deep_link_with_existing_authorization_shows_status() -> 
 
 @pytest.mark.asyncio
 async def test_provider_deep_link_no_authorization_falls_back_to_provider_lookup() -> None:
-    message = _message(_tg_user())
+    message = make_message(tg_user())
     fake_provider = MagicMock(
         provider_name="vpn123",
         provider_url="https://vpn123.example.com",
@@ -154,6 +130,7 @@ async def test_provider_deep_link_no_authorization_falls_back_to_provider_lookup
             "provider",
             "vpn123",
             None,
+            t=t,
         )
 
     message.answer.assert_awaited_once()
@@ -163,7 +140,7 @@ async def test_provider_deep_link_no_authorization_falls_back_to_provider_lookup
 
 @pytest.mark.asyncio
 async def test_provider_deep_link_unknown_provider_shows_not_found() -> None:
-    message = _message(_tg_user())
+    message = make_message(tg_user())
 
     with (
         patch.object(
@@ -183,6 +160,7 @@ async def test_provider_deep_link_unknown_provider_shows_not_found() -> None:
             "provider",
             "ghost",
             None,
+            t=t,
         )
 
     text = message.answer.await_args.args[0]
@@ -194,7 +172,7 @@ async def test_provider_deep_link_unknown_provider_shows_not_found() -> None:
 
 @pytest.mark.asyncio
 async def test_conn_deep_link_forwards_hmac_and_shows_connection_request() -> None:
-    message = _message(_tg_user())
+    message = make_message(tg_user())
     fake_auth = MagicMock(
         provider_name="vpn123",
         provider_url="https://vpn123.example.com",
@@ -213,6 +191,7 @@ async def test_conn_deep_link_forwards_hmac_and_shows_connection_request() -> No
             "conn",
             "vpn123",
             "raw-hmac",
+            t=t,
         )
 
     process_mock.assert_awaited_once_with(
@@ -222,12 +201,15 @@ async def test_conn_deep_link_forwards_hmac_and_shows_connection_request() -> No
     )
     text = message.answer.await_args.args[0]
     assert "vpn123" in text
-    assert "подпис" in text.lower()
+    assert text == t("PROVIDER_CONNECTION_REQUEST").format(
+        provider_name="vpn123",
+        provider_url="https://vpn123.example.com",
+    )
 
 
 @pytest.mark.asyncio
 async def test_conn_deep_link_invalid_hmac_shows_error() -> None:
-    message = _message(_tg_user())
+    message = make_message(tg_user())
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -240,6 +222,7 @@ async def test_conn_deep_link_invalid_hmac_shows_error() -> None:
             "conn",
             "vpn123",
             "bad-hmac",
+            t=t,
         )
 
     text = message.answer.await_args.args[0]
@@ -251,7 +234,7 @@ async def test_conn_deep_link_invalid_hmac_shows_error() -> None:
 
 @pytest.mark.asyncio
 async def test_provider_menu_shows_intro_for_non_provider() -> None:
-    call = _callback(_tg_user(), "provider:menu")
+    call = make_callback(tg_user(), "provider:menu")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -263,12 +246,12 @@ async def test_provider_menu_shows_intro_for_non_provider() -> None:
     owner_lookup_mock.assert_awaited_once_with(1)
     call.message.edit_text.assert_awaited_once()
     text = call.message.edit_text.await_args.args[0]
-    assert text == provider_handler.t.PROVIDER_INTRO
+    assert text == t("PROVIDER_INTRO")
 
 
 @pytest.mark.asyncio
 async def test_provider_menu_shows_provider_info_for_provider_role() -> None:
-    call = _callback(_tg_user(), "provider:menu")
+    call = make_callback(tg_user(), "provider:menu")
     fake_provider = MagicMock(
         provider_name="vpn123",
         provider_url="https://vpn123.example.com",
@@ -291,7 +274,7 @@ async def test_provider_menu_shows_provider_info_for_provider_role() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_approve_success() -> None:
-    call = _callback(_tg_user(), "provider:approve:vpn123")
+    call = make_callback(tg_user(), "provider:approve:vpn123")
     fake_auth = MagicMock(
         provider_name="vpn123",
         status=ProviderAuthorizationStatus.APPROVED,
@@ -310,7 +293,7 @@ async def test_cb_provider_approve_success() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_approve_conflict_shows_error() -> None:
-    call = _callback(_tg_user(), "provider:approve:vpn123")
+    call = make_callback(tg_user(), "provider:approve:vpn123")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -325,7 +308,7 @@ async def test_cb_provider_approve_conflict_shows_error() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_approve_missing_provider_name_noop() -> None:
-    call = _callback(_tg_user(), "provider:approve")
+    call = make_callback(tg_user(), "provider:approve")
 
     await provider_handler.cb_provider_approve(call)
 
@@ -335,7 +318,7 @@ async def test_cb_provider_approve_missing_provider_name_noop() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_reject_success() -> None:
-    call = _callback(_tg_user(), "provider:reject:vpn123")
+    call = make_callback(tg_user(), "provider:reject:vpn123")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -350,7 +333,7 @@ async def test_cb_provider_reject_success() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_reject_not_found_shows_error() -> None:
-    call = _callback(_tg_user(), "provider:reject:vpn123")
+    call = make_callback(tg_user(), "provider:reject:vpn123")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -365,7 +348,7 @@ async def test_cb_provider_reject_not_found_shows_error() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_disconnect_deletes_when_no_subscriptions() -> None:
-    call = _callback(_tg_user(), "provider:disconnect:vpn123")
+    call = make_callback(tg_user(), "provider:disconnect:vpn123")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -375,14 +358,14 @@ async def test_cb_provider_disconnect_deletes_when_no_subscriptions() -> None:
         await provider_handler.cb_provider_disconnect(call)
 
     text = call.message.edit_text.await_args.args[0]
-    assert text == provider_handler.t.PROVIDER_DISCONNECTED_DELETED.format(
+    assert text == t("PROVIDER_DISCONNECTED_DELETED").format(
         provider_name="vpn123",
     )
 
 
 @pytest.mark.asyncio
 async def test_cb_provider_disconnect_revokes_when_subscriptions_exist() -> None:
-    call = _callback(_tg_user(), "provider:disconnect:vpn123")
+    call = make_callback(tg_user(), "provider:disconnect:vpn123")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -396,14 +379,14 @@ async def test_cb_provider_disconnect_revokes_when_subscriptions_exist() -> None
         await provider_handler.cb_provider_disconnect(call)
 
     text = call.message.edit_text.await_args.args[0]
-    assert text == provider_handler.t.PROVIDER_DISCONNECTED_REVOKED.format(
+    assert text == t("PROVIDER_DISCONNECTED_REVOKED").format(
         provider_name="vpn123",
     )
 
 
 @pytest.mark.asyncio
 async def test_cb_provider_disconnect_error_shows_message() -> None:
-    call = _callback(_tg_user(), "provider:disconnect:vpn123")
+    call = make_callback(tg_user(), "provider:disconnect:vpn123")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -421,7 +404,7 @@ async def test_cb_provider_disconnect_error_shows_message() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_my_providers_empty_when_no_authorizations() -> None:
-    call = _callback(_tg_user(), "provider:my")
+    call = make_callback(tg_user(), "provider:my")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -435,12 +418,12 @@ async def test_cb_my_providers_empty_when_no_authorizations() -> None:
         await provider_handler.cb_my_providers(call)
 
     text = call.message.edit_text.await_args.args[0]
-    assert text == provider_handler.t.MY_PROVIDERS_EMPTY
+    assert text == t("MY_PROVIDERS_EMPTY")
 
 
 @pytest.mark.asyncio
 async def test_cb_my_providers_lists_authorized_providers_only() -> None:
-    call = _callback(_tg_user(), "provider:my")
+    call = make_callback(tg_user(), "provider:my")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -467,7 +450,7 @@ async def test_cb_my_providers_lists_authorized_providers_only() -> None:
         await provider_handler.cb_my_providers(call)
 
     call.message.edit_text.assert_awaited_once()
-    assert call.message.edit_text.await_args.args[0] == provider_handler.t.MY_PROVIDERS_TITLE
+    assert call.message.edit_text.await_args.args[0] == t("MY_PROVIDERS_TITLE")
 
 
 # ── provider:view ────────────────────────────────────────────────────────────
@@ -475,7 +458,7 @@ async def test_cb_my_providers_lists_authorized_providers_only() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_view_missing_name_noop() -> None:
-    call = _callback(_tg_user(), "provider:view")
+    call = make_callback(tg_user(), "provider:view")
 
     await provider_handler.cb_provider_view(call)
 
@@ -485,7 +468,7 @@ async def test_cb_provider_view_missing_name_noop() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_view_shows_not_found_when_no_authorization() -> None:
-    call = _callback(_tg_user(), "provider:view:vpn123")
+    call = make_callback(tg_user(), "provider:view:vpn123")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -500,7 +483,7 @@ async def test_cb_provider_view_shows_not_found_when_no_authorization() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_view_shows_authorization_state() -> None:
-    call = _callback(_tg_user(), "provider:view:vpn123")
+    call = make_callback(tg_user(), "provider:view:vpn123")
     fake_auth = MagicMock(
         provider_name="vpn123",
         provider_url="https://vpn123.example.com",
@@ -523,7 +506,7 @@ async def test_cb_provider_view_shows_authorization_state() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_reject_missing_provider_name_noop() -> None:
-    call = _callback(_tg_user(), "provider:reject")
+    call = make_callback(tg_user(), "provider:reject")
 
     await provider_handler.cb_provider_reject(call)
 
@@ -533,7 +516,7 @@ async def test_cb_provider_reject_missing_provider_name_noop() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_disconnect_missing_provider_name_noop() -> None:
-    call = _callback(_tg_user(), "provider:disconnect")
+    call = make_callback(tg_user(), "provider:disconnect")
 
     await provider_handler.cb_provider_disconnect(call)
 
@@ -546,7 +529,7 @@ async def test_cb_provider_disconnect_missing_provider_name_noop() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_token_shows_token_for_provider_role() -> None:
-    call = _callback(_tg_user(), "provider:token")
+    call = make_callback(tg_user(), "provider:token")
     fake_provider = MagicMock(api_token="provider-token-abc")
 
     with patch.object(
@@ -562,7 +545,7 @@ async def test_cb_provider_token_shows_token_for_provider_role() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_token_shows_error_when_user_owns_no_provider() -> None:
-    call = _callback(_tg_user(), "provider:token")
+    call = make_callback(tg_user(), "provider:token")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -572,12 +555,12 @@ async def test_cb_provider_token_shows_error_when_user_owns_no_provider() -> Non
         await provider_handler.cb_provider_token(call)
 
     text = call.message.edit_text.await_args.args[0]
-    assert text == provider_handler.t.PROVIDER_NOT_FOUND_FOR_ROLE
+    assert text == t("PROVIDER_NOT_FOUND_FOR_ROLE")
 
 
 @pytest.mark.asyncio
 async def test_cb_provider_token_refresh_shows_error_when_user_owns_no_provider() -> None:
-    call = _callback(_tg_user(), "provider:token_refresh")
+    call = make_callback(tg_user(), "provider:token_refresh")
 
     with patch.object(
         provider_handler.v2hub_client,
@@ -587,12 +570,12 @@ async def test_cb_provider_token_refresh_shows_error_when_user_owns_no_provider(
         await provider_handler.cb_provider_token_refresh(call)
 
     text = call.message.edit_text.await_args.args[0]
-    assert text == provider_handler.t.PROVIDER_NOT_FOUND_FOR_ROLE
+    assert text == t("PROVIDER_NOT_FOUND_FOR_ROLE")
 
 
 @pytest.mark.asyncio
 async def test_cb_provider_token_refresh_success() -> None:
-    call = _callback(_tg_user(), "provider:token_refresh")
+    call = make_callback(tg_user(), "provider:token_refresh")
     fake_provider = MagicMock(provider_hash="hash-1")
 
     with (
@@ -616,7 +599,7 @@ async def test_cb_provider_token_refresh_success() -> None:
 
 @pytest.mark.asyncio
 async def test_cb_provider_token_refresh_handles_error() -> None:
-    call = _callback(_tg_user(), "provider:token_refresh")
+    call = make_callback(tg_user(), "provider:token_refresh")
     fake_provider = MagicMock(provider_hash="hash-1")
 
     with (
