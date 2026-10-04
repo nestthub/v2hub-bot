@@ -2,14 +2,14 @@ from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message
 
-from v2hub_bot.locales import ru as t
-from v2hub_bot.services import v2hub_client, v2hubError
+from v2hub_bot.locales.i18n import Translator
+from v2hub_bot.services import get_user_info_and_translator, v2hub_client, v2hubError
 from v2hub_bot.services.keyboards import back, token_actions
 
 router = Router()
 
 
-async def _token_info_text(user_id: int) -> tuple[str, bool, str | None]:
+async def _token_info_text(user_id: int, t: Translator) -> tuple[str, bool, str | None]:
     """Returns (message_text, has_token, token_value).
 
     Always reads straight from the server — the bot never stores the
@@ -18,9 +18,9 @@ async def _token_info_text(user_id: int) -> tuple[str, bool, str | None]:
     user = await v2hub_client.get_user(user_id)
 
     if not user or not user.api_token:
-        return t.TOKEN_NONE, False, None
+        return t("TOKEN_NONE"), False, None
 
-    text = t.TOKEN_INFO.format(token=user.api_token)
+    text = t("TOKEN_INFO").format(token=user.api_token)
     return text, True, user.api_token
 
 
@@ -29,12 +29,12 @@ async def _token_info_text(user_id: int) -> tuple[str, bool, str | None]:
 
 @router.message(Command("token"))
 async def cmd_token(message: Message) -> None:
-    user = message.from_user
+    user, t = await get_user_info_and_translator(message)
     if not user:
         return
 
-    text, has_token, _ = await _token_info_text(user.id)
-    await message.answer(text, reply_markup=token_actions(has_token))
+    text, has_token, _ = await _token_info_text(user.id, t)
+    await message.answer(text, reply_markup=token_actions(has_token, t))
 
 
 # ── Callbacks ─────────────────────────────────────────────────────────────────
@@ -42,31 +42,40 @@ async def cmd_token(message: Message) -> None:
 
 @router.callback_query(F.data == "token:info")
 async def cb_token_info(call: CallbackQuery) -> None:
-    text, has_token, _ = await _token_info_text(call.from_user.id)
+    user, t = await get_user_info_and_translator(call)
+    if not user:
+        return
+
+    text, has_token, _ = await _token_info_text(call.from_user.id, t)
+
     if call.message and isinstance(call.message, Message):
-        await call.message.edit_text(text, reply_markup=token_actions(has_token))
+        await call.message.edit_text(text, reply_markup=token_actions(has_token, t))
     await call.answer()
 
 
 @router.callback_query(F.data == "token:generate")
 async def cb_token_generate(call: CallbackQuery) -> None:
-    await call.answer(t.TOKEN_GENERATING)
+    local_user, t = await get_user_info_and_translator(call)
+    if not local_user:
+        return
+
+    await call.answer(t("TOKEN_GENERATING"))
 
     try:
-        user = await v2hub_client.create_user(user_id=call.from_user.id)
+        user = await v2hub_client.create_user(user_id=local_user.id)
         new_token = user.api_token
     except v2hubError as exc:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
-                t.TOKEN_ERROR_GENERATE.format(error=exc),
-                reply_markup=back(),
+                t("TOKEN_ERROR_GENERATE").format(error=exc),
+                reply_markup=back(t),
             )
         return
 
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
-            t.TOKEN_CREATED.format(token=new_token),
-            reply_markup=back(),
+            t("TOKEN_CREATED").format(token=new_token),
+            reply_markup=back(t),
         )
 
 
@@ -74,24 +83,28 @@ async def cb_token_generate(call: CallbackQuery) -> None:
 async def cb_token_refresh(call: CallbackQuery) -> None:
     user = await v2hub_client.get_user(call.from_user.id)
 
-    if not user or not user.api_token:
-        await call.answer(t.TOKEN_NO_ACTIVE, show_alert=True)
+    db_user, t = await get_user_info_and_translator(call)
+    if not db_user:
         return
 
-    await call.answer(t.TOKEN_REFRESHING)
+    if not user or not user.api_token:
+        await call.answer(t("TOKEN_NO_ACTIVE"), show_alert=True)
+        return
+
+    await call.answer(t("TOKEN_REFRESHING"))
 
     try:
         new_token = await v2hub_client.refresh_token(user_id=call.from_user.id)
     except v2hubError as exc:
         if call.message and isinstance(call.message, Message):
             await call.message.edit_text(
-                t.TOKEN_ERROR_REFRESH.format(error=exc),
-                reply_markup=back(),
+                t("TOKEN_ERROR_REFRESH").format(error=exc),
+                reply_markup=back(t),
             )
         return
 
     if call.message and isinstance(call.message, Message):
         await call.message.edit_text(
-            t.TOKEN_REFRESHED.format(token=new_token),
-            reply_markup=back(),
+            t("TOKEN_REFRESHED").format(token=new_token),
+            reply_markup=back(t),
         )

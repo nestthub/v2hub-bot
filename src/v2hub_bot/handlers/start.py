@@ -5,11 +5,9 @@ from aiogram.filters import CommandObject, CommandStart
 from aiogram.types import CallbackQuery, Message
 
 from v2hub_bot.config import settings
-from v2hub_bot.db import async_session, get_or_create_user
 from v2hub_bot.handlers.token import _token_info_text
-from v2hub_bot.locales import ru as t
-from v2hub_bot.services import v2hub_client, v2hubError
-from v2hub_bot.services.keyboards import extended_menu, main_menu, token_actions, token_first_time
+from v2hub_bot.services import get_user_info_and_translator, v2hub_client, v2hubError
+from v2hub_bot.services.keyboards import extended_menu, main_menu, token_actions
 
 router = Router()
 
@@ -71,72 +69,56 @@ async def _ensure_token(user_id: int) -> tuple[str | None, bool]:
 @router.message(CommandStart(deep_link=True))
 async def cmd_start_deep_link(message: Message, command: CommandObject) -> None:
     """Handle /start with a payload: `provider_*` and `conn_*` deep links."""
-    user = message.from_user
+    user, t = await get_user_info_and_translator(message)
     if not user:
         return
 
     if command.args == "token":
-        text, has_token, _ = await _token_info_text(user.id)
-        await message.answer(text, reply_markup=token_actions(has_token))
+        text, has_token, _ = await _token_info_text(user.id, t)
+        await message.answer(text, reply_markup=token_actions(has_token, t))
         return
 
     parsed = parse_deep_link_payload(command.args)
     if parsed is None:
-        await message.answer(t.DEEP_LINK_INVALID)
+        await message.answer(t("DEEP_LINK_INVALID"))
         return
-
-    # Локально помечаем, что этот Telegram user_id запускал бота.
-    async with async_session() as session:
-        await get_or_create_user(session, user.id)
 
     # Imported here to avoid a circular import between start.py and provider.py.
     from v2hub_bot.handlers.provider import handle_provider_deep_link
 
     kind, provider_name, hmac = parsed
-    await handle_provider_deep_link(message, user.id, kind, provider_name, hmac)
+    await handle_provider_deep_link(message, user.id, kind, provider_name, hmac, t)
 
 
 @router.message(CommandStart())
 async def cmd_start(message: Message) -> None:
-    user = message.from_user
-    if not user:
+    user, t = await get_user_info_and_translator(message)
+    if not user or not message.from_user:
         return
 
-    name = html.escape(user.first_name)
+    name = html.escape(message.from_user.first_name)
 
-    # Локально помечаем, что этот Telegram user_id запускал бота, — это
-    # единственное, что бот хранит о нём в своей базе.
-    async with async_session() as session:
-        await get_or_create_user(session, user.id)
+    _, is_new = await _ensure_token(user.id)
 
-    token, is_new = await _ensure_token(user.id)
-
-    if is_new and token:
-        # Шаг 1 — приветствие
-        await message.answer(t.WELCOME_NEW.format(name=name))
-        # Шаг 2 — токен с инструкцией и кнопками
-        await message.answer(
-            t.TOKEN_FIRST_TIME.format(token=token),
-            reply_markup=token_first_time(),
-        )
-    else:
-        await message.answer(
-            t.WELCOME_RETURNING.format(name=name),
-            reply_markup=main_menu(has_token=bool(token), is_admin=user.id in settings.bot_admins),
-        )
+    await message.answer(
+        text=t("WELCOME_NEW" if is_new else "WELCOME_RETURNING").format(name=name),
+        reply_markup=main_menu(t, is_admin=user.id in settings.bot_admins),
+    )
 
 
 @router.callback_query(F.data == "menu")
 async def cb_menu(call: CallbackQuery) -> None:
     name = html.escape(call.from_user.first_name)
 
-    user = await v2hub_client.get_user(call.from_user.id)
-
     if call.message and isinstance(call.message, Message):
+        user, t = await get_user_info_and_translator(call)
+        if not user:
+            return
+
         await call.message.edit_text(
-            t.WELCOME_RETURNING.format(name=name),
+            t("WELCOME_RETURNING").format(name=name),
             reply_markup=main_menu(
-                has_token=bool(user and user.api_token),
+                t,
                 is_admin=call.from_user.id in settings.bot_admins,
             ),
         )
@@ -147,13 +129,15 @@ async def cb_menu(call: CallbackQuery) -> None:
 async def cb_extended_menu(call: CallbackQuery) -> None:
     name = html.escape(call.from_user.first_name)
 
-    user = await v2hub_client.get_user(call.from_user.id)
-
     if call.message and isinstance(call.message, Message):
+        user, t = await get_user_info_and_translator(call)
+        if not user:
+            return
+
         await call.message.edit_text(
-            t.WELCOME_RETURNING.format(name=name),
+            t("WELCOME_RETURNING").format(name=name),
             reply_markup=extended_menu(
-                has_token=bool(user and user.api_token),
+                t,
                 is_admin=call.from_user.id in settings.bot_admins,
             ),
         )

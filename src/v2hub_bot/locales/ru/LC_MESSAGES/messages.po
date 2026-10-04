@@ -1,0 +1,643 @@
+# v2hub Telegram bot — Russian translation.
+# msgid = message key; msgstr = text (Telegram HTML, {placeholders} preserved).
+msgid ""
+msgstr ""
+"Project-Id-Version: v2hub-bot\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
+
+msgid "WELCOME_NEW"
+msgstr ""
+"<tg-emoji emoji-id=\"5906995262378741881\">👋</tg-emoji> Привет, <b>{name}</b>!\n"
+"\n"
+"<b>v2hub</b> — ваш личный VPN-менеджер.\n"
+"\n"
+"Один раз подключите устройство по ссылке-подписке — и забудьте о ручной настройке навсегда. Все изменения применяются автоматически на каждом вашем устройстве: телефоне, ноутбуке, планшете и у членов семьи."
+
+msgid "WELCOME_RETURNING"
+msgstr ""
+"<tg-emoji emoji-id=\"5906995262378741881\">👋</tg-emoji> С возвращением, <b>{name}</b>!\n"
+"\n"
+"Всё под контролем — управляйте подключениями через панель."
+
+msgid "TOKEN_NONE"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>Токен доступа</b>\n"
+"\n"
+"У вас пока нет токена — без него войти в панель не получится.\n"
+"Нажмите кнопку ниже, чтобы получить его прямо сейчас."
+
+msgid "TOKEN_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>Ваш токен доступа</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> Никому не передавайте токен: он даёт полный доступ к вашему аккаунту."
+
+msgid "TOKEN_GENERATING"
+msgstr "⏳ Создаём токен…"
+
+msgid "TOKEN_CREATED"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> <b>Токен готов!</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"Скопируйте его и вставьте при входе в панель управления.\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> Никому не передавайте токен: он даёт полный доступ к вашему аккаунту."
+
+msgid "TOKEN_REFRESHING"
+msgstr "⏳ Обновляем токен…"
+
+msgid "TOKEN_REFRESHED"
+msgstr ""
+"<tg-emoji emoji-id=\"6005843436479975944\">🔄</tg-emoji> <b>Токен обновлён!</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"Старый токен деактивирован — вставьте новый в панели управления.\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> Никому не передавайте токен: он даёт полный доступ к вашему аккаунту."
+
+msgid "TOKEN_NO_ACTIVE"
+msgstr "У вас нет активного токена."
+
+msgid "TOKEN_ERROR_GENERATE"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось создать токен:\n"
+"<code>{error}</code>\n"
+"\n"
+"Попробуйте позже или напишите в поддержку."
+
+msgid "TOKEN_ERROR_REFRESH"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось обновить токен:\n"
+"<code>{error}</code>\n"
+"\n"
+"Попробуйте позже или напишите в поддержку."
+
+msgid "HELP_TEXT"
+msgstr ""
+"<tg-emoji emoji-id=\"6030848053177486888\">❓</tg-emoji> <b>Справка</b>\n"
+"\n"
+"<b>v2hub</b> — сервис управления VPN-подключениями. Настройте устройство один раз, а все обновления будут применяться автоматически.\n"
+"\n"
+"<b>Команды:</b>\n"
+"<blockquote>/start — главное меню\n"
+"/token — токен доступа\n"
+"/settings - настройки бота\n"
+"/support — написать в поддержку</blockquote>\n"
+"\n"
+"<b>Как начать:</b>\n"
+"1. Получите токен через /token\n"
+"2. Откройте панель и вставьте токен при входе\n"
+"3. Добавьте устройства — изменения будут применяться автоматически\n"
+"\n"
+"При обновлении токена старый деактивируется. Не забудьте вставить новый в панели."
+
+msgid "SUPPORT_TEXT"
+msgstr ""
+"<tg-emoji emoji-id=\"5936017305585586269\">📩</tg-emoji> <b>Поддержка</b>\n"
+"\n"
+"Что-то пошло не так или есть вопрос?\n"
+"Мы на связи — напишите нам, и мы разберёмся.\n"
+"\n"
+"Чем подробнее опишете ситуацию, тем быстрее поможем."
+
+msgid "PROVIDER_INTRO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>Провайдер</b>\n"
+"\n"
+"Провайдер — партнёр v2hub с собственным VPN-сервисом, который может подключать пользователей и управлять их подписками через API.\n"
+"\n"
+"<b>Чтобы стать провайдером, нужно:</b>\n"
+"<blockquote>• иметь действующий VPN-сервис;\n"
+"• либо чётко подтверждённое намерение построить сервис на базе v2hub</blockquote>\n"
+"\n"
+"Роль провайдера выдаётся только администратором. Напишите в поддержку, для получения собственного провайдера."
+
+msgid "PROVIDER_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>Ваш провайдер</b>\n"
+"\n"
+"<b>Название:</b> {provider_name}\n"
+"<b>URL:</b> {provider_url}"
+
+msgid "PROVIDER_TOKEN_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🔑</tg-emoji> <b>Токен провайдера</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">⚠️</tg-emoji> Никому не передавайте этот токен: он даёт полный доступ к API вашего провайдера."
+
+msgid "PROVIDER_TOKEN_REFRESHING"
+msgstr "⏳ Обновляем токен провайдера…"
+
+msgid "PROVIDER_TOKEN_REFRESHED"
+msgstr ""
+"<tg-emoji emoji-id=\"6005843436479975944\">🔄</tg-emoji> <b>Токен провайдера обновлён!</b>\n"
+"\n"
+"<blockquote><code>{token}</code></blockquote>\n"
+"\n"
+"Старый токен деактивирован."
+
+msgid "PROVIDER_TOKEN_ERROR_REFRESH"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось обновить токен провайдера:\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_NOT_FOUND_FOR_ROLE"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Ваш провайдерский аккаунт не найден. Обратитесь в поддержку."
+
+msgid "PROVIDER_PUBLIC_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>{provider_name}</b>\n"
+"\n"
+"<b>URL:</b> {provider_url}\n"
+"<b>Статус авторизации:</b> {status}"
+
+msgid "PROVIDER_STATUS_NONE"
+msgstr "не авторизован"
+
+msgid "PROVIDER_STATUS_PENDING"
+msgstr "ожидает подтверждения"
+
+msgid "PROVIDER_STATUS_APPROVED"
+msgstr "подключён"
+
+msgid "PROVIDER_STATUS_REVOKED"
+msgstr "отключён"
+
+msgid "PROVIDER_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Провайдер <code>{provider_name}</code> не найден."
+
+msgid "PROVIDER_CONNECTION_REQUEST"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>Запрос на подключение провайдера</b>\n"
+"\n"
+"<b>{provider_name}</b>\n"
+"URL: {provider_url}\n"
+"\n"
+"Провайдер запрашивает доступ на добавление подписок.\n"
+"\n"
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Подключение провайдера <b>не затрагивает</b> ваши личные подписки — создаются новые рядом с ними.\n"
+"\n"
+"<tg-emoji emoji-id=\"5881702736843511327\">🔒</tg-emoji> Подтвердите или отклоните запрос ниже."
+
+msgid "PROVIDER_CONNECTION_LINK_INVALID"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Ссылка подключения недействительна или устарела. Попросите провайдера прислать новую ссылку.\n"
+"\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_APPROVING"
+msgstr "⏳ Подтверждаем подключение…"
+
+msgid "PROVIDER_APPROVED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Провайдер <b>{provider_name}</b> подключён."
+
+msgid "PROVIDER_APPROVE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось подтвердить подключение:\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_LIMIT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Достигнут максимальный лимит подключённых провайдеров.\n"
+"Отключите неиспользуемого провайдера, чтобы подключить новый."
+
+msgid "PROVIDER_REJECTING"
+msgstr "⏳ Отклоняем запрос…"
+
+msgid "PROVIDER_REJECTED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Запрос от провайдера <b>{provider_name}</b> отклонён."
+
+msgid "PROVIDER_REJECT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось отклонить запрос:\n"
+"<code>{error}</code>"
+
+msgid "PROVIDER_DISCONNECTING"
+msgstr "⏳ Отключаем провайдера…"
+
+msgid "PROVIDER_DISCONNECTED_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Провайдер <b>{provider_name}</b> отключён и удалён из списка ваших провайдеров."
+
+msgid "PROVIDER_DISCONNECTED_REVOKED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Провайдер <b>{provider_name}</b> отключён. "
+
+msgid "PROVIDER_DISCONNECT_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось отключить провайдера:\n"
+"<code>{error}</code>"
+
+msgid "MY_PROVIDERS_EMPTY"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>Мои провайдеры</b>\n"
+"\n"
+"У вас пока нет подключённых провайдеров."
+
+msgid "MY_PROVIDERS_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"6005570495603282482\">🏷</tg-emoji> <b>Мои провайдеры</b>"
+
+
+msgid "DEEP_LINK_INVALID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Ссылка повреждена или неполная."
+
+msgid "BTN_PROVIDER"
+msgstr "Провайдер"
+
+msgid "BTN_MY_PROVIDERS"
+msgstr "Мои провайдеры"
+
+msgid "BTN_PROVIDER_TOKEN"
+msgstr "Токен провайдера"
+
+msgid "BTN_PROVIDER_REFRESH_TOKEN"
+msgstr "Обновить токен"
+
+msgid "BTN_CONNECT"
+msgstr "Подключить"
+
+msgid "BTN_REJECT"
+msgstr "Отклонить"
+
+msgid "BTN_DISCONNECT"
+msgstr "Отключить"
+
+msgid "BTN_CONTACT_SUPPORT"
+msgstr "Написать администратору"
+
+msgid "BTN_EXTENDED_MENU"
+msgstr "Расширенное меню"
+
+msgid "BTN_V2HUB_API"
+msgstr "О проекте"
+
+msgid "BTN_V2HUB_GITHUB"
+msgstr "Наш GitHub"
+
+msgid "THROTTLE_WARNING"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> Подождите немного перед следующей командой."
+
+msgid "BTN_OPEN_PANEL"
+msgstr "Открыть панель"
+
+msgid "BTN_MY_TOKEN"
+msgstr "Мой токен"
+
+msgid "BTN_GET_TOKEN"
+msgstr "Получить токен"
+
+msgid "BTN_REFRESH_TOKEN"
+msgstr "Обновить токен"
+
+msgid "BTN_SETTINGS"
+msgstr "Настройки"
+
+msgid "SETTINGS_TEXT"
+msgstr "Настройте бота под себя!"
+
+msgid "SETTINGS_LANGUAGE_TEXT"
+msgstr "Выберите язык интерфейса:"
+
+msgid "BTN_LANGUAGE"
+msgstr "Язык"
+
+msgid "BTN_HELP"
+msgstr "Помощь"
+
+msgid "BTN_SUPPORT"
+msgstr "Поддержка"
+
+msgid "BTN_BACK"
+msgstr "Назад"
+
+msgid "BTN_MAIN_MENU"
+msgstr "Главное меню"
+
+msgid "BTN_WRITE_SUPPORT"
+msgstr "Написать в поддержку"
+
+msgid "BTN_ADMIN_PANEL"
+msgstr "Админ-панель"
+
+msgid "BTN_ADMIN_PANEL_SETTINGS"
+msgstr "Настройки панели"
+
+msgid "BTN_ADMIN_STATS"
+msgstr "Статистика"
+
+msgid "BTN_ADMIN_USERS"
+msgstr "Пользователи"
+
+msgid "BTN_ADMIN_PROVIDERS"
+msgstr "Провайдеры"
+
+msgid "BTN_ADMIN_BROADCAST"
+msgstr "Рассылка"
+
+msgid "BTN_ADMIN_STATS_DAY"
+msgstr "День"
+
+msgid "BTN_ADMIN_STATS_WEEK"
+msgstr "Неделя"
+
+msgid "BTN_ADMIN_STATS_MONTH"
+msgstr "Месяц"
+
+msgid "BTN_ADMIN_STATS_ALL"
+msgstr "Все время"
+
+msgid "BTN_ADMIN_STATS_OPTIONAL"
+msgstr "Указать дату"
+
+msgid "ADMIN_STATS_SELECT"
+msgstr "<tg-emoji emoji-id=\"5994378914636500516\">📊</tg-emoji> Выберите период, за который хотите получить статистику:"
+
+msgid "ADMIN_STATS_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"5994378914636500516\">📊</tg-emoji> Всего пользователей: <code>{total_users}</code>\n"
+"\n"
+"Статистика {period}:\n"
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> Новых пользователей: <code>{new_users}</code>\n"
+"<tg-emoji emoji-id=\"6034923938486684992\">⭐</tg-emoji> Новых подписок: <code>{new_subs}</code>"
+
+msgid "ADMIN_STATS_GET_OPTIONAL_PERIOD"
+msgstr ""
+"<tg-emoji emoji-id=\"5850317551090800862\">⏱️</tg-emoji> Введите период в формате:\n"
+"<code>YYYY-MM-DD : YYYY-MM-DD</code>\n"
+"\n"
+"Можно указать только начало или конец периода:\n"
+"<code>YYYY-MM-DD :</code> — с указанной даты\n"
+"<code>: YYYY-MM-DD</code> — до указанной даты"
+
+msgid "ADMIN_STATS_PERIOD_INVALID"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Неверный формат периода. Попробуйте ещё раз, например:\n"
+"<code>2026-01-01 : 2026-02-01</code>"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_DAY"
+msgstr "за последние сутки"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_WEEK"
+msgstr "за последнюю неделю"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_MONTH"
+msgstr "за последний месяц"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_ALL"
+msgstr "за всё время"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM"
+msgstr "в период с {start_date} по {end_date}"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM_START"
+msgstr "запуска"
+
+msgid "ADMIN_STATS_PERIOD_LABEL_CUSTOM_END"
+msgstr "сегодняшний день"
+
+msgid "ADMIN_STATS_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось получить статистику:\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PANEL_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"5926783847453692661\">🛠</tg-emoji> <b>Админ-панель</b>\n"
+"\n"
+"Выберите раздел:"
+
+msgid "BTN_ADMIN_USER_CREATE"
+msgstr "Создать пользователя"
+
+msgid "ADMIN_USERS_PROVIDERS_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> У пользователя нет провайдеров."
+
+msgid "ADMIN_USERS_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> Отправьте Telegram ID пользователя, которого хотите найти."
+
+msgid "ADMIN_USERS_INVALID_ID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> ID должен быть числом. Попробуйте ещё раз."
+
+msgid "ADMIN_USERS_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Пользователь с ID <code>{user_id}</code> не найден."
+
+msgid "ADMIN_USERS_INFO"
+msgstr ""
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> Информация о пользователе:\n"
+"ID: <code>{user_id}</code>\n"
+"Токен: <tg-spoiler><code>{api_token}</code></tg-spoiler>\n"
+"Провайдер: <code>{provider_name}</code>\n"
+"Дата первого запуска бота: {created_at}\n"
+"Заблокирован в боте: {is_banned}"
+
+msgid "ADMIN_USERS_UNKNOWN"
+msgstr "неизвестно"
+
+msgid "BTN_ADMIN_USER_DELETE"
+msgstr "Удалить пользователя"
+
+msgid "ADMIN_USERS_DELETE_CONFIRM"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">⚠️</tg-emoji> Удалить пользователя <code>{user_id}</code>? Это действие необратимо: будет удалён его аккаунт v2hub и вся связанная с ним информация."
+
+msgid "ADMIN_USERS_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Пользователь <code>{user_id}</code> удалён."
+
+msgid "ADMIN_USERS_DELETE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось удалить пользователя:\n"
+"<code>{error}</code>"
+
+msgid "BTN_ADMIN_BROADCAST_MODE_COPY"
+msgstr "Переслать как есть"
+
+msgid "BTN_ADMIN_BROADCAST_MODE_COMPOSE"
+msgstr "Собрать сообщение"
+
+msgid "ADMIN_BROADCAST_SELECT_MODE"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> Как вы хотите подготовить рассылку?\n"
+"\n"
+"<b>Переслать как есть</b> — отправьте готовое сообщение целиком (текст, медиа, форматирование, кнопки — если они уже есть), оно будет скопировано каждому получателю без изменений.\n"
+"\n"
+"<b>Собрать сообщение</b> — отправьте текст или медиа, а затем добавьте кнопки (со ссылкой или действием) отдельно."
+
+msgid "ADMIN_BROADCAST_PROMPT"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> Отправьте сообщение, которое хотите разослать пользователям — оно будет скопировано получателям как есть, вместе с любыми медиа и уже прикреплённой клавиатурой.\n"
+"\n"
+"Поддерживается HTML-разметка Telegram."
+
+msgid "ADMIN_BROADCAST_CONTENT_PROMPT"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> Отправьте текст или медиа (с подписью или без) для рассылки. На следующем шаге вы сможете добавить к нему кнопки.\n"
+"\n"
+"Поддерживается HTML-разметка Telegram."
+
+msgid "ADMIN_BROADCAST_KEYBOARD_BUILDER"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> <b>Добавление клавиатуры</b>\n"
+"\n"
+"Формат кнопки:\n"
+"<code>Текст - callback_data</code>\n"
+"\n"
+"Несколько кнопок в ряду:\n"
+"<code>Каталог - catalog | Помощь - help</code>\n"
+"\n"
+"Ссылка:\n"
+"<code>Сайт - https://example.com</code>\n"
+"\n"
+"Дополнительные параметры:\n"
+"<code>Кнопка - action [style=primary]</code>\n"
+"<code>Кнопка - action [emoji=123456]</code>\n"
+"\n"
+"Стили: <code>success</code>, <code>primary</code>, <code>danger</code>.\n"
+"\n"
+"Новый ряд — с новой строки.\n"
+"\n"
+"Если клавиатура не нужна, нажмите «Пропустить»."
+
+msgid "ADMIN_BROADCAST_NO_CONTENT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось получить содержимое рассылки. Попробуйте начать заново."
+
+msgid "ADMIN_BROADCAST_PREVIEW"
+msgstr ""
+"<tg-emoji emoji-id=\"5771868281212245617\">📢</tg-emoji> Так будет выглядеть рассылка. Получателей: <b>{count}</b>.\n"
+"\n"
+"Подтвердить отправку?"
+
+msgid "ADMIN_BROADCAST_CANCELLED"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Рассылка отменена."
+
+msgid "ADMIN_BROADCAST_STARTED"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> Рассылка запущена. Получателей: <b>{count}</b>."
+
+msgid "ADMIN_BROADCAST_PROGRESS"
+msgstr "<tg-emoji emoji-id=\"5891211339170326418\">⏳</tg-emoji> Рассылка выполняется: {sent}/{total}"
+
+msgid "ADMIN_BROADCAST_DONE"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Рассылка завершена.\n"
+"<blockquote>Всего получателей: {total}\n"
+"Успешно доставлено: {success}\n"
+"Не удалось доставить: {failed}</blockquote>"
+
+msgid "BTN_ADMIN_BROADCAST_CONFIRM"
+msgstr "Отправить"
+
+msgid "BTN_ADMIN_BROADCAST_CANCEL"
+msgstr "Отменить"
+
+msgid "BTN_ADMIN_BROADCAST_NO_KEYBOARD"
+msgstr "Без кнопок"
+
+msgid "BTN_ADMIN_PROVIDER_CREATE"
+msgstr "Создать провайдера"
+
+msgid "BTN_ADMIN_PROVIDER_RENAME"
+msgstr "Переименовать"
+
+msgid "BTN_ADMIN_PROVIDER_SET_URL"
+msgstr "Изменить URL"
+
+msgid "BTN_ADMIN_PROVIDER_DELETE"
+msgstr "Удалить"
+
+msgid "BTN_ADMIN_PROVIDER_SKIP"
+msgstr "Пропустить"
+
+msgid "BTN_ADMIN_PROVIDER_CLEAR"
+msgstr "Очистить"
+
+msgid "ADMIN_PROVIDERS_LIST_TITLE"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> <b>Провайдеры</b>\n"
+"\n"
+"Всего: <b>{count}</b>.\n"
+"Выберите провайдера или создайте нового:"
+
+msgid "ADMIN_PROVIDERS_LIST_EMPTY"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> <b>Провайдеры</b>\n"
+"\n"
+"Провайдеров пока нет."
+
+msgid "ADMIN_PROVIDER_DETAILS"
+msgstr ""
+"<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> Провайдер <b>{provider_name}</b>\n"
+"Hash: <code>{provider_hash}</code>\n"
+"Owner hash: <code>{owner_hash}</code>\n"
+"URL: {provider_url}\n"
+"Токен: <blockquote><tg-spoiler>{api_token}</tg-spoiler></blockquote>"
+
+msgid "ADMIN_PROVIDER_NOT_FOUND"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Провайдер не найден."
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_OWNER"
+msgstr ""
+"<tg-emoji emoji-id=\"5886412370347036129\">👤</tg-emoji> Отправьте Telegram ID пользователя, который будет владельцем нового провайдера.\n"
+"\n"
+"У пользователя уже должен быть аккаунт v2hub — при необходимости он будет создан."
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_NAME"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> Отправьте имя нового провайдера (должно быть уникальным)."
+
+msgid "ADMIN_PROVIDER_CREATE_PROMPT_URL"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> Отправьте URL провайдера, либо нажмите «Пропустить»."
+
+msgid "ADMIN_PROVIDER_CREATE_NAME_INVALID"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Имя не может быть пустым. Попробуйте ещё раз."
+
+msgid "ADMIN_PROVIDER_CREATE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось создать провайдера:\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PROVIDER_CREATE_CONFLICT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Провайдер с именем <b>{provider_name}</b> уже существует."
+
+msgid "ADMIN_PROVIDER_CREATED"
+msgstr ""
+"<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Провайдер <b>{provider_name}</b> создан.\n"
+"<blockquote>Owner: <code>{owner_id}</code>\n"
+"Токен: <code>{api_token}</code></blockquote>"
+
+msgid "ADMIN_PROVIDER_RENAME_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> Отправьте новое имя для провайдера <b>{provider_name}</b>."
+
+msgid "ADMIN_PROVIDER_RENAMED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Провайдер переименован в <b>{provider_name}</b>."
+
+msgid "ADMIN_PROVIDER_RENAME_CONFLICT"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Имя <b>{provider_name}</b> уже занято. Попробуйте другое."
+
+msgid "ADMIN_PROVIDER_SET_URL_PROMPT"
+msgstr "<tg-emoji emoji-id=\"5931347928810526429\">🏷</tg-emoji> Отправьте новый URL для провайдера <b>{provider_name}</b>, либо нажмите «Очистить», чтобы убрать URL."
+
+msgid "ADMIN_PROVIDER_URL_UPDATED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> URL провайдера обновлён."
+
+msgid "ADMIN_PROVIDER_UPDATE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось обновить провайдера:\n"
+"<code>{error}</code>"
+
+msgid "ADMIN_PROVIDER_DELETE_CONFIRM"
+msgstr "<tg-emoji emoji-id=\"6032636795387121097\">⚠️</tg-emoji> Удалить провайдера <b>{provider_name}</b>? Это действие необратимо."
+
+msgid "ADMIN_PROVIDER_DELETED"
+msgstr "<tg-emoji emoji-id=\"6030445631921721471\">✅</tg-emoji> Провайдер <b>{provider_name}</b> удалён."
+
+msgid "ADMIN_PROVIDER_DELETE_ERROR"
+msgstr ""
+"<tg-emoji emoji-id=\"6032636795387121097\">❌</tg-emoji> Не удалось удалить провайдера:\n"
+"<code>{error}</code>"

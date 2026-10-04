@@ -24,7 +24,7 @@ async def test_main_starts_polling_with_all_routers() -> None:
         await main_module.main()
 
     bot_cls.assert_called_once()
-    assert dp.include_router.call_count == 6
+    assert dp.include_router.call_count == 7
     dp.start_polling.assert_awaited_once()
 
 

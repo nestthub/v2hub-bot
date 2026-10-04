@@ -20,7 +20,7 @@ def test_user_table_only_has_bot_local_columns() -> None:
     """
     columns = set(User.__table__.columns.keys())
 
-    assert columns == {"id", "is_banned", "created_at"}
+    assert columns == {"id", "is_banned", "created_at", "lang"}
 
 
 def test_only_users_table_exists() -> None:
@@ -31,7 +31,7 @@ def test_only_users_table_exists() -> None:
 def test_user_repr_includes_id() -> None:
     user = User(id=123)
 
-    assert repr(user) == "<User id=123>"
+    assert repr(user) == "<User id=123, lang=None>"
 
 
 @pytest.mark.asyncio

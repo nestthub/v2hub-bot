@@ -60,12 +60,13 @@ Settings are loaded from environment variables / `.env` via `pydantic-settings`.
 
 ## Bot Commands
 
-| Command    | Description                                  |
-| ---------- | -------------------------------------------- |
-| `/start`   | Main menu; token is created automatically    |
-| `/token`   | View, generate, or refresh your access token |
-| `/support` | Contact support                              |
-| `/help`    | Show help                                    |
+| Command     | Description                                    |
+| ----------- | ---------------------------------------------- |
+| `/start`    | Main menu; token is created automatically      |
+| `/token`    | View, generate, or refresh your access token   |
+| `/support`  | Contact support                                |
+| `/help`     | Show help                                      |
+| `/settings` | Bot settings, including the interface language |
 
 ## Project Structure
 
@@ -74,24 +75,29 @@ src/v2hub_bot/
 ├── main.py                  # Entry point: bot setup, middleware & router registration
 ├── config.py                 # Settings loaded from .env (pydantic-settings)
 ├── locales/
-│   └── ru.py                 # User-facing text and button labels (Russian)
+│   ├── i18n.py                # gettext translator lookup (falls back to English)
+│   ├── compile_locales.py       # Pure-Python .po -> .mo compiler (run by the Docker entrypoint)
+│   └── {en,ru,fa,zh}/         # User-facing texts and button labels (.po sources)
 ├── db/
 │   ├── engine.py              # Async SQLAlchemy engine, session factory
-│   ├── models.py               # ORM models (just User.id + created_at + is_banned)
-│   └── crud.py                  # CRUD helpers (get/create user by Telegram id)
+│   ├── models.py               # ORM models (User.id + lang + created_at + is_banned)
+│   └── crud.py                  # CRUD helpers (users by Telegram id, interface language)
 ├── handlers/
 │   ├── start.py                 # /start — main menu + automatic token creation
 │   ├── token.py                  # /token — view/generate/refresh token
+│   ├── settings.py                 # /settings — interface language selection
 │   ├── support.py                  # /support
 │   └── help.py                       # /help
 ├── services/
 │   ├── v2hub.py                       # Facade over the v2hub-admin client (AsyncAdminClient)
+│   ├── users.py                         # Local user lookup + translator for an incoming event
 │   └── keyboards.py                     # Inline keyboard factories, Mini App token passing
 └── middlewares/
     └── throttle.py                        # Per-user rate limiting
 
 tests/
 ├── conftest.py               # Shared fixtures: in-memory SQLite session, env defaults
+├── helpers.py                 # Shared test data/factories: translator, Telegram mocks
 ├── test_config.py             # Settings validation
 ├── test_models.py               # ORM model behavior
 ├── test_crud.py                   # Database CRUD helpers
@@ -100,7 +106,13 @@ tests/
 ├── test_throttle_middleware.py             # Rate-limiting middleware
 ├── test_handlers_start.py                    # /start and menu callback
 ├── test_handlers_token.py                       # /token and its callbacks
-└── test_handlers_support_help.py                    # /support and /help
+├── test_handlers_support_help.py                    # /support and /help
+├── test_handlers_settings.py                          # /settings and language selection
+├── test_users_service.py                                # Local user + translator lookup
+├── test_i18n.py                                           # Translators, language normalisation, catalog consistency
+├── test_compile_locales.py                                  # Pure-Python .po -> .mo compiler
+├── test_docker_entrypoint.py                                  # Entrypoint compiles translations before start
+└── test_migrations.py                                           # Alembic migrations
 ```
 
 ## Development
@@ -110,6 +122,14 @@ Install with development dependencies:
 ```bash
 pip install -e ".[dev]"
 ```
+
+### Translations
+
+Texts live in `src/v2hub_bot/locales/<lang>/LC_MESSAGES/messages.po`. The compiled `.mo`
+files are git-ignored build artifacts and must be generated before running the application or tests.
+
+- **Running locally without Docker:** `python -m v2hub_bot.locales.compile_locales`
+- **Before running tests:** `python -m v2hub_bot.locales.compile_locales`
 
 ### Running tests
 

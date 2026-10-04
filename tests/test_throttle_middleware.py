@@ -1,28 +1,27 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from aiogram.types import Message
+from helpers import make_message, tg_user
+from sqlalchemy import select
 
+from v2hub_bot.db.models import User
+from v2hub_bot.locales import i18n
 from v2hub_bot.middlewares.throttle import ThrottleMiddleware
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+
 pytestmark = pytest.mark.unit
-
-
-def _make_message(user_id: int | None = 1) -> MagicMock:
-    # spec=Message so isinstance(message, Message) passes inside the middleware.
-    message = MagicMock(spec=Message)
-    message.from_user = MagicMock(id=user_id) if user_id is not None else None
-    message.answer = AsyncMock()
-    return message
 
 
 @pytest.mark.asyncio
 async def test_first_call_is_not_throttled() -> None:
     middleware = ThrottleMiddleware(rate_limit=1.5)
     handler = AsyncMock(return_value="handled")
-    message = _make_message(user_id=1)
+    message = make_message(tg_user(1))
 
     result = await middleware(handler, message, {})
 
@@ -35,7 +34,7 @@ async def test_first_call_is_not_throttled() -> None:
 async def test_rapid_second_call_is_throttled() -> None:
     middleware = ThrottleMiddleware(rate_limit=100.0)  # huge window, guarantees throttle
     handler = AsyncMock(return_value="handled")
-    message = _make_message(user_id=1)
+    message = make_message(tg_user(1))
 
     await middleware(handler, message, {})
     result = await middleware(handler, message, {})
@@ -49,7 +48,7 @@ async def test_rapid_second_call_is_throttled() -> None:
 async def test_call_after_window_passes_is_not_throttled() -> None:
     middleware = ThrottleMiddleware(rate_limit=0.0)
     handler = AsyncMock(return_value="handled")
-    message = _make_message(user_id=1)
+    message = make_message(tg_user(1))
 
     await middleware(handler, message, {})
     result = await middleware(handler, message, {})
@@ -62,8 +61,8 @@ async def test_call_after_window_passes_is_not_throttled() -> None:
 async def test_different_users_are_throttled_independently() -> None:
     middleware = ThrottleMiddleware(rate_limit=100.0)
     handler = AsyncMock(return_value="handled")
-    message_a = _make_message(user_id=1)
-    message_b = _make_message(user_id=2)
+    message_a = make_message(tg_user(1))
+    message_b = make_message(tg_user(2))
 
     result_a = await middleware(handler, message_a, {})
     result_b = await middleware(handler, message_b, {})
@@ -89,9 +88,55 @@ async def test_non_message_events_bypass_throttling() -> None:
 async def test_message_without_from_user_bypasses_throttling() -> None:
     middleware = ThrottleMiddleware(rate_limit=100.0)
     handler = AsyncMock(return_value="handled")
-    message = _make_message(user_id=None)
+    message = make_message(None)
 
     result = await middleware(handler, message, {})
 
     handler.assert_awaited_once_with(message, {})
     assert result == "handled"
+
+
+@pytest.mark.asyncio
+async def test_throttle_warning_uses_telegram_language_for_unknown_user() -> None:
+    middleware = ThrottleMiddleware(rate_limit=100.0)
+    handler = AsyncMock()
+    message = make_message(tg_user(1, language_code="ru"))
+
+    await middleware(handler, message, {})
+    await middleware(handler, message, {})
+
+    assert message.answer.await_args.args[0] == i18n.get_translator("ru")("THROTTLE_WARNING")
+
+
+@pytest.mark.asyncio
+async def test_throttle_warning_uses_language_chosen_in_settings(
+    session_factory: async_sessionmaker[AsyncSession],
+) -> None:
+    async with session_factory() as session:
+        session.add(User(id=1, lang="fa"))
+        await session.commit()
+    middleware = ThrottleMiddleware(rate_limit=100.0)
+    handler = AsyncMock()
+    message = make_message(tg_user(1, language_code="ru"))  # Telegram says ru, user chose fa
+
+    await middleware(handler, message, {})
+    await middleware(handler, message, {})
+
+    expected = i18n.get_translator("fa")("THROTTLE_WARNING")
+    assert expected != i18n.get_translator("ru")("THROTTLE_WARNING")
+    assert message.answer.await_args.args[0] == expected
+
+
+@pytest.mark.asyncio
+async def test_throttled_message_does_not_create_a_local_user(
+    session_factory: async_sessionmaker[AsyncSession],
+) -> None:
+    middleware = ThrottleMiddleware(rate_limit=100.0)
+    handler = AsyncMock()
+    message = make_message(tg_user(1))
+
+    await middleware(handler, message, {})
+    await middleware(handler, message, {})
+
+    async with session_factory() as session:
+        assert (await session.execute(select(User.id))).first() is None
